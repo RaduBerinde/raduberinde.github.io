@@ -8,8 +8,8 @@
         @import url(style.css);
 
 .background {
-    stroke: white;
-    stroke-width: 1px;
+    stroke: black;
+    stroke-width: 2px;
     fill: white;
 }
 
@@ -84,7 +84,7 @@
     // This will be imported from a json file.
     var data = JSON.parse(document.getElementById('diagramdata').innerHTML);
 
-    var width = 800,
+    var width = 1000,
         height = 700;
 
     var d3cola = cola.d3adaptor()
@@ -149,8 +149,6 @@
                 graph.nodes.push({
                     title: p.outputs[j].title,
                     lines: p.outputs[j].lines,
-                    x: i * 100,
-                    y: i * 100,
                     width: 60,
                     height: 40,
                     rx: 20,
@@ -372,5 +370,7 @@
     }
     function isIE() { return ((navigator.appName == 'Microsoft Internet Explorer') || ((navigator.appName == 'Netscape') && (new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null))); }
 </script>
+Scroll up/down on the empty background to scale.
+Drag to pan or move nodes.
 </body>
 </html>
