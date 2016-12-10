@@ -145,9 +145,10 @@ Paste the diagram JSON in this box:
 
         // This will be imported from a json file.
         var jsontext = document.getElementById('jsontext');
-        var data = JSON.parse(jsontext.value);
         jsontext.readOnly = true
         document.getElementById('textdiv').style.display = "none"
+
+        var data = JSON.parse(jsontext.value);
 
         var graph = {};
         graph.nodes = [];
