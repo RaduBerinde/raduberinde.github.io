@@ -7,10 +7,6 @@
     <style>
         @import url(style.css);
 
-textarea {
-   font-size: 12px;
-}
- 
 .background {
     stroke: black;
     stroke-width: 2px;
@@ -75,22 +71,53 @@ textarea {
 
 </style>
 </head>
-<!-- <body onload="init()"> -->
-<body>
-<div id="textdiv">
-Paste the diagram JSON in this box:
-</div>
-<textarea id="jsontext" cols="120" rows="10" font-family="inherit">
-</textarea>
-<br/>
-<input type="button" id="button" onclick="init()" value="Generate Graph"/>
-<br/><br/>
-
+<body onload="init()">
 <script src="d3.v3.js"></script>
 <script src="cola.min.js"></script>
-
+<script src="pako_inflate.min.js"></script>
 
 <script>
+    function parseURLParams(url) {
+        var queryStart = url.indexOf("?") + 1,
+            queryEnd   = url.indexOf("#") + 1 || url.length + 1,
+            query = url.slice(queryStart, queryEnd - 1),
+            pairs = query.replace(/\+/g, " ").split("&"),
+            parms = {}, i, n, v, nv;
+    
+        if (query === url || query === "") return;
+    
+        for (i = 0; i < pairs.length; i++) {
+            nv = pairs[i].split("=", 2);
+            n = decodeURIComponent(nv[0]);
+            v = decodeURIComponent(nv[1]);
+    
+            if (!parms.hasOwnProperty(n)) parms[n] = [];
+            parms[n].push(nv.length === 2 ? v : null);
+        }
+        return parms;
+    }
+
+    var url = window.location.search
+    var compressed = url.substring(url.indexOf("?") + 1, url.length)
+
+    // Decode base64 (convert ascii to binary)
+    var strData     = atob(compressed);
+
+    // Convert binary string to character-number array
+    var charData    = strData.split('').map(function(x){return x.charCodeAt(0);});
+
+    // Turn number array into byte-array
+    var binData     = new Uint8Array(charData);
+
+    // Pako magic
+    var data        = pako.inflate(binData);
+
+    // Convert gunzipped byteArray back to ascii string:
+    var strData     = String.fromCharCode.apply(null, new Uint16Array(data));
+    
+
+    // This will be imported from a json file.
+    var data = JSON.parse(strData);
 
     var width = 1000,
         height = 700;
@@ -113,19 +140,6 @@ Paste the diagram JSON in this box:
         .attr('height', "100%")
         .call(d3.behavior.zoom().on("zoom", redraw));
 
-    // define arrow markers for graph links
-    outer.append('svg:defs').append('svg:marker')
-        .attr('id', 'end-arrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 5)
-        .attr('markerWidth', 3)
-        .attr('markerHeight', 3)
-        .attr('orient', 'auto')
-      .append('svg:path')
-        .attr('d', 'M0,-5L10,0L0,5L2,0')
-        .attr('stroke-width', '0px')
-        .attr('fill', '#000');
-
     var vis = outer
         .append('g')
         .attr('transform', 'translate(80,80) scale(0.7)');
@@ -138,19 +152,8 @@ Paste the diagram JSON in this box:
     var nodesLayer = vis.append("g");
     var linksLayer = vis.append("g");
 
+    var graph = {}, nodeLookup = {};
     function init() {
-        var button = document.getElementById('button');
-        button.value = "Start over";
-        button.onclick = function(){ history.go(0); };
-
-        // This will be imported from a json file.
-        var jsontext = document.getElementById('jsontext');
-        jsontext.readOnly = true
-        document.getElementById('textdiv').style.display = "none"
-
-        var data = JSON.parse(jsontext.value);
-
-        var graph = {};
         graph.nodes = [];
         for (var i = 0; i < data.processors.length; i++) {
             var p = data.processors[i];
@@ -280,6 +283,19 @@ Paste the diagram JSON in this box:
             .groups(graph.groups)
             .constraints(graph.constraints)
             .start(10, 10, 10);
+
+        // define arrow markers for graph links
+        outer.append('svg:defs').append('svg:marker')
+            .attr('id', 'end-arrow')
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 5)
+            .attr('markerWidth', 3)
+            .attr('markerHeight', 3)
+            .attr('orient', 'auto')
+          .append('svg:path')
+            .attr('d', 'M0,-5L10,0L0,5L2,0')
+            .attr('stroke-width', '0px')
+            .attr('fill', '#000');
 
         var group = groupsLayer.selectAll(".group")
             .data(graph.groups)
