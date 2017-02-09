@@ -100,17 +100,18 @@
     var url = window.location.search
     var compressed = url.substring(url.indexOf("?") + 1, url.length)
 
-    // Decode base64 (convert ascii to binary)
-    var strData     = atob(compressed);
+    // Decode base64 (convert ascii to binary).
+    //var strData = atob(compressed);
+    var strData = atob(compressed.replace(/-/g, '+').replace(/_/g, '/'));
 
     // Convert binary string to character-number array
-    var charData    = strData.split('').map(function(x){return x.charCodeAt(0);});
+    var charData = strData.split('').map(function(x){return x.charCodeAt(0);});
 
     // Turn number array into byte-array
-    var binData     = new Uint8Array(charData);
+    var binData = new Uint8Array(charData);
 
     // Pako magic
-    var data        = pako.inflate(binData);
+    var data = pako.inflate(binData);
 
     // Convert gunzipped byteArray back to ascii string:
     var strData     = String.fromCharCode.apply(null, new Uint16Array(data));
