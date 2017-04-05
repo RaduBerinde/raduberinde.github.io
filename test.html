@@ -112,8 +112,15 @@
     // This will be imported from a json file.
     var data = JSON.parse(document.getElementById('diagramdata').innerHTML);
 
-    var width = 1000,
-        height = 700;
+    var width = window.innerWidth,
+        height = window.innerHeight;
+
+    if (width > 60) {
+      width = width - 60;
+    }
+    if (height > 50) {
+      height = height - 50;
+    }
 
     var d3cola = cola.d3adaptor()
         //.linkDistance(function(link) { return link.distance })
@@ -398,6 +405,7 @@
     }
     function isIE() { return ((navigator.appName == 'Microsoft Internet Explorer') || ((navigator.appName == 'Netscape') && (new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null))); }
 </script>
+<br>
 Scroll up/down on the empty background to scale.
 Drag to pan or move nodes.
 </body>
