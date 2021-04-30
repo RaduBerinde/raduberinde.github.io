@@ -1,0 +1,163 @@
+<!--
+
+<title>
+  Visual Optsteps
+</title>
+<body>
+
+SQL:
+<pre id="sql" style="padding: 5px 0px; overflow-x:auto; tab-size:4">
+SELECT 1+1 AS two, 2+2 AS four
+</pre>
+
+
+<pre id="sql" style="padding: 5px 0px; overflow-x:auto; tab-size:4">
+project
+ ├── columns: two:1!null four:2!null
+ ├── values
+ │    └── ()
+ └── projections
+      ├── 1 + 1 [as=two:1]
+      └── 2 + 2 [as=four:2]
+</pre>
+
+</body>
+
+-->
+
+<!DOCTYPE html>
+<html lang="en-us">
+<title>Visual Optsteps</title>
+<body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/github.min.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css"
+    />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html-ui-base.min.js"></script>
+  </head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
+
+  <script>
+    var hash = window.location.hash;
+    var compressed = window.location.hash;
+    if (window.location.hash.length <= 1) {
+      compressed = window.location.search
+    }
+
+    compressed = compressed.substring(1, compressed.length)
+
+    // Decode base64 (convert ascii to binary).
+    var strData = atob(compressed.replace(/-/g, '+').replace(/_/g, '/'));
+
+    // Convert binary string to character-number array
+    var charData = strData.split('').map(function(x){return x.charCodeAt(0);});
+
+    // Turn number array into byte-array
+    var binData = new Uint8Array(charData);
+
+    // Pako magic
+    var data = pako.inflate(binData);
+
+    var strData = new TextDecoder("utf-8").decode(data)
+
+    var data = JSON.parse(strData);
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Populate the SQL.
+      document.getElementById("sql").innerHTML = data.SQL;
+
+      var targetElement = document.getElementById('normalization');
+      var configuration = {
+        inputFormat: 'json',
+        drawFileList: true,
+        fileListToggle: false,
+        fileListStartVisible: false,
+        fileContentToggle: false,
+        matching: 'lines',
+        outputFormat: 'side-by-side',
+        synchronisedScroll: true,
+        highlight: false,
+        renderNothingWhenEmpty: false,
+      };
+      var diff2htmlUi = new Diff2HtmlUI(targetElement, data.Normdiff, configuration);
+      diff2htmlUi.draw();
+
+      var fileListTitleSpan = document.getElementsByClassName('d2h-file-list-title')[0]
+      fileListTitleSpan.innerHTML = fileListTitleSpan.innerHTML.replace('Files changed', 'Normalization steps')
+
+      // Do some very basic syntax highlighting. We pick the pattern that
+      // matches at the earliest index, and among those we pick the first in the
+      // list. We add a <span> around the part inside the parens and repeat with
+      // the rest of the string.
+      var patterns = [
+        {
+          style: 'hljs-attribute',
+          match: /├── (columns|key|fd|immutable|mutable|volatile|multiplicity|cost|stats|outer|constraints)/,
+        },
+        {
+          style: 'hljs-attribute',
+          match: /└── (columns|key|fd|immutable|mutable|volatile|multiplicity|cost|stats|outer|constraints)/,
+        },
+        {
+          style: 'hljs-title',
+          match: /^([a-zA-Z][^: ]*)/,
+        },
+        {
+          style: 'hljs-title',
+          match: /├── ([a-zA-Z][^: ]*)/,
+        },
+        {
+          style: 'hljs-title',
+          match: /└── ([a-zA-Z][^: ]*)/,
+        },
+        {
+          style: 'hljs-number',
+          match: /[^a-zA-Z]([0-9][0-9]*)/,
+        },
+        {
+          style: 'hljs-attribute',
+          match: /(columns|key|fd|immutable|mutable|volatile|multiplicity|cost|stats|outer|constraints)/,
+        },
+        {
+          style: 'hljs-built_in',
+          match: /(!null)/,
+        },
+      ]
+      var codeLines = document.getElementsByClassName('d2h-code-line-ctn')
+      for (var i = 0; i < codeLines.length; i++) {
+        var cl = codeLines[i];
+        var str = cl.innerHTML;
+
+        var out = "";
+        while (true) {
+          var bestMatch = null;
+          var style = null;
+          patterns.forEach(function (pattern) {
+            var match = str.match(pattern.match);
+            if (match && (!bestMatch || match.index < bestMatch.index)) {
+              bestMatch = match;
+              style = pattern.style;
+            }
+          })
+          if (!bestMatch) {
+            break
+          }
+          var index = bestMatch.index + (bestMatch[0].length - bestMatch[1].length);
+          out += str.substr(0, index) + '<span class="' + style + '">' + bestMatch[1] + '</span>';
+          str = str.substr(index + bestMatch[1].length);
+        }
+        cl.innerHTML = out + str;
+      }
+    })
+  </script>
+  <body>
+    <pre id="sql" style="padding: 5px 0px; overflow-x:auto; tab-size:4">
+  LOL
+    </pre>
+    <div id="normalization"></div>
+  </body>
+</html>
