@@ -27,7 +27,7 @@ project
 
 <!DOCTYPE html>
 <html lang="en-us">
-<title>Visual Optsteps</title>
+<title>Optsteps</title>
 <body>
   <head>
     <meta charset="utf-8" />
@@ -42,10 +42,9 @@ project
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
 
   <script>
-    var hash = window.location.hash;
-    var compressed = window.location.hash;
-    if (window.location.hash.length <= 1) {
-      compressed = window.location.search
+    var compressed = window.location.search;
+    if (compressed.length <= 1) {
+      compressed = window.location.fragment
     }
 
     compressed = compressed.substring(1, compressed.length)
@@ -91,40 +90,32 @@ project
 
       // Do some very basic syntax highlighting. We pick the pattern that
       // matches at the earliest index, and among those we pick the first in the
-      // list. We add a <span> around the part inside the parens and repeat with
-      // the rest of the string.
+      // list. Each pattern has a "token" capture group, and optionally a
+      // "prefix" group.  We add a <span> around the token inside the parens and
+      // repeat with the rest of the string.
       var patterns = [
+        // All fields that end in : are "attributes".
         {
           style: 'hljs-attribute',
-          match: /├── (columns|key|fd|immutable|mutable|volatile|multiplicity|cost|stats|outer|constraints)/,
+          match: /(?<prefix>(├|└)── )(?<token>[a-zA-Z][^:]*):/,
         },
+        // Some other known attributes.
         {
           style: 'hljs-attribute',
-          match: /└── (columns|key|fd|immutable|mutable|volatile|multiplicity|cost|stats|outer|constraints)/,
+          match: /(?<prefix>(├|└)── )(?<token>immutable|mutable|volatile)/,
         },
+        // Operators.
         {
           style: 'hljs-title',
-          match: /^([a-zA-Z][^: ]*)/,
-        },
-        {
-          style: 'hljs-title',
-          match: /├── ([a-zA-Z][^: ]*)/,
-        },
-        {
-          style: 'hljs-title',
-          match: /└── ([a-zA-Z][^: ]*)/,
+          match: /(?<prefix>^|(├|└)── )(?<token>[a-zA-Z][^: ]*)/,
         },
         {
           style: 'hljs-number',
-          match: /[^a-zA-Z]([0-9][0-9]*)/,
-        },
-        {
-          style: 'hljs-attribute',
-          match: /(columns|key|fd|immutable|mutable|volatile|multiplicity|cost|stats|outer|constraints)/,
+          match: /(?<token>[^a-zA-Z]([0-9][0-9]*))/,
         },
         {
           style: 'hljs-built_in',
-          match: /(!null)/,
+          match: /(?<token>!null)/,
         },
       ]
       var codeLines = document.getElementsByClassName('d2h-code-line-ctn')
@@ -146,18 +137,23 @@ project
           if (!bestMatch) {
             break
           }
-          var index = bestMatch.index + (bestMatch[0].length - bestMatch[1].length);
-          out += str.substr(0, index) + '<span class="' + style + '">' + bestMatch[1] + '</span>';
-          str = str.substr(index + bestMatch[1].length);
+          var tokenStart = bestMatch.index
+          if (bestMatch.groups.prefix) {
+            tokenStart += bestMatch.groups.prefix.length
+          }
+          out += str.substr(0, tokenStart) + '<span class="' + style + '">' + bestMatch.groups.token + '</span>';
+          str = str.substr(tokenStart + bestMatch.groups.token.length);
         }
         cl.innerHTML = out + str;
       }
     })
   </script>
   <body>
-    <pre id="sql" style="padding: 5px 0px; overflow-x:auto; tab-size:4">
-  LOL
-    </pre>
+    <div align=center>
+      <pre id="sql" style="padding: 5px 0px; overflow-x:auto; tab-size:4">
+No data provided via fragment or query
+      </pre>
+     </div>
     <div id="normalization"></div>
   </body>
 </html>
