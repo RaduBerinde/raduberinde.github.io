@@ -85,7 +85,7 @@ project
       var diff2htmlUi = new Diff2HtmlUI(targetElement, data.Normdiff, configuration);
       diff2htmlUi.draw();
 
-      var fileListTitleSpan = document.getElementsByClassName('d2h-file-list-title')[0]
+      var fileListTitleSpan = document.getElementsByClassName('d2h-file-list-title')[1]
       fileListTitleSpan.innerHTML = fileListTitleSpan.innerHTML.replace('Files changed', 'Normalization steps')
 
       // Do some very basic syntax highlighting. We pick the pattern that
@@ -153,11 +153,12 @@ project
     })
   </script>
   <body>
-    <div align=center>
+    <div class="d2h-file-list-title">Query:</div>
+    <div style="margin-left:5%;">
       <pre id="sql" style="padding: 5px 0px; overflow-x:auto; tab-size:4">
 No data provided via fragment or query
       </pre>
-     </div>
+    </div>
     <div id="normalization"></div>
   </body>
 </html>
