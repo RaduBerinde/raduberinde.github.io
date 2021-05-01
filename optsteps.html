@@ -44,10 +44,10 @@ project
   <script>
     var compressed = window.location.search;
     if (compressed.length <= 1) {
-      compressed = window.location.fragment
+      compressed = window.location.hash
     }
 
-    compressed = compressed.substring(1, compressed.length)
+    compressed = compressed.substring(1)
 
     // Decode base64 (convert ascii to binary).
     var strData = atob(compressed.replace(/-/g, '+').replace(/_/g, '/'));
