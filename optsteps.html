@@ -94,15 +94,15 @@ project
       // "prefix" group.  We add a <span> around the token inside the parens and
       // repeat with the rest of the string.
       var patterns = [
-        // All fields that end in : are "attributes".
+        // All fields that are followed by a colon are attributes (not operators).
         {
           style: 'hljs-attribute',
           match: /(?<prefix>(├|└)── )(?<token>[a-zA-Z][^:]*):/,
         },
-        // Some other known attributes.
+        // Some other attributes and keywords.
         {
           style: 'hljs-attribute',
-          match: /(?<prefix>(├|└)── )(?<token>immutable|mutable|volatile)/,
+          match: /(?<token>\b(immutable|mutable|volatile|outer|constraints|fd|tight)\b)/,
         },
         // Operators.
         {
@@ -111,7 +111,11 @@ project
         },
         {
           style: 'hljs-number',
-          match: /(?<token>[^a-zA-Z]([0-9][0-9]*))/,
+          match: /(?<token>(\b[0-9][0-9]*))/,
+        },
+        {
+          style: 'hljs-number',
+          match: /(?<token>\bNULL\b)/,
         },
         {
           style: 'hljs-built_in',
