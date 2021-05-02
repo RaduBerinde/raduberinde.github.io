@@ -99,10 +99,15 @@ project
           style: 'hljs-attribute',
           match: /(?<prefix>(├|└)── )(?<token>[a-zA-Z][^:]*):/,
         },
-        // Some other attributes and keywords.
+        // Top-level attributes.
         {
           style: 'hljs-attribute',
-          match: /(?<token>\b(immutable|mutable|volatile|outer|constraints|fd|tight)\b)/,
+          match: /(?<prefix>(├|└)── )(?<token>immutable|mutable|stable|volatile|mutations|has-placeholder|)/
+        },
+        // Other attributes.
+        {
+          style: 'hljs-attribute',
+          match: /(?<token>\b(outer|constraints|fd|tight)\b)/,
         },
         // Operators.
         {
