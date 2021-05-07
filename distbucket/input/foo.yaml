@@ -1,0 +1,9 @@
+nodes:
+
+  - type: linear
+    baseline: 100
+    ramp_per_second: 1
+
+  - type: linear
+    baseline: 50
+    ramp_per_second: 4

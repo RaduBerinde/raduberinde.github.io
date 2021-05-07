@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Workload</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://unpkg.com/uplot@1.6.9/dist/uPlot.min.css">
+    <style>
+      .uplot {
+        display: inline-block;
+        vertical-align: top;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/uplot@1.6.9/dist/uPlot.iife.js"></script>
+
+    <br>
+
+
+    <script>
+      function makeCharts(input) {
+        const colors = [ "red", "green", "blue", "brown", "magenta", "orange" ];
+        var colorIdx = 0;
+
+        function getColor() {
+          var c = colors[colorIdx];
+          colorIdx = (colorIdx + 1) % colors.length;
+          return c
+        }
+
+        input.Charts.forEach(function (chart) {
+          const series = chart.Series;
+          const data = [ input.TimeAxis ].concat(series.map(s => s.Data));
+          const cursorOpts = {
+            lock: true,
+            focus: {
+              prox: 16,
+            },
+            sync: {
+              key: "moo",
+            },
+          };
+
+          const opts = {
+            title: chart.Title,
+            width: 1000,
+            height: 400,
+            focus: {
+              alpha: 0.3,
+            },
+            scales: {
+              x: {
+                time: false,
+               },
+            },
+            cursor: cursorOpts,
+            series: [ { label: "Time (s)" } ].concat(series.map(function(s, idx) {
+              return {
+                  label: s.Name,
+                  value: (u, v) => v.toFixed(1),
+                  stroke: getColor(),
+              }
+            })),
+            axes: [
+              {},
+              {
+                label: "Resource Units",
+                values: (u, vals, space) => vals.map(v => +v.toFixed(1)),
+              },
+            ],
+          };
+
+          new uPlot(opts, data, document.body);
+        })
+      }
+
+
+      const config = window.location.search.substring(1);
+        document.title = document.title + " (" + config + ")"
+
+      fetch("output/" + config + ".json").then(r => r.json()).then(input => {
+				makeCharts(input);
+      });
+
+    </script>
+  </body>
+</html>
