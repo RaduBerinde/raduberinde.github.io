@@ -1,9 +1,38 @@
 nodes:
+  - funcs:
+     - type: constant
+       value: 100
 
-  - type: linear
-    baseline: 100
-    ramp_per_second: 1
+     - type: ramp
+       start: 5
+       duration: 10
+       delta: 50
 
-  - type: linear
-    baseline: 50
-    ramp_per_second: 4
+     - type: ramp
+       start: 25
+       duration: 2
+       delta: -50
+
+  - funcs:
+     - type: constant
+       value: 50
+
+     - type: ramp
+       start: 10
+       duration: 10
+       delta: 100
+
+     - type: ramp
+       start: 20
+       duration: 5
+       delta: -60
+
+     - type: ramp
+       start: 27
+       duration: 1
+       delta: -40
+
+  - funcs:
+     - type: sine
+       period: 10
+       peak: 100

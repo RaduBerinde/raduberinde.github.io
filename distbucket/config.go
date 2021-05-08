@@ -29,6 +29,10 @@ func (c Config) TimeForTick(tick int) time.Duration {
 	return c.Tick * time.Duration(tick)
 }
 
+func (c Config) TickForTime(t time.Duration) int {
+	return int(t / c.Tick)
+}
+
 func (c Config) TimeAxis() []float64 {
 	res := make([]float64, c.NumTicks())
 	for i := range res {
@@ -41,7 +45,7 @@ var DefaultConfig = Config{
 	Timeframe: 30 * time.Second,
 	Tick:      10 * time.Millisecond,
 
-	RatePerSec:   100,
-	InitialBurst: 1000,
-	MaxBurst:     1000,
+	RatePerSec:   5000,
+	InitialBurst: 50000,
+	MaxBurst:     50000,
 }

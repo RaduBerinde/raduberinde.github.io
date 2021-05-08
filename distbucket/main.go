@@ -29,6 +29,10 @@ type Chart struct {
 }
 
 type Data struct {
+	RatePerSec   float64
+	InitialBurst float64
+	MaxBurst     float64
+
 	TimeAxis []float64
 
 	Charts []Chart
@@ -74,13 +78,20 @@ func main() {
 			nodes[i] = MakeWorkload(input.Config, input.Nodes[i])
 		}
 
-		sum := nodes[0]
-		for _, w := range nodes[1:] {
+		sum := ZeroWorkload(input.Config)
+		for _, w := range nodes {
 			sum = sum.Sum(w)
 		}
 
-		var d Data
-		d.TimeAxis = input.Config.TimeAxis()
+		tokenBucketOutput, tokens := TokenBucket(nodes)
+
+		d := Data{
+			RatePerSec:   input.Config.RatePerSec,
+			InitialBurst: input.Config.InitialBurst,
+			MaxBurst:     input.Config.MaxBurst,
+			TimeAxis:     input.Config.TimeAxis(),
+		}
+
 		nodeSeries := make([]Series, len(nodes))
 		for i := range nodes {
 			nodeSeries[i].Name = fmt.Sprintf("node %d", i+1)
@@ -98,6 +109,19 @@ func main() {
 					Data: sum.Data,
 				}},
 			},
+			{
+				Title: "Perfect token bucket",
+				Series: []Series{
+					{
+						Name: "aggregate",
+						Data: tokenBucketOutput.Data,
+					},
+					{
+						Name: "tokens",
+						Data: tokens.Data,
+					},
+				},
+			},
 		}
 		asJson, err := json.MarshalIndent(&d, "", "  ")
 		if err != nil {
@@ -109,56 +133,3 @@ func main() {
 	}
 	fmt.Printf("Done.\n")
 }
-
-/*
-	cfg := DefaultConfig
-	nodes := []Workload{
-		MakeWorkload(cfg, WorkloadDesc{
-			Type:          "linear",
-			Baseline:      100,
-			RampPerSecond: 1,
-		}),
-		MakeWorkload(cfg, WorkloadDesc{
-			Type:          "linear",
-			Baseline:      50,
-			RampPerSecond: 4,
-		}),
-	}
-
-	sum := nodes[0]
-	for _, w := range nodes[1:] {
-		sum = sum.Sum(w)
-	}
-
-	var d Data
-	d.TimeAxis = cfg.TimeAxis()
-	d.Charts = []Chart{
-		{
-			Title: "Requested per node",
-			Series: []Series{
-				{
-					Name: "node 1",
-					Data: nodes[0].Data,
-				},
-				{
-					Name: "node 2",
-					Data: nodes[1].Data,
-				},
-			},
-		},
-		{
-			Title: "Requested aggregate",
-			Series: []Series{{
-				Name: "aggregate",
-				Data: sum.Data,
-			}},
-		},
-	}
-	asJson, err := json.MarshalIndent(&d, "", "  ")
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(string(asJson))
-}
-*/
