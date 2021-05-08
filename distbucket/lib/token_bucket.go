@@ -1,4 +1,4 @@
-package main
+package lib
 
 func TokenBucket(nodes []Workload) (output Workload, tokens Workload) {
 	cfg := nodes[0].Config

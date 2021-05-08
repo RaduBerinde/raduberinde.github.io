@@ -1,16 +1,17 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
-
-	"gopkg.in/yaml.v2"
+	"github.com/gopherjs/gopherjs/js"
+	"github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"
 )
 
+func main() {
+	js.Global.Set("Foo", lib.Process)
+}
+
+
+
+/*
 // These struct are for the input yaml.
 type Input struct {
 	Config Config
@@ -133,3 +134,4 @@ func main() {
 	}
 	fmt.Printf("Done.\n")
 }
+*/
