@@ -15,26 +15,91 @@
   </head>
   <body>
     <script src="https://unpkg.com/uplot@1.6.9/dist/uPlot.iife.js"></script>
+    <script src="distbucket.js"></script>
 
     <br>
 
     <font size="3"><b>
     <table style="border-spacing: 10px 0; margin-left: 50px">
       <tr>
-        <td>Refill rate:</td><td id="rate"></td>
+        <td>Refill rate:</td>
+        <td><input id="rate_per_sec" type="number" style="width: 80px" min="0" value="240"/></td>
       </tr>
       <tr>
-        <td>Initial burst:</td><td id="initial_burst"></td>
+        <td>Initial burst:</td>
+        <td><input id="initial_burst" type="number" style="width: 80px" min="0" value="100"/></td>
       </tr>
       <tr>
-        <td>Max burst:</td><td id="max_burst"></td>
+        <td>Max burst:</td>
+        <td><input id="max_burst" type="number" style="width: 80px" min="0" value="100"/></td>
       </tr>
     </table>
     </b></font>
 
 
     <script>
-      function makeCharts(input) {
+      // configKeys are yaml fields and <input> ids.
+      const configKeys = ["rate_per_sec", "initial_burst", "max_burst"];
+
+      var plots = [];
+
+      function makeCharts() {
+        plots.forEach(function(plot) {
+          plot.destroy()
+        })
+        plots = [];
+
+        const workloadYAML = `
+nodes:
+  - funcs:
+     - type: constant
+       value: 100
+
+     - type: ramp
+       start: 5
+       duration: 10
+       delta: 50
+
+     - type: ramp
+       start: 25
+       duration: 2
+       delta: -50
+
+  - funcs:
+     - type: constant
+       value: 50
+
+     - type: ramp
+       start: 10
+       duration: 10
+       delta: 100
+
+     - type: ramp
+       start: 20
+       duration: 5
+       delta: -60
+
+     - type: ramp
+       start: 27
+       duration: 1
+       delta: -40
+
+  - funcs:
+     - type: sine
+       period: 10
+       peak: 100
+`
+        var inputYAML = workloadYAML;
+        inputYAML += "config:\n";
+        configKeys.forEach(function(key) {
+          var elem = document.getElementById(key);
+          inputYAML += "  " + key + ": " + elem.value + "\n";
+        })
+        console.log(inputYAML);
+
+        var output = Process(inputYAML);
+
+
         const colors = [ "red", "green", "blue", "brown", "magenta", "orange" ];
         var colorIdx = 0;
 
@@ -44,9 +109,9 @@
           return c
         }
 
-        input.Charts.forEach(function (chart) {
+        output.Charts.forEach(function (chart) {
           const series = chart.Series;
-          const data = [ input.TimeAxis ].concat(series.map(s => s.Data));
+          const data = [ output.TimeAxis ].concat(series.map(s => s.Data));
           const cursorOpts = {
             lock: true,
             ocus: {
@@ -73,33 +138,44 @@
             series: [ { label: "Time (s)" } ].concat(series.map(function(s, idx) {
               return {
                   label: s.Name,
-                  value: (u, v) => v.toFixed(1),
+                  value: (u, v) => v.toFixed(1) + " " + s.Unit,
                   stroke: getColor(),
               }
             })),
             axes: [
               {},
               {
-                label: "Resource Units",
-                values: (u, vals, space) => vals.map(v => +v.toFixed(1)),
+                values: (u, vals, space) => vals.map(v => v.toFixed(1)),
               },
             ],
           };
 
-          new uPlot(opts, data, document.body);
+          plots.push(new uPlot(opts, data, document.body));
         })
       }
+      makeCharts();
+      configKeys.forEach(function(key) {
+        var elem = document.getElementById(key);
+        elem.onchange = function() {
+          makeCharts()
+        }
+      })
+
+      //document.getElementById("rate").innerHTML = input.RatePerSec + " RU/s"
+      //document.getElementById("initial_burst").innerHTML = input.InitialBurst + " RU"
+      //document.getElementById("max_burst").innerHTML = input.MaxBurst + " RU"
+
 
 
       const config = window.location.search.substring(1);
         document.title = document.title + " (" + config + ")"
 
-      fetch("output/" + config + ".json").then(r => r.json()).then(input => {
-				makeCharts(input);
-        document.getElementById("rate").innerHTML = input.RatePerSec + " RU/s"
-        document.getElementById("initial_burst").innerHTML = input.InitialBurst + " RU"
-        document.getElementById("max_burst").innerHTML = input.MaxBurst + " RU"
-      });
+      //fetch("output/" + config + ".json").then(r => r.json()).then(input => {
+			//	makeCharts(input);
+      //  document.getElementById("rate").innerHTML = input.RatePerSec + " RU/s"
+      //  document.getElementById("initial_burst").innerHTML = input.InitialBurst + " RU"
+      //  document.getElementById("max_burst").innerHTML = input.MaxBurst + " RU"
+      //});
 
     </script>
   </body>

@@ -16,9 +16,9 @@ type Config struct {
 	Timeframe time.Duration
 	Tick      time.Duration
 
-	RatePerSec   float64
-	InitialBurst float64
-	MaxBurst     float64
+	RatePerSec   float64 `yaml:"rate_per_sec"`
+	InitialBurst float64 `yaml:"initial_burst"`
+	MaxBurst     float64 `yaml:"max_burst"`
 }
 
 func (c Config) NumTicks() int {
@@ -42,10 +42,10 @@ func (c Config) TimeAxis() []float64 {
 }
 
 var DefaultConfig = Config{
-	Timeframe: 30 * time.Second,
+	Timeframe: 60 * time.Second,
 	Tick:      10 * time.Millisecond,
 
-	RatePerSec:   5000,
-	InitialBurst: 50000,
-	MaxBurst:     50000,
+	RatePerSec:   240,
+	InitialBurst: 100,
+	MaxBurst:     100,
 }

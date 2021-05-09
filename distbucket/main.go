@@ -6,9 +6,8 @@ import (
 )
 
 func main() {
-	js.Global.Set("Foo", lib.Process)
+	js.Global.Set("Process", lib.Process)
 }
-
 
 
 /*

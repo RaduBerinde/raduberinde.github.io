@@ -94,14 +94,20 @@ func MakeWorkload(config Config, desc WorkloadDesc) Workload {
 	return w
 }
 
-func (w Workload) Sum(other Workload) Workload {
-	if w.Config != other.Config {
-		panic("different configs")
-	}
+func (w *Workload) Copy() Workload {
 	res := Workload{
 		Config: w.Config,
 		Data:   make([]float64, len(w.Data)),
 	}
+	copy(res.Data, w.Data)
+	return res
+}
+
+func (w *Workload) Sum(other *Workload) Workload {
+	if w.Config != other.Config {
+		panic("different configs")
+	}
+	res := w.Copy()
 	for i := range res.Data {
 		res.Data[i] = w.Data[i] + other.Data[i]
 	}
