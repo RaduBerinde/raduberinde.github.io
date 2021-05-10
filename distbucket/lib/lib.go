@@ -1,8 +1,10 @@
 package lib
 
-import "fmt"
-import "gopkg.in/yaml.v2"
+import (
+	"fmt"
 
+	"gopkg.in/yaml.v2"
+)
 
 // This struct is the input to the library.
 type Input struct {
@@ -19,22 +21,25 @@ type Output struct {
 
 type Chart struct {
 	Title  string
+	Units  []string
 	Series []Series
 }
 
 type Series struct {
-	Name string
-	Unit string
-	Data []float64
+	Name  string
+	Unit  string
+	Width float64
+	Data  []float64
 }
 
 // Process takes the input parameters and generates the output graphs.
 func Process(inputYAML string) Output {
-	input := Input {
+	input := Input{
 		Config: DefaultConfig,
 	}
 	if err := yaml.UnmarshalStrict([]byte(inputYAML), &input); err != nil {
-		panic(err)
+		fmt.Printf("Error parsing input YAML: %v\n", err)
+		return Output{}
 	}
 
 	nodes := make([]Workload, len(input.Nodes))
@@ -47,48 +52,64 @@ func Process(inputYAML string) Output {
 		sum = sum.Sum(&nodes[i])
 	}
 
-	tokenBucketOutput, tokens := TokenBucket(nodes)
+	nodeSeries := make([]Series, len(nodes))
+	for i := range nodeSeries {
+		nodeSeries[i] = Series{
+			Name:  fmt.Sprintf("node %d", i+1),
+			Unit:  "RU/s",
+			Width: 1,
+			Data:  nodes[i].Data,
+		}
+	}
 
 	out := Output{
 		TimeAxis: input.Config.TimeAxis(),
 	}
 
-	nodeSeries := make([]Series, len(nodes))
-	for i := range nodes {
+	out.Charts = append(out.Charts, Chart{
+		Title: "Requested",
+		Units: []string{"RU/s"},
+		Series: append(nodeSeries, Series{
+			Name:  "aggregate",
+			Unit:  "RU/s",
+			Width: 2,
+			Data:  sum.Data,
+		}),
+	})
+
+	tokenBucketPerNode, tokenBucketAggregate, tokens := TokenBucket(input.Config, nodes)
+
+	nodeSeries = make([]Series, len(nodes))
+	for i := range nodeSeries {
+		w := tokenBucketPerNode[i]
+		if input.Config.Smoothing {
+			w = w.Smooth(0.1)
+		}
 		nodeSeries[i] = Series{
-			Name: fmt.Sprintf("node %d", i+1),
-			Unit: "RU/s",
-			Data: nodes[i].Data,
+			Name:  fmt.Sprintf("node %d", i+1),
+			Unit:  "RU/s",
+			Width: 1,
+			Data:  w.Data,
 		}
 	}
-	out.Charts = []Chart{
-		{
-			Title:  "Requested per node",
-			Series: nodeSeries,
-		},
-		{
-			Title: "Requested aggregate",
-			Series: []Series{{
-				Name: "aggregate",
-				Unit: "RU/s",
-				Data: sum.Data,
-			}},
-		},
-		{
-			Title: "Perfect token bucket",
-			Series: []Series{
-				{
-					Name: "aggregate",
-					Unit: "RU/s",
-					Data: tokenBucketOutput.Data,
-				},
-				{
-					Name: "tokens",
-					Unit: "RU",
-					Data: tokens.Data,
-				},
+
+	out.Charts = append(out.Charts, Chart{
+		Title: "Perfect token bucket",
+		Units: []string{"RU/s", "RU"},
+		Series: append(nodeSeries,
+			Series{
+				Name:  "aggregate",
+				Unit:  "RU/s",
+				Width: 2.5,
+				Data:  tokenBucketAggregate.Data,
 			},
-		},
-	}
+			Series{
+				Name:  "tokens",
+				Unit:  "RU",
+				Width: 0.5,
+				Data:  tokens.Data,
+			},
+		),
+	})
 	return out
 }

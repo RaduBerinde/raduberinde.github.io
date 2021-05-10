@@ -19,6 +19,7 @@ type Config struct {
 	RatePerSec   float64 `yaml:"rate_per_sec"`
 	InitialBurst float64 `yaml:"initial_burst"`
 	MaxBurst     float64 `yaml:"max_burst"`
+	Smoothing    bool
 }
 
 func (c Config) NumTicks() int {
