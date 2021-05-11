@@ -40568,7 +40568,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		/* while (true) { */ case 8:
 			/* if (!(_i$2 < _ref$2.$length)) { break; } */ if(!(_i$2 < _ref$2.$length)) { $s = 9; continue; }
 			i$2 = _i$2;
-			_r$3 = fmt.Sprintf("node %d", new sliceType$3([new $Int((i$2 + 1 >> 0))])); /* */ $s = 10; case 10: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			_r$3 = fmt.Sprintf("n%d", new sliceType$3([new $Int((i$2 + 1 >> 0))])); /* */ $s = 10; case 10: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 			Series.copy(((i$2 < 0 || i$2 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$2]), new Series.ptr(_r$3, "RU/s", 1, ((i$2 < 0 || i$2 >= nodes.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes.$array[nodes.$offset + i$2]).Data));
 			_i$2++;
 		/* } */ $s = 8; continue; case 9:
@@ -40589,7 +40589,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			if (input[0].Config.Smoothing) {
 				Workload.copy(w, w.Smooth(0.1));
 			}
-			_r$5 = fmt.Sprintf("node %d", new sliceType$3([new $Int((i$3 + 1 >> 0))])); /* */ $s = 14; case 14: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+			_r$5 = fmt.Sprintf("n%d", new sliceType$3([new $Int((i$3 + 1 >> 0))])); /* */ $s = 14; case 14: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
 			Series.copy(((i$3 < 0 || i$3 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$3]), new Series.ptr(_r$5, "RU/s", 1, w.Data));
 			_i$3++;
 		/* } */ $s = 12; continue; case 13:

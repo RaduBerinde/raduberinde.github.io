@@ -55,7 +55,7 @@ func Process(inputYAML string) Output {
 	nodeSeries := make([]Series, len(nodes))
 	for i := range nodeSeries {
 		nodeSeries[i] = Series{
-			Name:  fmt.Sprintf("node %d", i+1),
+			Name:  fmt.Sprintf("n%d", i+1),
 			Unit:  "RU/s",
 			Width: 1,
 			Data:  nodes[i].Data,
@@ -86,7 +86,7 @@ func Process(inputYAML string) Output {
 			w = w.Smooth(0.1)
 		}
 		nodeSeries[i] = Series{
-			Name:  fmt.Sprintf("node %d", i+1),
+			Name:  fmt.Sprintf("n%d", i+1),
 			Unit:  "RU/s",
 			Width: 1,
 			Data:  w.Data,
