@@ -93,12 +93,14 @@
       const sliderKeys = ["rate_per_sec", "initial_burst", "max_burst"];
 
       var plots = [];
+      var widthDeltas = [];
 
       function makeCharts() {
         plots.forEach(function(plot) {
           plot.destroy();
         })
         plots = [];
+        widthDeltas = [];
         const workloadYAML = document.getElementById("workload_yaml").value;
 
         var inputYAML = workloadYAML;
@@ -136,11 +138,14 @@
           };
 
           colorIdx = 0;
+          // Size the charts so that the actual plots align even if one graph has
+          // one axis and the other has two.
+          var widthDelta = -450 + chart.Units.length * 54;
 
           var opts = {
             title: chart.Title,
             // Size the charts so that the actual graphs align.
-            width: 800 + chart.Units.length * 54,
+            width: window.innerWidth + widthDelta,
             height: 400,
             focus: {
               alpha: 0.3
@@ -178,6 +183,7 @@
           }
           var graphsDiv = document.getElementById("graphs_div")
           plots.push(new uPlot(opts, data, graphsDiv));
+          widthDeltas.push(widthDelta);
           graphsDiv.appendChild(document.createElement("p"));
         })
       }
@@ -218,6 +224,14 @@
       document.getElementById("workload_yaml").oninput = function() {
         makeCharts();
       };
+      window.addEventListener("resize", e => {
+        for (let i = 0; i < plots.length; i++) {
+          plots[i].setSize({
+            width: window.innerWidth + widthDeltas[i],
+            height: 400,
+          })
+        }
+     });
     </script>
   </body>
 </html>
