@@ -40593,7 +40593,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			Series.copy(((i$3 < 0 || i$3 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$3]), new Series.ptr(_r$5, "RU/s", 1, w.Data));
 			_i$3++;
 		/* } */ $s = 12; continue; case 13:
-		out.Charts = $append(out.Charts, new Chart.ptr("Perfect token bucket", new sliceType$7(["RU/s", "RU"]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, tokenBucketAggregate.Data), new Series.ptr("tokens", "RU", 0.5, tokens.Data))));
+		out.Charts = $append(out.Charts, new Chart.ptr("Granted (perfect token bucket)", new sliceType$7(["RU/s", "RU"]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, tokenBucketAggregate.Data), new Series.ptr("tokens", "RU", 0.5, tokens.Data))));
 		$s = -1; return out;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Process }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._tuple = _tuple; $f.err = err; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.input = input; $f.inputYAML = inputYAML; $f.nodeSeries = nodeSeries; $f.nodes = nodes; $f.out = out; $f.sum = sum; $f.tokenBucketAggregate = tokenBucketAggregate; $f.tokenBucketPerNode = tokenBucketPerNode; $f.tokens = tokens; $f.w = w; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
 	};

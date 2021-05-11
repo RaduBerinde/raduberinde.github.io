@@ -94,7 +94,7 @@ func Process(inputYAML string) Output {
 	}
 
 	out.Charts = append(out.Charts, Chart{
-		Title: "Perfect token bucket",
+		Title: "Granted (perfect token bucket)",
 		Units: []string{"RU/s", "RU"},
 		Series: append(nodeSeries,
 			Series{
