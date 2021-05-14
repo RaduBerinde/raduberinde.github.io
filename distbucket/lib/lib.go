@@ -77,7 +77,41 @@ func Process(inputYAML string) Output {
 		}),
 	})
 
-	tokenBucketPerNode, tokenBucketAggregate, tokens := TokenBucket(input.Config, nodes)
+	tokenBucketPerNode, tokenBucketAggregate, tokens := DistTokenBucket(input.Config, nodes)
+	nodeSeries = make([]Series, len(nodes))
+	for i := range nodeSeries {
+		w := tokenBucketPerNode[i]
+		if input.Config.Smoothing {
+			w = w.Smooth(0.1)
+		}
+		nodeSeries[i] = Series{
+			Name:  fmt.Sprintf("n%d", i+1),
+			Unit:  "RU/s",
+			Width: 1,
+			Data:  w.Data,
+		}
+	}
+
+	out.Charts = append(out.Charts, Chart{
+		Title: "Granted (distributed token bucket)",
+		Units: []string{"RU/s", "RU"},
+		Series: append(nodeSeries,
+			Series{
+				Name:  "aggregate",
+				Unit:  "RU/s",
+				Width: 2.5,
+				Data:  tokenBucketAggregate.Data,
+			},
+			Series{
+				Name:  "global tokens",
+				Unit:  "RU",
+				Width: 0.5,
+				Data:  tokens.Data,
+			},
+		),
+	})
+
+	tokenBucketPerNode, tokenBucketAggregate, tokens = TokenBucket(input.Config, nodes)
 
 	nodeSeries = make([]Series, len(nodes))
 	for i := range nodeSeries {
@@ -112,4 +146,5 @@ func Process(inputYAML string) Output {
 		),
 	})
 	return out
+
 }

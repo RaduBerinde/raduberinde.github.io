@@ -16,10 +16,18 @@ type Config struct {
 	Timeframe time.Duration
 	Tick      time.Duration
 
+	// Global token bucket settings.
 	RatePerSec   float64 `yaml:"rate_per_sec"`
 	InitialBurst float64 `yaml:"initial_burst"`
 	MaxBurst     float64 `yaml:"max_burst"`
-	Smoothing    bool
+
+	// Algorithm knobs.
+	ReqAmount      float64
+	LowWatermark   float64
+	PreRequestTime time.Duration
+
+	// Misc settions.
+	Smoothing bool
 }
 
 func (c Config) NumTicks() int {
@@ -49,4 +57,8 @@ var DefaultConfig = Config{
 	RatePerSec:   240,
 	InitialBurst: 100,
 	MaxBurst:     100,
+
+	ReqAmount:      1000,
+	LowWatermark:   100,
+	PreRequestTime: 10 * time.Second,
 }

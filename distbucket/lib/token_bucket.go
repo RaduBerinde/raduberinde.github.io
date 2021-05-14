@@ -35,7 +35,6 @@ func TokenBucket(cfg Config, nodes []Workload) (perNode []Workload, aggregate Wo
 		}
 		return ticks[m]
 	}
-	_ = headOfQueue
 
 	tickDuration := cfg.Tick.Seconds()
 	for now := range aggregate.Data {
