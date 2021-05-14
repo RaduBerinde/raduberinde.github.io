@@ -9,7 +9,7 @@ import (
 // This struct is the input to the library.
 type Input struct {
 	Config Config
-	Nodes  []WorkloadDesc
+	Nodes  []FuncDesc
 }
 
 // This struct is the output of the library.
@@ -41,29 +41,25 @@ func Process(inputYAML string) Output {
 		fmt.Printf("Error parsing input YAML: %v\n", err)
 		return Output{}
 	}
+	cfg := &input.Config
 
-	nodes := make([]Workload, len(input.Nodes))
-	for i := range nodes {
-		nodes[i] = MakeWorkload(input.Config, input.Nodes[i])
+	requested := MakePerNodeData(cfg, len(input.Nodes))
+	for i := range requested {
+		requested[i] = DataFromFuncDesc(cfg, input.Nodes[i])
 	}
 
-	sum := ZeroWorkload(input.Config)
-	for i := range nodes {
-		sum = sum.Sum(&nodes[i])
-	}
-
-	nodeSeries := make([]Series, len(nodes))
+	nodeSeries := make([]Series, len(requested))
 	for i := range nodeSeries {
 		nodeSeries[i] = Series{
 			Name:  fmt.Sprintf("n%d", i+1),
 			Unit:  "RU/s",
 			Width: 1,
-			Data:  nodes[i].Data,
+			Data:  requested[i],
 		}
 	}
 
 	out := Output{
-		TimeAxis: input.Config.TimeAxis(),
+		TimeAxis: cfg.TimeAxis(),
 	}
 
 	out.Charts = append(out.Charts, Chart{
@@ -73,57 +69,59 @@ func Process(inputYAML string) Output {
 			Name:  "aggregate",
 			Unit:  "RU/s",
 			Width: 2,
-			Data:  sum.Data,
+			Data:  requested.Aggregate(cfg),
 		}),
 	})
 
-	tokenBucketPerNode, tokenBucketAggregate, tokens := DistTokenBucket(input.Config, nodes)
-	nodeSeries = make([]Series, len(nodes))
-	for i := range nodeSeries {
-		w := tokenBucketPerNode[i]
-		if input.Config.Smoothing {
-			w = w.Smooth(0.1)
-		}
-		nodeSeries[i] = Series{
-			Name:  fmt.Sprintf("n%d", i+1),
-			Unit:  "RU/s",
-			Width: 1,
-			Data:  w.Data,
-		}
-	}
-
-	out.Charts = append(out.Charts, Chart{
-		Title: "Granted (distributed token bucket)",
-		Units: []string{"RU/s", "RU"},
-		Series: append(nodeSeries,
-			Series{
-				Name:  "aggregate",
+	/*
+		grantedPerNode, tokenBucketAggregate, tokens := DistTokenBucket(cfg, nodes)
+		nodeSeries = make([]Series, len(nodes))
+		for i := range nodeSeries {
+			w := tokenBucketPerNode[i]
+			if cfg.Smoothing {
+				w = w.Smooth(0.1)
+			}
+			nodeSeries[i] = Series{
+				Name:  fmt.Sprintf("n%d", i+1),
 				Unit:  "RU/s",
-				Width: 2.5,
-				Data:  tokenBucketAggregate.Data,
-			},
-			Series{
-				Name:  "global tokens",
-				Unit:  "RU",
-				Width: 0.5,
-				Data:  tokens.Data,
-			},
-		),
-	})
+				Width: 1,
+				Data:  w.Data,
+			}
+		}
 
-	tokenBucketPerNode, tokenBucketAggregate, tokens = TokenBucket(input.Config, nodes)
+		out.Charts = append(out.Charts, Chart{
+			Title: "Granted (distributed token bucket)",
+			Units: []string{"RU/s", "RU"},
+			Series: append(nodeSeries,
+				Series{
+					Name:  "aggregate",
+					Unit:  "RU/s",
+					Width: 2.5,
+					Data:  tokenBucketAggregate.Data,
+				},
+				Series{
+					Name:  "global tokens",
+					Unit:  "RU",
+					Width: 0.5,
+					Data:  tokens.Data,
+				},
+			),
+		})
+	*/
 
-	nodeSeries = make([]Series, len(nodes))
+	granted, tokens := TokenBucket(cfg, requested)
+
+	nodeSeries = make([]Series, len(requested))
 	for i := range nodeSeries {
-		w := tokenBucketPerNode[i]
-		if input.Config.Smoothing {
-			w = w.Smooth(0.1)
+		g := granted[i]
+		if cfg.Smoothing {
+			g = g.Smooth(cfg, 0.1)
 		}
 		nodeSeries[i] = Series{
 			Name:  fmt.Sprintf("n%d", i+1),
 			Unit:  "RU/s",
 			Width: 1,
-			Data:  w.Data,
+			Data:  g,
 		}
 	}
 
@@ -135,13 +133,13 @@ func Process(inputYAML string) Output {
 				Name:  "aggregate",
 				Unit:  "RU/s",
 				Width: 2.5,
-				Data:  tokenBucketAggregate.Data,
+				Data:  granted.Aggregate(cfg),
 			},
 			Series{
 				Name:  "tokens",
 				Unit:  "RU",
 				Width: 0.5,
-				Data:  tokens.Data,
+				Data:  tokens,
 			},
 		),
 	})

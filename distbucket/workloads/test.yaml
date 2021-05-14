@@ -1,5 +1,5 @@
 nodes:
-  - funcs:
+  - terms:
     - type: constant
       value: 100
 
@@ -13,7 +13,7 @@ nodes:
       duration: 2
       delta: -50
 
-  - funcs:
+  - terms:
     - type: constant
       value: 50
 
@@ -32,12 +32,12 @@ nodes:
       duration: 1
       delta: -40
 
-  - funcs:
+  - terms:
     - type: sine
       period: 15
       amplitude: 100
 
-  - funcs:
+  - terms:
     - type: gaussian
       start: 20
       duration: 15

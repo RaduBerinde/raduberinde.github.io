@@ -1,32 +1,25 @@
 package lib
 
-func TokenBucket(cfg Config, nodes []Workload) (perNode []Workload, aggregate Workload, tokens Workload) {
-	aggregate = ZeroWorkload(cfg)
-	tokens = ZeroWorkload(cfg)
-	perNode = make([]Workload, len(nodes))
-	for i := range perNode {
-		perNode[i] = ZeroWorkload(cfg)
+func TokenBucket(cfg *Config, requested PerNodeData) (granted PerNodeData, tokens Data) {
+	tokens = ZeroData(cfg)
+	granted = MakePerNodeData(cfg, len(requested))
+	if len(requested) == 0 {
+		return granted, tokens
 	}
-	if len(nodes) == 0 {
-		return perNode, aggregate, tokens
-	}
+
+	// Make copies of requested, since we are going to modify the data.
+	requested = requested.Copy(cfg)
 
 	currTokens := cfg.InitialBurst
-	// Make copies of the workloads, since we are going to modify them.
-	oldNodes := nodes
-	nodes = make([]Workload, len(oldNodes))
-	for i := range oldNodes {
-		nodes[i] = oldNodes[i].Copy()
-	}
 
-	// Keep the current tick per node that needs tokens.
-
-	ticks := make([]int, len(nodes))
+	// Maintain the current tick per node that needs tokens; requested is 0 up to
+	// that tick.
+	ticks := make([]int, len(requested))
 	headOfQueue := func() int {
 		m := 0
 		for i := range ticks {
 			// Skip over empty areas.
-			for ticks[i] < len(nodes[i].Data) && nodes[i].Data[ticks[i]] == 0 {
+			for ticks[i] < len(requested[i]) && requested[i][ticks[i]] == 0 {
 				ticks[i]++
 			}
 			if ticks[i] < ticks[m] {
@@ -37,7 +30,7 @@ func TokenBucket(cfg Config, nodes []Workload) (perNode []Workload, aggregate Wo
 	}
 
 	tickDuration := cfg.Tick.Seconds()
-	for now := range aggregate.Data {
+	for now := range tokens {
 		// If we have more than MaxBurst, then the initial burst was larger and we
 		// are still using it.
 		if currTokens < cfg.MaxBurst {
@@ -46,7 +39,7 @@ func TokenBucket(cfg Config, nodes []Workload) (perNode []Workload, aggregate Wo
 				currTokens = cfg.MaxBurst
 			}
 		}
-		tokens.Data[now] = currTokens
+		tokens[now] = currTokens
 		for currTokens > 0 {
 			t := headOfQueue()
 			if t > now {
@@ -60,7 +53,7 @@ func TokenBucket(cfg Config, nodes []Workload) (perNode []Workload, aggregate Wo
 			var n int
 			for i := range ticks {
 				if ticks[i] == t {
-					reqRate += nodes[i].Data[t]
+					reqRate += requested[i][t]
 					n++
 				}
 			}
@@ -73,15 +66,14 @@ func TokenBucket(cfg Config, nodes []Workload) (perNode []Workload, aggregate Wo
 			} else {
 				currTokens -= reqUnits
 			}
-			aggregate.Data[now] += reqRate * fraction
 			// Give out to each node, proportionally to the ask.
 			for i := range ticks {
-				amount := nodes[i].Data[t] * fraction
-				nodes[i].Data[t] -= amount
-				perNode[i].Data[now] += amount
+				amount := requested[i][t] * fraction
+				requested[i][t] -= amount
+				granted[i][now] += amount
 			}
 		}
 	}
 
-	return perNode, aggregate, tokens
+	return granted, tokens
 }

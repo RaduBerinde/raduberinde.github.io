@@ -1,6 +1,6 @@
 var workloads = {
   test: `nodes:
-  - funcs:
+  - terms:
     - type: constant
       value: 100
 
@@ -14,7 +14,7 @@ var workloads = {
       duration: 2
       delta: -50
 
-  - funcs:
+  - terms:
     - type: constant
       value: 50
 
@@ -33,12 +33,12 @@ var workloads = {
       duration: 1
       delta: -40
 
-  - funcs:
+  - terms:
     - type: sine
       period: 15
       amplitude: 100
 
-  - funcs:
+  - terms:
     - type: gaussian
       start: 20
       duration: 15

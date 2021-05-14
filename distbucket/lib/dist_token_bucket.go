@@ -1,5 +1,6 @@
 package lib
 
+/*
 type globalBucket struct {
 	currTokens   float64
 	lastDeadline int
@@ -133,3 +134,4 @@ func DistTokenBucket(
 	}
 	return perNode, aggregate, tokens
 }
+*/

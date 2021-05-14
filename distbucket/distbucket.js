@@ -40378,7 +40378,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/vendor/gopkg.
 	return $pkg;
 })();
 $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (function() {
-	var $pkg = {}, $init, fmt, yaml, math, time, Config, globalBucket, localBucket, Input, Output, Chart, Series, Workload, WorkloadDesc, Func, sliceType, sliceType$1, sliceType$2, sliceType$3, sliceType$4, sliceType$5, sliceType$6, sliceType$7, sliceType$8, sliceType$9, ptrType, ptrType$1, ptrType$2, sliceType$10, DistTokenBucket, Process, TokenBucket, ZeroWorkload, MakeWorkload;
+	var $pkg = {}, $init, fmt, yaml, math, time, Config, Data, FuncDesc, FuncTerm, PerNodeData, Input, Output, Chart, Series, sliceType, sliceType$1, sliceType$2, sliceType$3, sliceType$4, sliceType$5, sliceType$6, sliceType$7, sliceType$8, ptrType, sliceType$9, ZeroData, DataSum, DataFromFuncDesc, MakePerNodeData, Process, TokenBucket;
 	fmt = $packages["fmt"];
 	yaml = $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/vendor/gopkg.in/yaml.v2"];
 	math = $packages["math"];
@@ -40407,34 +40407,36 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		this.PreRequestTime = PreRequestTime_;
 		this.Smoothing = Smoothing_;
 	});
-	globalBucket = $pkg.globalBucket = $newType(0, $kindStruct, "lib.globalBucket", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", false, function(currTokens_, lastDeadline_) {
+	Data = $pkg.Data = $newType(12, $kindSlice, "lib.Data", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, null);
+	FuncDesc = $pkg.FuncDesc = $newType(0, $kindStruct, "lib.FuncDesc", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Terms_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.currTokens = 0;
-			this.lastDeadline = 0;
+			this.Terms = sliceType$9.nil;
 			return;
 		}
-		this.currTokens = currTokens_;
-		this.lastDeadline = lastDeadline_;
+		this.Terms = Terms_;
 	});
-	localBucket = $pkg.localBucket = $newType(0, $kindStruct, "lib.localBucket", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", false, function(requested_, requestedTick_, granted_, currTokens_, currRatePerTick_, deadlineTick_) {
+	FuncTerm = $pkg.FuncTerm = $newType(0, $kindStruct, "lib.FuncTerm", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Type_, Start_, Duration_, Value_, Delta_, Period_, Amplitude_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.requested = new Workload.ptr(new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, 0, 0, new time.Duration(0, 0), false), sliceType.nil);
-			this.requestedTick = 0;
-			this.granted = new Workload.ptr(new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, 0, 0, new time.Duration(0, 0), false), sliceType.nil);
-			this.currTokens = 0;
-			this.currRatePerTick = 0;
-			this.deadlineTick = 0;
+			this.Type = "";
+			this.Start = 0;
+			this.Duration = 0;
+			this.Value = 0;
+			this.Delta = 0;
+			this.Period = 0;
+			this.Amplitude = 0;
 			return;
 		}
-		this.requested = requested_;
-		this.requestedTick = requestedTick_;
-		this.granted = granted_;
-		this.currTokens = currTokens_;
-		this.currRatePerTick = currRatePerTick_;
-		this.deadlineTick = deadlineTick_;
+		this.Type = Type_;
+		this.Start = Start_;
+		this.Duration = Duration_;
+		this.Value = Value_;
+		this.Delta = Delta_;
+		this.Period = Period_;
+		this.Amplitude = Amplitude_;
 	});
+	PerNodeData = $pkg.PerNodeData = $newType(12, $kindSlice, "lib.PerNodeData", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, null);
 	Input = $pkg.Input = $newType(0, $kindStruct, "lib.Input", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Config_, Nodes_) {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -40449,7 +40451,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.TimeAxis = sliceType.nil;
-			this.Charts = sliceType$6.nil;
+			this.Charts = sliceType$5.nil;
 			return;
 		}
 		this.TimeAxis = TimeAxis_;
@@ -40459,8 +40461,8 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Title = "";
-			this.Units = sliceType$8.nil;
-			this.Series = sliceType$7.nil;
+			this.Units = sliceType$7.nil;
+			this.Series = sliceType$6.nil;
 			return;
 		}
 		this.Title = Title_;
@@ -40481,58 +40483,17 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		this.Width = Width_;
 		this.Data = Data_;
 	});
-	Workload = $pkg.Workload = $newType(0, $kindStruct, "lib.Workload", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Config_, Data_) {
-		this.$val = this;
-		if (arguments.length === 0) {
-			this.Config = new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, 0, 0, new time.Duration(0, 0), false);
-			this.Data = sliceType.nil;
-			return;
-		}
-		this.Config = Config_;
-		this.Data = Data_;
-	});
-	WorkloadDesc = $pkg.WorkloadDesc = $newType(0, $kindStruct, "lib.WorkloadDesc", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Funcs_) {
-		this.$val = this;
-		if (arguments.length === 0) {
-			this.Funcs = sliceType$10.nil;
-			return;
-		}
-		this.Funcs = Funcs_;
-	});
-	Func = $pkg.Func = $newType(0, $kindStruct, "lib.Func", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Type_, Start_, Duration_, Value_, Delta_, Period_, Amplitude_) {
-		this.$val = this;
-		if (arguments.length === 0) {
-			this.Type = "";
-			this.Start = 0;
-			this.Duration = 0;
-			this.Value = 0;
-			this.Delta = 0;
-			this.Period = 0;
-			this.Amplitude = 0;
-			return;
-		}
-		this.Type = Type_;
-		this.Start = Start_;
-		this.Duration = Duration_;
-		this.Value = Value_;
-		this.Delta = Delta_;
-		this.Period = Period_;
-		this.Amplitude = Amplitude_;
-	});
 	sliceType = $sliceType($Float64);
-	sliceType$1 = $sliceType(Workload);
-	sliceType$2 = $sliceType(localBucket);
-	sliceType$3 = $sliceType(WorkloadDesc);
+	sliceType$1 = $sliceType($emptyInterface);
+	sliceType$2 = $sliceType(Data);
+	sliceType$3 = $sliceType(FuncDesc);
 	sliceType$4 = $sliceType($Uint8);
-	sliceType$5 = $sliceType($emptyInterface);
-	sliceType$6 = $sliceType(Chart);
-	sliceType$7 = $sliceType(Series);
-	sliceType$8 = $sliceType($String);
-	sliceType$9 = $sliceType($Int);
-	ptrType = $ptrType(globalBucket);
-	ptrType$1 = $ptrType(localBucket);
-	ptrType$2 = $ptrType(Workload);
-	sliceType$10 = $sliceType(Func);
+	sliceType$5 = $sliceType(Chart);
+	sliceType$6 = $sliceType(Series);
+	sliceType$7 = $sliceType($String);
+	sliceType$8 = $sliceType($Int);
+	ptrType = $ptrType(Config);
+	sliceType$9 = $sliceType(FuncTerm);
 	Config.ptr.prototype.NumTicks = function() {
 		var c, x;
 		c = this;
@@ -40566,402 +40527,103 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		return res;
 	};
 	Config.prototype.TimeAxis = function() { return this.$val.TimeAxis(); };
-	globalBucket.ptr.prototype.tick = function(cfg, now) {
-		var cfg, gb, now;
-		gb = this;
-		if (gb.lastDeadline >= now) {
-			return;
-		}
-		if (gb.currTokens < cfg.MaxBurst) {
-			gb.currTokens = gb.currTokens + (cfg.RatePerSec * cfg.Tick.Seconds());
-			if (gb.currTokens > cfg.MaxBurst) {
-				gb.currTokens = cfg.MaxBurst;
-			}
-		}
+	ZeroData = function(cfg) {
+		var cfg, x;
+		return (x = $makeSlice(sliceType, $clone(cfg, Config).NumTicks()), $subslice(new Data(x.$array), x.$offset, x.$offset + x.$length));
 	};
-	globalBucket.prototype.tick = function(cfg, now) { return this.$val.tick(cfg, now); };
-	globalBucket.ptr.prototype.request = function(cfg, now, amount) {
-		var amount, cfg, deadlineTick, gb, n, now;
-		deadlineTick = 0;
-		gb = this;
-		if (gb.currTokens >= amount) {
-			gb.currTokens = gb.currTokens - (amount);
-			deadlineTick = now;
-			return deadlineTick;
-		}
-		amount = amount - (gb.currTokens);
-		gb.currTokens = 0;
-		n = ((amount / (cfg.RatePerSec * cfg.Tick.Seconds()) + 0.5 >> 0));
-		if (n < 0) {
-			n = 1;
-		}
-		gb.lastDeadline = now + n >> 0;
-		deadlineTick = gb.lastDeadline;
-		return deadlineTick;
+	$pkg.ZeroData = ZeroData;
+	Data.prototype.Copy = function(cfg) {
+		var cfg, d, res;
+		d = this;
+		res = ZeroData(cfg);
+		$copySlice(res, d);
+		return res;
 	};
-	globalBucket.prototype.request = function(cfg, now, amount) { return this.$val.request(cfg, now, amount); };
-	localBucket.ptr.prototype.distribute = function(now, amount, deadlineTick) {
-		var amount, deadlineTick, l, now;
-		l = this;
-		if (l.deadlineTick > now) {
-			amount = amount + (((l.deadlineTick - now >> 0)) * l.currRatePerTick);
-		}
-		if (deadlineTick <= now) {
-			l.deadlineTick = now;
-			l.currTokens = l.currTokens + (amount);
-			l.currRatePerTick = 0;
-			return;
-		}
-		l.deadlineTick = deadlineTick;
-		l.currRatePerTick = amount / ((deadlineTick - now >> 0));
-	};
-	localBucket.prototype.distribute = function(now, amount, deadlineTick) { return this.$val.distribute(now, amount, deadlineTick); };
-	localBucket.ptr.prototype.maintain = function(cfg, gb, now) {
-		var cfg, deadlineTick, gb, l, now;
-		l = this;
-		if (l.currTokens > cfg.LowWatermark) {
-			return;
-		}
-		if (((l.deadlineTick - now >> 0)) * cfg.Tick.Seconds() < cfg.PreRequestTime.Seconds()) {
-			deadlineTick = gb.request($clone(cfg, Config), now, cfg.ReqAmount);
-			l.distribute(now, cfg.ReqAmount, deadlineTick);
-		}
-	};
-	localBucket.prototype.maintain = function(cfg, gb, now) { return this.$val.maintain(cfg, gb, now); };
-	localBucket.ptr.prototype.request = function(cfg, now, amount) {
-		var amount, available, cfg, l, now;
-		l = this;
-		l.currTokens = l.currTokens + (l.currRatePerTick);
-		if (l.currTokens >= amount) {
-			l.currTokens = 0;
-			return amount;
-		}
-		available = l.currTokens;
-		l.currTokens = 0;
-		return available;
-	};
-	localBucket.prototype.request = function(cfg, now, amount) { return this.$val.request(cfg, now, amount); };
-	localBucket.ptr.prototype.tick = function(cfg, gb, now) {
-		var amount, cfg, gb, granted, l, now, x, x$1, x$2, x$3, x$4, x$5, x$6, x$7;
-		l = this;
-		l.maintain($clone(cfg, Config), gb, now);
+	$ptrType(Data).prototype.Copy = function(cfg) { return this.$get().Copy(cfg); };
+	Data.prototype.Sum = function(cfg, other) {
+		var _i, _ref, cfg, i, other, res, w;
+		w = this;
+		res = w.Copy(cfg);
+		_ref = res;
+		_i = 0;
 		while (true) {
-			if (!(l.requestedTick <= now)) { break; }
-			amount = (x = l.requested.Data, x$1 = l.requestedTick, ((x$1 < 0 || x$1 >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + x$1]));
-			if (amount === 0) {
-				l.requestedTick = l.requestedTick + (1) >> 0;
+			if (!(_i < _ref.$length)) { break; }
+			i = _i;
+			((i < 0 || i >= res.$length) ? ($throwRuntimeError("index out of range"), undefined) : res.$array[res.$offset + i] = ((i < 0 || i >= w.$length) ? ($throwRuntimeError("index out of range"), undefined) : w.$array[w.$offset + i]) + ((i < 0 || i >= other.$length) ? ($throwRuntimeError("index out of range"), undefined) : other.$array[other.$offset + i]));
+			_i++;
+		}
+		return res;
+	};
+	$ptrType(Data).prototype.Sum = function(cfg, other) { return this.$get().Sum(cfg, other); };
+	DataSum = function(cfg, d) {
+		var _i, _i$1, _ref, _ref$1, cfg, d, i, j, res, x;
+		res = ZeroData(cfg);
+		_ref = d;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			i = _i;
+			_ref$1 = ((i < 0 || i >= d.$length) ? ($throwRuntimeError("index out of range"), undefined) : d.$array[d.$offset + i]);
+			_i$1 = 0;
+			while (true) {
+				if (!(_i$1 < _ref$1.$length)) { break; }
+				j = _i$1;
+				((j < 0 || j >= res.$length) ? ($throwRuntimeError("index out of range"), undefined) : res.$array[res.$offset + j] = ((j < 0 || j >= res.$length) ? ($throwRuntimeError("index out of range"), undefined) : res.$array[res.$offset + j]) + ((x = ((i < 0 || i >= d.$length) ? ($throwRuntimeError("index out of range"), undefined) : d.$array[d.$offset + i]), ((j < 0 || j >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + j]))));
+				_i$1++;
+			}
+			_i++;
+		}
+		return res;
+	};
+	$pkg.DataSum = DataSum;
+	Data.prototype.Smooth = function(cfg, alpha) {
+		var _i, _ref, alpha, cfg, i, res, w, x;
+		w = this;
+		res = ZeroData(cfg);
+		if (w.$length === 0) {
+			return res;
+		}
+		_ref = w;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			i = _i;
+			if (i === 0) {
+				(0 >= res.$length ? ($throwRuntimeError("index out of range"), undefined) : res.$array[res.$offset + 0] = (0 >= w.$length ? ($throwRuntimeError("index out of range"), undefined) : w.$array[w.$offset + 0]));
+				_i++;
 				continue;
 			}
-			granted = l.request($clone(cfg, Config), now, amount);
-			(x$3 = l.granted.Data, ((now < 0 || now >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + now] = (x$2 = l.granted.Data, ((now < 0 || now >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + now])) + (granted)));
-			(x$6 = l.requested.Data, x$7 = l.requestedTick, ((x$7 < 0 || x$7 >= x$6.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$6.$array[x$6.$offset + x$7] = (x$4 = l.requested.Data, x$5 = l.requestedTick, ((x$5 < 0 || x$5 >= x$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$4.$array[x$4.$offset + x$5])) - (granted)));
-			if (granted < amount) {
-				return;
-			}
-		}
-	};
-	localBucket.prototype.tick = function(cfg, gb, now) { return this.$val.tick(cfg, gb, now); };
-	DistTokenBucket = function(cfg, nodes) {
-		var _i, _i$1, _i$2, _i$3, _ref, _ref$1, _ref$2, _ref$3, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, aggregate, cfg, global, i, i$1, local, n, nodes, now, perNode, tokens, x, x$1, x$2, x$3;
-		perNode = sliceType$1.nil;
-		aggregate = new Workload.ptr(new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, 0, 0, new time.Duration(0, 0), false), sliceType.nil);
-		tokens = new Workload.ptr(new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, 0, 0, new time.Duration(0, 0), false), sliceType.nil);
-		Workload.copy(aggregate, ZeroWorkload($clone(cfg, Config)));
-		Workload.copy(tokens, ZeroWorkload($clone(cfg, Config)));
-		if (nodes.$length === 0) {
-			_tmp = sliceType$1.nil;
-			_tmp$1 = $clone(aggregate, Workload);
-			_tmp$2 = $clone(tokens, Workload);
-			perNode = _tmp;
-			Workload.copy(aggregate, _tmp$1);
-			Workload.copy(tokens, _tmp$2);
-			return [perNode, aggregate, tokens];
-		}
-		global = new globalBucket.ptr(0, 0);
-		local = $makeSlice(sliceType$2, nodes.$length);
-		_ref = local;
-		_i = 0;
-		while (true) {
-			if (!(_i < _ref.$length)) { break; }
-			i = _i;
-			Workload.copy(((i < 0 || i >= local.$length) ? ($throwRuntimeError("index out of range"), undefined) : local.$array[local.$offset + i]).requested, ((i < 0 || i >= nodes.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes.$array[nodes.$offset + i]).Copy());
-			Workload.copy(((i < 0 || i >= local.$length) ? ($throwRuntimeError("index out of range"), undefined) : local.$array[local.$offset + i]).granted, ZeroWorkload($clone(cfg, Config)));
+			((i < 0 || i >= res.$length) ? ($throwRuntimeError("index out of range"), undefined) : res.$array[res.$offset + i] = (1 - alpha) * (x = i - 1 >> 0, ((x < 0 || x >= res.$length) ? ($throwRuntimeError("index out of range"), undefined) : res.$array[res.$offset + x])) + alpha * ((i < 0 || i >= w.$length) ? ($throwRuntimeError("index out of range"), undefined) : w.$array[w.$offset + i]));
 			_i++;
 		}
-		global.currTokens = cfg.InitialBurst;
-		_ref$1 = aggregate.Data;
-		_i$1 = 0;
-		while (true) {
-			if (!(_i$1 < _ref$1.$length)) { break; }
-			now = _i$1;
-			global.tick($clone(cfg, Config), now);
-			(x = tokens.Data, ((now < 0 || now >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + now] = global.currTokens));
-			_ref$2 = nodes;
-			_i$2 = 0;
-			while (true) {
-				if (!(_i$2 < _ref$2.$length)) { break; }
-				n = _i$2;
-				((n < 0 || n >= local.$length) ? ($throwRuntimeError("index out of range"), undefined) : local.$array[local.$offset + n]).tick($clone(cfg, Config), global, now);
-				(x$3 = aggregate.Data, ((now < 0 || now >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + now] = (x$1 = aggregate.Data, ((now < 0 || now >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + now])) + ((x$2 = ((n < 0 || n >= local.$length) ? ($throwRuntimeError("index out of range"), undefined) : local.$array[local.$offset + n]).granted.Data, ((now < 0 || now >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + now])))));
-				_i$2++;
-			}
-			_i$1++;
-		}
-		perNode = $makeSlice(sliceType$1, local.$length);
-		_ref$3 = perNode;
-		_i$3 = 0;
-		while (true) {
-			if (!(_i$3 < _ref$3.$length)) { break; }
-			i$1 = _i$3;
-			Workload.copy(((i$1 < 0 || i$1 >= perNode.$length) ? ($throwRuntimeError("index out of range"), undefined) : perNode.$array[perNode.$offset + i$1]), ((i$1 < 0 || i$1 >= local.$length) ? ($throwRuntimeError("index out of range"), undefined) : local.$array[local.$offset + i$1]).granted);
-			_i$3++;
-		}
-		_tmp$3 = perNode;
-		_tmp$4 = $clone(aggregate, Workload);
-		_tmp$5 = $clone(tokens, Workload);
-		perNode = _tmp$3;
-		Workload.copy(aggregate, _tmp$4);
-		Workload.copy(tokens, _tmp$5);
-		return [perNode, aggregate, tokens];
+		return res;
 	};
-	$pkg.DistTokenBucket = DistTokenBucket;
-	Process = function(inputYAML) {
-		var _i, _i$1, _i$2, _i$3, _i$4, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _tuple, _tuple$1, err, i, i$1, i$2, i$3, i$4, input, inputYAML, nodeSeries, nodes, out, sum, tokenBucketAggregate, tokenBucketPerNode, tokens, w, w$1, x, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; input = $f.input; inputYAML = $f.inputYAML; nodeSeries = $f.nodeSeries; nodes = $f.nodes; out = $f.out; sum = $f.sum; tokenBucketAggregate = $f.tokenBucketAggregate; tokenBucketPerNode = $f.tokenBucketPerNode; tokens = $f.tokens; w = $f.w; w$1 = $f.w$1; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		input = [input];
-		input[0] = new Input.ptr($clone($pkg.DefaultConfig, Config), sliceType$3.nil);
-		_r = yaml.UnmarshalStrict((new sliceType$4($stringToBytes(inputYAML))), input[0]); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		err = _r;
-		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 2; continue; }
-		/* */ $s = 3; continue;
-		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 2:
-			_r$1 = fmt.Printf("Error parsing input YAML: %v\n", new sliceType$5([err])); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-			_r$1;
-			$s = -1; return new Output.ptr(sliceType.nil, sliceType$6.nil);
-		/* } */ case 3:
-		nodes = $makeSlice(sliceType$1, input[0].Nodes.$length);
-		_ref = nodes;
-		_i = 0;
-		/* while (true) { */ case 5:
-			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 6; continue; }
-			i = _i;
-			_r$2 = MakeWorkload($clone(input[0].Config, Config), $clone((x = input[0].Nodes, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i])), WorkloadDesc)); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			Workload.copy(((i < 0 || i >= nodes.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes.$array[nodes.$offset + i]), _r$2);
-			_i++;
-		/* } */ $s = 5; continue; case 6:
-		sum = $clone(ZeroWorkload($clone(input[0].Config, Config)), Workload);
-		_ref$1 = nodes;
-		_i$1 = 0;
-		while (true) {
-			if (!(_i$1 < _ref$1.$length)) { break; }
-			i$1 = _i$1;
-			Workload.copy(sum, sum.Sum(((i$1 < 0 || i$1 >= nodes.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes.$array[nodes.$offset + i$1])));
-			_i$1++;
-		}
-		nodeSeries = $makeSlice(sliceType$7, nodes.$length);
-		_ref$2 = nodeSeries;
-		_i$2 = 0;
-		/* while (true) { */ case 8:
-			/* if (!(_i$2 < _ref$2.$length)) { break; } */ if(!(_i$2 < _ref$2.$length)) { $s = 9; continue; }
-			i$2 = _i$2;
-			_r$3 = fmt.Sprintf("n%d", new sliceType$5([new $Int((i$2 + 1 >> 0))])); /* */ $s = 10; case 10: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-			Series.copy(((i$2 < 0 || i$2 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$2]), new Series.ptr(_r$3, "RU/s", 1, ((i$2 < 0 || i$2 >= nodes.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes.$array[nodes.$offset + i$2]).Data));
-			_i$2++;
-		/* } */ $s = 8; continue; case 9:
-		out = new Output.ptr($clone(input[0].Config, Config).TimeAxis(), sliceType$6.nil);
-		out.Charts = $append(out.Charts, new Chart.ptr("Requested", new sliceType$8(["RU/s"]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2, sum.Data))));
-		_tuple = DistTokenBucket($clone(input[0].Config, Config), nodes);
-		tokenBucketPerNode = _tuple[0];
-		tokenBucketAggregate = $clone(_tuple[1], Workload);
-		tokens = $clone(_tuple[2], Workload);
-		nodeSeries = $makeSlice(sliceType$7, nodes.$length);
-		_ref$3 = nodeSeries;
-		_i$3 = 0;
-		/* while (true) { */ case 11:
-			/* if (!(_i$3 < _ref$3.$length)) { break; } */ if(!(_i$3 < _ref$3.$length)) { $s = 12; continue; }
-			i$3 = _i$3;
-			w = $clone(((i$3 < 0 || i$3 >= tokenBucketPerNode.$length) ? ($throwRuntimeError("index out of range"), undefined) : tokenBucketPerNode.$array[tokenBucketPerNode.$offset + i$3]), Workload);
-			if (input[0].Config.Smoothing) {
-				Workload.copy(w, w.Smooth(0.1));
-			}
-			_r$4 = fmt.Sprintf("n%d", new sliceType$5([new $Int((i$3 + 1 >> 0))])); /* */ $s = 13; case 13: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
-			Series.copy(((i$3 < 0 || i$3 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$3]), new Series.ptr(_r$4, "RU/s", 1, w.Data));
-			_i$3++;
-		/* } */ $s = 11; continue; case 12:
-		out.Charts = $append(out.Charts, new Chart.ptr("Granted (distributed token bucket)", new sliceType$8(["RU/s", "RU"]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, tokenBucketAggregate.Data), new Series.ptr("global tokens", "RU", 0.5, tokens.Data))));
-		_r$5 = TokenBucket($clone(input[0].Config, Config), nodes); /* */ $s = 14; case 14: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
-		_tuple$1 = _r$5;
-		tokenBucketPerNode = _tuple$1[0];
-		Workload.copy(tokenBucketAggregate, _tuple$1[1]);
-		Workload.copy(tokens, _tuple$1[2]);
-		nodeSeries = $makeSlice(sliceType$7, nodes.$length);
-		_ref$4 = nodeSeries;
-		_i$4 = 0;
-		/* while (true) { */ case 15:
-			/* if (!(_i$4 < _ref$4.$length)) { break; } */ if(!(_i$4 < _ref$4.$length)) { $s = 16; continue; }
-			i$4 = _i$4;
-			w$1 = $clone(((i$4 < 0 || i$4 >= tokenBucketPerNode.$length) ? ($throwRuntimeError("index out of range"), undefined) : tokenBucketPerNode.$array[tokenBucketPerNode.$offset + i$4]), Workload);
-			if (input[0].Config.Smoothing) {
-				Workload.copy(w$1, w$1.Smooth(0.1));
-			}
-			_r$6 = fmt.Sprintf("n%d", new sliceType$5([new $Int((i$4 + 1 >> 0))])); /* */ $s = 17; case 17: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
-			Series.copy(((i$4 < 0 || i$4 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$4]), new Series.ptr(_r$6, "RU/s", 1, w$1.Data));
-			_i$4++;
-		/* } */ $s = 15; continue; case 16:
-		out.Charts = $append(out.Charts, new Chart.ptr("Granted (perfect token bucket)", new sliceType$8(["RU/s", "RU"]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, tokenBucketAggregate.Data), new Series.ptr("tokens", "RU", 0.5, tokens.Data))));
-		$s = -1; return out;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Process }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.input = input; $f.inputYAML = inputYAML; $f.nodeSeries = nodeSeries; $f.nodes = nodes; $f.out = out; $f.sum = sum; $f.tokenBucketAggregate = tokenBucketAggregate; $f.tokenBucketPerNode = tokenBucketPerNode; $f.tokens = tokens; $f.w = w; $f.w$1 = w$1; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.Process = Process;
-	TokenBucket = function(cfg, nodes) {
-		var _i, _i$1, _i$2, _i$3, _i$4, _r, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, aggregate, amount, cfg, currTokens, fraction, headOfQueue, i, i$1, i$2, i$3, n, nodes, now, oldNodes, perNode, reqRate, reqUnits, t, tickDuration, ticks, tokens, x, x$1, x$2, x$3, x$4, x$5, x$6, x$7, x$8, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _r = $f._r; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; _tmp$4 = $f._tmp$4; _tmp$5 = $f._tmp$5; aggregate = $f.aggregate; amount = $f.amount; cfg = $f.cfg; currTokens = $f.currTokens; fraction = $f.fraction; headOfQueue = $f.headOfQueue; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; n = $f.n; nodes = $f.nodes; now = $f.now; oldNodes = $f.oldNodes; perNode = $f.perNode; reqRate = $f.reqRate; reqUnits = $f.reqUnits; t = $f.t; tickDuration = $f.tickDuration; ticks = $f.ticks; tokens = $f.tokens; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; x$8 = $f.x$8; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		nodes = [nodes];
-		ticks = [ticks];
-		perNode = sliceType$1.nil;
-		aggregate = new Workload.ptr(new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, 0, 0, new time.Duration(0, 0), false), sliceType.nil);
-		tokens = new Workload.ptr(new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, 0, 0, new time.Duration(0, 0), false), sliceType.nil);
-		Workload.copy(aggregate, ZeroWorkload($clone(cfg, Config)));
-		Workload.copy(tokens, ZeroWorkload($clone(cfg, Config)));
-		perNode = $makeSlice(sliceType$1, nodes[0].$length);
-		_ref = perNode;
-		_i = 0;
-		while (true) {
-			if (!(_i < _ref.$length)) { break; }
-			i = _i;
-			Workload.copy(((i < 0 || i >= perNode.$length) ? ($throwRuntimeError("index out of range"), undefined) : perNode.$array[perNode.$offset + i]), ZeroWorkload($clone(cfg, Config)));
-			_i++;
-		}
-		if (nodes[0].$length === 0) {
-			_tmp = perNode;
-			_tmp$1 = $clone(aggregate, Workload);
-			_tmp$2 = $clone(tokens, Workload);
-			perNode = _tmp;
-			Workload.copy(aggregate, _tmp$1);
-			Workload.copy(tokens, _tmp$2);
-			$s = -1; return [perNode, aggregate, tokens];
-		}
-		currTokens = cfg.InitialBurst;
-		oldNodes = nodes[0];
-		nodes[0] = $makeSlice(sliceType$1, oldNodes.$length);
-		_ref$1 = oldNodes;
-		_i$1 = 0;
-		while (true) {
-			if (!(_i$1 < _ref$1.$length)) { break; }
-			i$1 = _i$1;
-			Workload.copy(((i$1 < 0 || i$1 >= nodes[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes[0].$array[nodes[0].$offset + i$1]), ((i$1 < 0 || i$1 >= oldNodes.$length) ? ($throwRuntimeError("index out of range"), undefined) : oldNodes.$array[oldNodes.$offset + i$1]).Copy());
-			_i$1++;
-		}
-		ticks[0] = $makeSlice(sliceType$9, nodes[0].$length);
-		headOfQueue = (function(nodes, ticks) { return function() {
-			var _i$2, _ref$2, i$2, m, x, x$1;
-			m = 0;
-			_ref$2 = ticks[0];
-			_i$2 = 0;
-			while (true) {
-				if (!(_i$2 < _ref$2.$length)) { break; }
-				i$2 = _i$2;
-				while (true) {
-					if (!(((i$2 < 0 || i$2 >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i$2]) < ((i$2 < 0 || i$2 >= nodes[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes[0].$array[nodes[0].$offset + i$2]).Data.$length && ((x = ((i$2 < 0 || i$2 >= nodes[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes[0].$array[nodes[0].$offset + i$2]).Data, x$1 = ((i$2 < 0 || i$2 >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i$2]), ((x$1 < 0 || x$1 >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + x$1])) === 0))) { break; }
-					((i$2 < 0 || i$2 >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i$2] = (((i$2 < 0 || i$2 >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i$2]) + (1) >> 0));
-				}
-				if (((i$2 < 0 || i$2 >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i$2]) < ((m < 0 || m >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + m])) {
-					m = i$2;
-				}
-				_i$2++;
-			}
-			return ((m < 0 || m >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + m]);
-		}; })(nodes, ticks);
-		tickDuration = cfg.Tick.Seconds();
-		_ref$2 = aggregate.Data;
-		_i$2 = 0;
-		/* while (true) { */ case 1:
-			/* if (!(_i$2 < _ref$2.$length)) { break; } */ if(!(_i$2 < _ref$2.$length)) { $s = 2; continue; }
-			now = _i$2;
-			if (currTokens < cfg.MaxBurst) {
-				currTokens = currTokens + (cfg.RatePerSec * tickDuration);
-				if (currTokens > cfg.MaxBurst) {
-					currTokens = cfg.MaxBurst;
-				}
-			}
-			(x = tokens.Data, ((now < 0 || now >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + now] = currTokens));
-			/* while (true) { */ case 3:
-				/* if (!(currTokens > 0)) { break; } */ if(!(currTokens > 0)) { $s = 4; continue; }
-				_r = headOfQueue(); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-				t = _r;
-				if (t > now) {
-					/* break; */ $s = 4; continue;
-				}
-				reqRate = 0;
-				n = 0;
-				_ref$3 = ticks[0];
-				_i$3 = 0;
-				while (true) {
-					if (!(_i$3 < _ref$3.$length)) { break; }
-					i$2 = _i$3;
-					if (((i$2 < 0 || i$2 >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i$2]) === t) {
-						reqRate = reqRate + ((x$1 = ((i$2 < 0 || i$2 >= nodes[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes[0].$array[nodes[0].$offset + i$2]).Data, ((t < 0 || t >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + t])));
-						n = n + (1) >> 0;
-					}
-					_i$3++;
-				}
-				reqUnits = reqRate * tickDuration;
-				fraction = 1;
-				if (reqUnits > currTokens) {
-					fraction = currTokens / reqUnits;
-					currTokens = 0;
-				} else {
-					currTokens = currTokens - (reqUnits);
-				}
-				(x$3 = aggregate.Data, ((now < 0 || now >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + now] = (x$2 = aggregate.Data, ((now < 0 || now >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + now])) + (reqRate * fraction)));
-				_ref$4 = ticks[0];
-				_i$4 = 0;
-				while (true) {
-					if (!(_i$4 < _ref$4.$length)) { break; }
-					i$3 = _i$4;
-					amount = (x$4 = ((i$3 < 0 || i$3 >= nodes[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes[0].$array[nodes[0].$offset + i$3]).Data, ((t < 0 || t >= x$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$4.$array[x$4.$offset + t])) * fraction;
-					(x$6 = ((i$3 < 0 || i$3 >= nodes[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes[0].$array[nodes[0].$offset + i$3]).Data, ((t < 0 || t >= x$6.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$6.$array[x$6.$offset + t] = (x$5 = ((i$3 < 0 || i$3 >= nodes[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : nodes[0].$array[nodes[0].$offset + i$3]).Data, ((t < 0 || t >= x$5.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$5.$array[x$5.$offset + t])) - (amount)));
-					(x$8 = ((i$3 < 0 || i$3 >= perNode.$length) ? ($throwRuntimeError("index out of range"), undefined) : perNode.$array[perNode.$offset + i$3]).Data, ((now < 0 || now >= x$8.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$8.$array[x$8.$offset + now] = (x$7 = ((i$3 < 0 || i$3 >= perNode.$length) ? ($throwRuntimeError("index out of range"), undefined) : perNode.$array[perNode.$offset + i$3]).Data, ((now < 0 || now >= x$7.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$7.$array[x$7.$offset + now])) + (amount)));
-					_i$4++;
-				}
-			/* } */ $s = 3; continue; case 4:
-			_i$2++;
-		/* } */ $s = 1; continue; case 2:
-		_tmp$3 = perNode;
-		_tmp$4 = $clone(aggregate, Workload);
-		_tmp$5 = $clone(tokens, Workload);
-		perNode = _tmp$3;
-		Workload.copy(aggregate, _tmp$4);
-		Workload.copy(tokens, _tmp$5);
-		$s = -1; return [perNode, aggregate, tokens];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: TokenBucket }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._r = _r; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f._tmp$4 = _tmp$4; $f._tmp$5 = _tmp$5; $f.aggregate = aggregate; $f.amount = amount; $f.cfg = cfg; $f.currTokens = currTokens; $f.fraction = fraction; $f.headOfQueue = headOfQueue; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.n = n; $f.nodes = nodes; $f.now = now; $f.oldNodes = oldNodes; $f.perNode = perNode; $f.reqRate = reqRate; $f.reqUnits = reqUnits; $f.t = t; $f.tickDuration = tickDuration; $f.ticks = ticks; $f.tokens = tokens; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.TokenBucket = TokenBucket;
-	Workload.ptr.prototype.AddFunc = function(f) {
-		var _1, _i, _r, _r$1, _r$2, _ref, a, b, c, convTime, convTimeCheck, delta, end, endTick, f, i, i$1, i$2, i$3, i$4, period, startTick, w, x, x$1, x$2, x$3, x$4, x$5, x$6, x$7, x$8, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _ref = $f._ref; a = $f.a; b = $f.b; c = $f.c; convTime = $f.convTime; convTimeCheck = $f.convTimeCheck; delta = $f.delta; end = $f.end; endTick = $f.endTick; f = $f.f; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; period = $f.period; startTick = $f.startTick; w = $f.w; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; x$8 = $f.x$8; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		w = [w];
-		w[0] = this;
-		convTime = (function(w) { return function(v) {
+	$ptrType(Data).prototype.Smooth = function(cfg, alpha) { return this.$get().Smooth(cfg, alpha); };
+	Data.prototype.AddFuncTerm = function(cfg, f) {
+		var _1, _i, _r, _r$1, _r$2, _ref, a, b, c, cfg, convTime, convTimeCheck, delta, end, endTick, f, i, i$1, i$2, i$3, i$4, period, s, startTick, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _ref = $f._ref; a = $f.a; b = $f.b; c = $f.c; cfg = $f.cfg; convTime = $f.convTime; convTimeCheck = $f.convTimeCheck; delta = $f.delta; end = $f.end; endTick = $f.endTick; f = $f.f; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; period = $f.period; s = $f.s; startTick = $f.startTick; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		cfg = [cfg];
+		s = this;
+		convTime = (function(cfg) { return function(v) {
 			var v;
-			return $clone(w[0].Config, Config).TickForTime((new time.Duration(0, v * 1e+09)));
-		}; })(w);
-		convTimeCheck = (function(w) { return function $b(v) {
+			return $clone(cfg[0], Config).TickForTime((new time.Duration(0, v * 1e+09)));
+		}; })(cfg);
+		convTimeCheck = (function(cfg) { return function $b(v) {
 			var _r, d, v, x, $s, $r;
 			/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; d = $f.d; v = $f.v; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 			d = (new time.Duration(0, v * 1e+09));
-			/* */ if ((d.$high < 0 || (d.$high === 0 && d.$low < 0)) || (x = w[0].Config.Timeframe, (d.$high > x.$high || (d.$high === x.$high && d.$low > x.$low)))) { $s = 1; continue; }
+			/* */ if ((d.$high < 0 || (d.$high === 0 && d.$low < 0)) || (x = cfg[0].Timeframe, (d.$high > x.$high || (d.$high === x.$high && d.$low > x.$low)))) { $s = 1; continue; }
 			/* */ $s = 2; continue;
-			/* if ((d.$high < 0 || (d.$high === 0 && d.$low < 0)) || (x = w[0].Config.Timeframe, (d.$high > x.$high || (d.$high === x.$high && d.$low > x.$low)))) { */ case 1:
-				_r = fmt.Sprintf("time %v out of range", new sliceType$5([new $Float64(v)])); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			/* if ((d.$high < 0 || (d.$high === 0 && d.$low < 0)) || (x = cfg[0].Timeframe, (d.$high > x.$high || (d.$high === x.$high && d.$low > x.$low)))) { */ case 1:
+				_r = fmt.Sprintf("time %v out of range", new sliceType$1([new $Float64(v)])); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 				$panic(new $String(_r));
 			/* } */ case 2:
-			$s = -1; return $clone(w[0].Config, Config).TickForTime((new time.Duration(0, v * 1e+09)));
+			$s = -1; return $clone(cfg[0], Config).TickForTime((new time.Duration(0, v * 1e+09)));
 			/* */ } return; } if ($f === undefined) { $f = { $blk: $b }; } $f._r = _r; $f.d = d; $f.v = v; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
-		}; })(w);
+		}; })(cfg);
 		_r = convTimeCheck(f.Start); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		startTick = _r;
-		endTick = $clone(w[0].Config, Config).NumTicks();
+		endTick = $clone(cfg[0], Config).NumTicks();
 		/* */ if (!((f.Duration === 0))) { $s = 2; continue; }
 		/* */ $s = 3; continue;
 		/* if (!((f.Duration === 0))) { */ case 2:
@@ -40981,7 +40643,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 				i = startTick;
 				while (true) {
 					if (!(i < endTick)) { break; }
-					(x$1 = w[0].Data, ((i < 0 || i >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + i] = (x = w[0].Data, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i])) + (f.Value)));
+					((i < 0 || i >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i] = ((i < 0 || i >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i]) + (f.Value));
 					i = i + (1) >> 0;
 				}
 				$s = 11; continue;
@@ -40989,22 +40651,22 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 				i$1 = startTick;
 				while (true) {
 					if (!(i$1 < endTick)) { break; }
-					(x$3 = w[0].Data, ((i$1 < 0 || i$1 >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + i$1] = (x$2 = w[0].Data, ((i$1 < 0 || i$1 >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + i$1])) + (f.Delta * ((i$1 - startTick >> 0)) / ((endTick - startTick >> 0)))));
+					((i$1 < 0 || i$1 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$1] = ((i$1 < 0 || i$1 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$1]) + (f.Delta * ((i$1 - startTick >> 0)) / ((endTick - startTick >> 0))));
 					i$1 = i$1 + (1) >> 0;
 				}
 				i$2 = endTick;
 				while (true) {
-					if (!(i$2 < w[0].Data.$length)) { break; }
-					(x$5 = w[0].Data, ((i$2 < 0 || i$2 >= x$5.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$5.$array[x$5.$offset + i$2] = (x$4 = w[0].Data, ((i$2 < 0 || i$2 >= x$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$4.$array[x$4.$offset + i$2])) + (f.Delta)));
+					if (!(i$2 < s.$length)) { break; }
+					((i$2 < 0 || i$2 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$2] = ((i$2 < 0 || i$2 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$2]) + (f.Delta));
 					i$2 = i$2 + (1) >> 0;
 				}
 				$s = 11; continue;
 			/* } else if (_1 === ("sine")) { */ case 8:
-				period = $clone(w[0].Config, Config).TickForTime((new time.Duration(0, f.Period * 1e+09)));
+				period = $clone(cfg[0], Config).TickForTime((new time.Duration(0, f.Period * 1e+09)));
 				i$3 = startTick;
 				while (true) {
 					if (!(i$3 < endTick)) { break; }
-					(x$6 = w[0].Data, ((i$3 < 0 || i$3 >= x$6.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$6.$array[x$6.$offset + i$3] = f.Amplitude * (0.5 + 0.5 * math.Sin(-1.5707963267948966 + 6.283185307179586 * ((i$3 - startTick >> 0)) / (period)))));
+					((i$3 < 0 || i$3 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$3] = f.Amplitude * (0.5 + 0.5 * math.Sin(-1.5707963267948966 + 6.283185307179586 * ((i$3 - startTick >> 0)) / (period))));
 					i$3 = i$3 + (1) >> 0;
 				}
 				$s = 11; continue;
@@ -41012,109 +40674,248 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 				a = f.Amplitude;
 				b = f.Start + 0.5 * f.Duration;
 				c = f.Duration / (2 * math.Sqrt(2 * math.Log(100)));
-				_ref = w[0].Data;
+				_ref = s;
 				_i = 0;
 				while (true) {
 					if (!(_i < _ref.$length)) { break; }
 					i$4 = _i;
-					delta = $clone(w[0].Config, Config).TimeForTick(i$4).Seconds() - b;
-					(x$8 = w[0].Data, ((i$4 < 0 || i$4 >= x$8.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$8.$array[x$8.$offset + i$4] = (x$7 = w[0].Data, ((i$4 < 0 || i$4 >= x$7.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$7.$array[x$7.$offset + i$4])) + (a * math.Exp(-0.5 * delta * delta / (c * c)))));
+					delta = $clone(cfg[0], Config).TimeForTick(i$4).Seconds() - b;
+					((i$4 < 0 || i$4 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$4] = ((i$4 < 0 || i$4 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$4]) + (a * math.Exp(-0.5 * delta * delta / (c * c))));
 					_i++;
 				}
 				$s = 11; continue;
 			/* } else { */ case 10:
-				_r$2 = fmt.Sprintf("func type '%s' not supported", new sliceType$5([new $String(f.Type)])); /* */ $s = 12; case 12: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+				_r$2 = fmt.Sprintf("func type '%s' not supported", new sliceType$1([new $String(f.Type)])); /* */ $s = 12; case 12: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 				$panic(new $String(_r$2));
 			/* } */ case 11:
 		case 5:
 		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Workload.ptr.prototype.AddFunc }; } $f._1 = _1; $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._ref = _ref; $f.a = a; $f.b = b; $f.c = c; $f.convTime = convTime; $f.convTimeCheck = convTimeCheck; $f.delta = delta; $f.end = end; $f.endTick = endTick; $f.f = f; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.period = period; $f.startTick = startTick; $f.w = w; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Data.prototype.AddFuncTerm }; } $f._1 = _1; $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._ref = _ref; $f.a = a; $f.b = b; $f.c = c; $f.cfg = cfg; $f.convTime = convTime; $f.convTimeCheck = convTimeCheck; $f.delta = delta; $f.end = end; $f.endTick = endTick; $f.f = f; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.period = period; $f.s = s; $f.startTick = startTick; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	Workload.prototype.AddFunc = function(f) { return this.$val.AddFunc(f); };
-	ZeroWorkload = function(config) {
-		var config;
-		return new Workload.ptr($clone(config, Config), $makeSlice(sliceType, $clone(config, Config).NumTicks()));
-	};
-	$pkg.ZeroWorkload = ZeroWorkload;
-	MakeWorkload = function(config, desc) {
-		var _i, _ref, config, desc, f, w, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _ref = $f._ref; config = $f.config; desc = $f.desc; f = $f.f; w = $f.w; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		w = $clone(ZeroWorkload($clone(config, Config)), Workload);
-		_ref = desc.Funcs;
+	$ptrType(Data).prototype.AddFuncTerm = function(cfg, f) { return this.$get().AddFuncTerm(cfg, f); };
+	DataFromFuncDesc = function(cfg, desc) {
+		var _i, _ref, cfg, desc, f, w, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _ref = $f._ref; cfg = $f.cfg; desc = $f.desc; f = $f.f; w = $f.w; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		w = ZeroData(cfg);
+		_ref = desc.Terms;
 		_i = 0;
 		/* while (true) { */ case 1:
 			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 2; continue; }
-			f = $clone(((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]), Func);
-			$r = w.AddFunc($clone(f, Func)); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			f = $clone(((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]), FuncTerm);
+			$r = w.AddFuncTerm(cfg, $clone(f, FuncTerm)); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			_i++;
 		/* } */ $s = 1; continue; case 2:
 		$s = -1; return w;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: MakeWorkload }; } $f._i = _i; $f._ref = _ref; $f.config = config; $f.desc = desc; $f.f = f; $f.w = w; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: DataFromFuncDesc }; } $f._i = _i; $f._ref = _ref; $f.cfg = cfg; $f.desc = desc; $f.f = f; $f.w = w; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	$pkg.MakeWorkload = MakeWorkload;
-	Workload.ptr.prototype.Copy = function() {
-		var res, w;
-		w = this;
-		res = $clone(ZeroWorkload($clone(w.Config, Config)), Workload);
-		$copySlice(res.Data, w.Data);
-		return res;
-	};
-	Workload.prototype.Copy = function() { return this.$val.Copy(); };
-	Workload.ptr.prototype.Sum = function(other) {
-		var _i, _ref, i, other, res, w, x, x$1, x$2;
-		w = this;
-		if (!($equal(w.Config, other.Config, Config))) {
-			$panic(new $String("different configs"));
-		}
-		res = $clone(w.Copy(), Workload);
-		_ref = res.Data;
+	$pkg.DataFromFuncDesc = DataFromFuncDesc;
+	MakePerNodeData = function(cfg, numNodes) {
+		var _i, _ref, cfg, i, numNodes, res;
+		res = $makeSlice(sliceType$2, numNodes);
+		_ref = res;
 		_i = 0;
 		while (true) {
 			if (!(_i < _ref.$length)) { break; }
 			i = _i;
-			(x$2 = res.Data, ((i < 0 || i >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + i] = (x = w.Data, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i])) + (x$1 = other.Data, ((i < 0 || i >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + i]))));
+			((i < 0 || i >= res.$length) ? ($throwRuntimeError("index out of range"), undefined) : res.$array[res.$offset + i] = ZeroData(cfg));
 			_i++;
 		}
-		return res;
+		return $subslice(new PerNodeData(res.$array), res.$offset, res.$offset + res.$length);
 	};
-	Workload.prototype.Sum = function(other) { return this.$val.Sum(other); };
-	Workload.ptr.prototype.Smooth = function(alpha) {
-		var _i, _ref, alpha, i, res, w, x, x$1, x$2, x$3, x$4, x$5;
-		w = this;
-		res = $clone(ZeroWorkload($clone(w.Config, Config)), Workload);
-		if (w.Data.$length === 0) {
-			return res;
-		}
-		_ref = w.Data;
+	$pkg.MakePerNodeData = MakePerNodeData;
+	PerNodeData.prototype.Copy = function(cfg) {
+		var _i, _ref, cfg, i, md, res;
+		md = this;
+		res = $makeSlice(sliceType$2, md.$length);
+		_ref = res;
 		_i = 0;
 		while (true) {
 			if (!(_i < _ref.$length)) { break; }
 			i = _i;
-			if (i === 0) {
-				(x$1 = res.Data, (0 >= x$1.$length ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + 0] = (x = w.Data, (0 >= x.$length ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + 0]))));
-				_i++;
-				continue;
+			((i < 0 || i >= res.$length) ? ($throwRuntimeError("index out of range"), undefined) : res.$array[res.$offset + i] = ((i < 0 || i >= md.$length) ? ($throwRuntimeError("index out of range"), undefined) : md.$array[md.$offset + i]).Copy(cfg));
+			_i++;
+		}
+		return $subslice(new PerNodeData(res.$array), res.$offset, res.$offset + res.$length);
+	};
+	$ptrType(PerNodeData).prototype.Copy = function(cfg) { return this.$get().Copy(cfg); };
+	PerNodeData.prototype.Aggregate = function(cfg) {
+		var cfg, nd;
+		nd = this;
+		return DataSum(cfg, $subslice(new sliceType$2(nd.$array), nd.$offset, nd.$offset + nd.$length));
+	};
+	$ptrType(PerNodeData).prototype.Aggregate = function(cfg) { return this.$get().Aggregate(cfg); };
+	Process = function(inputYAML) {
+		var _i, _i$1, _i$2, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _ref, _ref$1, _ref$2, _tuple, cfg, err, g, granted, i, i$1, i$2, input, inputYAML, nodeSeries, out, requested, tokens, x, x$1, x$2, x$3, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _tuple = $f._tuple; cfg = $f.cfg; err = $f.err; g = $f.g; granted = $f.granted; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; input = $f.input; inputYAML = $f.inputYAML; nodeSeries = $f.nodeSeries; out = $f.out; requested = $f.requested; tokens = $f.tokens; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		input = [input];
+		input[0] = new Input.ptr($clone($pkg.DefaultConfig, Config), sliceType$3.nil);
+		_r = yaml.UnmarshalStrict((new sliceType$4($stringToBytes(inputYAML))), input[0]); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		err = _r;
+		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 2:
+			_r$1 = fmt.Printf("Error parsing input YAML: %v\n", new sliceType$1([err])); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			_r$1;
+			$s = -1; return new Output.ptr(sliceType.nil, sliceType$5.nil);
+		/* } */ case 3:
+		cfg = input[0].Config;
+		requested = MakePerNodeData(cfg, input[0].Nodes.$length);
+		_ref = requested;
+		_i = 0;
+		/* while (true) { */ case 5:
+			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 6; continue; }
+			i = _i;
+			_r$2 = DataFromFuncDesc(cfg, $clone((x = input[0].Nodes, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i])), FuncDesc)); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			((i < 0 || i >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i] = _r$2);
+			_i++;
+		/* } */ $s = 5; continue; case 6:
+		nodeSeries = $makeSlice(sliceType$6, requested.$length);
+		_ref$1 = nodeSeries;
+		_i$1 = 0;
+		/* while (true) { */ case 8:
+			/* if (!(_i$1 < _ref$1.$length)) { break; } */ if(!(_i$1 < _ref$1.$length)) { $s = 9; continue; }
+			i$1 = _i$1;
+			_r$3 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$1 + 1 >> 0))])); /* */ $s = 10; case 10: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			Series.copy(((i$1 < 0 || i$1 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$1]), new Series.ptr(_r$3, "RU/s", 1, (x$1 = ((i$1 < 0 || i$1 >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i$1]), $subslice(new sliceType(x$1.$array), x$1.$offset, x$1.$offset + x$1.$length))));
+			_i$1++;
+		/* } */ $s = 8; continue; case 9:
+		out = new Output.ptr($clone(cfg, Config).TimeAxis(), sliceType$5.nil);
+		out.Charts = $append(out.Charts, new Chart.ptr("Requested", new sliceType$7(["RU/s"]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2, (x$2 = requested.Aggregate(cfg), $subslice(new sliceType(x$2.$array), x$2.$offset, x$2.$offset + x$2.$length))))));
+		_r$4 = TokenBucket(cfg, requested); /* */ $s = 11; case 11: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+		_tuple = _r$4;
+		granted = _tuple[0];
+		tokens = _tuple[1];
+		nodeSeries = $makeSlice(sliceType$6, requested.$length);
+		_ref$2 = nodeSeries;
+		_i$2 = 0;
+		/* while (true) { */ case 12:
+			/* if (!(_i$2 < _ref$2.$length)) { break; } */ if(!(_i$2 < _ref$2.$length)) { $s = 13; continue; }
+			i$2 = _i$2;
+			g = ((i$2 < 0 || i$2 >= granted.$length) ? ($throwRuntimeError("index out of range"), undefined) : granted.$array[granted.$offset + i$2]);
+			if (cfg.Smoothing) {
+				g = g.Smooth(cfg, 0.1);
 			}
-			(x$5 = res.Data, ((i < 0 || i >= x$5.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$5.$array[x$5.$offset + i] = (1 - alpha) * (x$2 = res.Data, x$3 = i - 1 >> 0, ((x$3 < 0 || x$3 >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + x$3])) + alpha * (x$4 = w.Data, ((i < 0 || i >= x$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$4.$array[x$4.$offset + i]))));
-			_i++;
-		}
-		return res;
+			_r$5 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$2 + 1 >> 0))])); /* */ $s = 14; case 14: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+			Series.copy(((i$2 < 0 || i$2 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$2]), new Series.ptr(_r$5, "RU/s", 1, $subslice(new sliceType(g.$array), g.$offset, g.$offset + g.$length)));
+			_i$2++;
+		/* } */ $s = 12; continue; case 13:
+		out.Charts = $append(out.Charts, new Chart.ptr("Granted (perfect token bucket)", new sliceType$7(["RU/s", "RU"]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, (x$3 = granted.Aggregate(cfg), $subslice(new sliceType(x$3.$array), x$3.$offset, x$3.$offset + x$3.$length))), new Series.ptr("tokens", "RU", 0.5, $subslice(new sliceType(tokens.$array), tokens.$offset, tokens.$offset + tokens.$length)))));
+		$s = -1; return out;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Process }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._tuple = _tuple; $f.cfg = cfg; $f.err = err; $f.g = g; $f.granted = granted; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.input = input; $f.inputYAML = inputYAML; $f.nodeSeries = nodeSeries; $f.out = out; $f.requested = requested; $f.tokens = tokens; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	Workload.prototype.Smooth = function(alpha) { return this.$val.Smooth(alpha); };
+	$pkg.Process = Process;
+	TokenBucket = function(cfg, requested) {
+		var _i, _i$1, _i$2, _r, _ref, _ref$1, _ref$2, _tmp, _tmp$1, _tmp$2, _tmp$3, amount, cfg, currTokens, fraction, granted, headOfQueue, i, i$1, n, now, reqRate, reqUnits, requested, t, tickDuration, ticks, tokens, x, x$1, x$2, x$3, x$4, x$5, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _r = $f._r; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; amount = $f.amount; cfg = $f.cfg; currTokens = $f.currTokens; fraction = $f.fraction; granted = $f.granted; headOfQueue = $f.headOfQueue; i = $f.i; i$1 = $f.i$1; n = $f.n; now = $f.now; reqRate = $f.reqRate; reqUnits = $f.reqUnits; requested = $f.requested; t = $f.t; tickDuration = $f.tickDuration; ticks = $f.ticks; tokens = $f.tokens; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		requested = [requested];
+		ticks = [ticks];
+		granted = PerNodeData.nil;
+		tokens = Data.nil;
+		tokens = ZeroData(cfg);
+		granted = MakePerNodeData(cfg, requested[0].$length);
+		if (requested[0].$length === 0) {
+			_tmp = granted;
+			_tmp$1 = tokens;
+			granted = _tmp;
+			tokens = _tmp$1;
+			$s = -1; return [granted, tokens];
+		}
+		requested[0] = requested[0].Copy(cfg);
+		currTokens = cfg.InitialBurst;
+		ticks[0] = $makeSlice(sliceType$8, requested[0].$length);
+		headOfQueue = (function(requested, ticks) { return function() {
+			var _i, _ref, i, m, x, x$1;
+			m = 0;
+			_ref = ticks[0];
+			_i = 0;
+			while (true) {
+				if (!(_i < _ref.$length)) { break; }
+				i = _i;
+				while (true) {
+					if (!(((i < 0 || i >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i]) < ((i < 0 || i >= requested[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : requested[0].$array[requested[0].$offset + i]).$length && ((x = ((i < 0 || i >= requested[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : requested[0].$array[requested[0].$offset + i]), x$1 = ((i < 0 || i >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i]), ((x$1 < 0 || x$1 >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + x$1])) === 0))) { break; }
+					((i < 0 || i >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i] = (((i < 0 || i >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i]) + (1) >> 0));
+				}
+				if (((i < 0 || i >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i]) < ((m < 0 || m >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + m])) {
+					m = i;
+				}
+				_i++;
+			}
+			return ((m < 0 || m >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + m]);
+		}; })(requested, ticks);
+		tickDuration = cfg.Tick.Seconds();
+		_ref = tokens;
+		_i = 0;
+		/* while (true) { */ case 1:
+			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 2; continue; }
+			now = _i;
+			if (currTokens < cfg.MaxBurst) {
+				currTokens = currTokens + (cfg.RatePerSec * tickDuration);
+				if (currTokens > cfg.MaxBurst) {
+					currTokens = cfg.MaxBurst;
+				}
+			}
+			((now < 0 || now >= tokens.$length) ? ($throwRuntimeError("index out of range"), undefined) : tokens.$array[tokens.$offset + now] = currTokens);
+			/* while (true) { */ case 3:
+				/* if (!(currTokens > 0)) { break; } */ if(!(currTokens > 0)) { $s = 4; continue; }
+				_r = headOfQueue(); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+				t = _r;
+				if (t > now) {
+					/* break; */ $s = 4; continue;
+				}
+				reqRate = 0;
+				n = 0;
+				_ref$1 = ticks[0];
+				_i$1 = 0;
+				while (true) {
+					if (!(_i$1 < _ref$1.$length)) { break; }
+					i = _i$1;
+					if (((i < 0 || i >= ticks[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : ticks[0].$array[ticks[0].$offset + i]) === t) {
+						reqRate = reqRate + ((x = ((i < 0 || i >= requested[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : requested[0].$array[requested[0].$offset + i]), ((t < 0 || t >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + t])));
+						n = n + (1) >> 0;
+					}
+					_i$1++;
+				}
+				reqUnits = reqRate * tickDuration;
+				fraction = 1;
+				if (reqUnits > currTokens) {
+					fraction = currTokens / reqUnits;
+					currTokens = 0;
+				} else {
+					currTokens = currTokens - (reqUnits);
+				}
+				_ref$2 = ticks[0];
+				_i$2 = 0;
+				while (true) {
+					if (!(_i$2 < _ref$2.$length)) { break; }
+					i$1 = _i$2;
+					amount = (x$1 = ((i$1 < 0 || i$1 >= requested[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : requested[0].$array[requested[0].$offset + i$1]), ((t < 0 || t >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + t])) * fraction;
+					(x$3 = ((i$1 < 0 || i$1 >= requested[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : requested[0].$array[requested[0].$offset + i$1]), ((t < 0 || t >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + t] = (x$2 = ((i$1 < 0 || i$1 >= requested[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : requested[0].$array[requested[0].$offset + i$1]), ((t < 0 || t >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + t])) - (amount)));
+					(x$5 = ((i$1 < 0 || i$1 >= granted.$length) ? ($throwRuntimeError("index out of range"), undefined) : granted.$array[granted.$offset + i$1]), ((now < 0 || now >= x$5.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$5.$array[x$5.$offset + now] = (x$4 = ((i$1 < 0 || i$1 >= granted.$length) ? ($throwRuntimeError("index out of range"), undefined) : granted.$array[granted.$offset + i$1]), ((now < 0 || now >= x$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$4.$array[x$4.$offset + now])) + (amount)));
+					_i$2++;
+				}
+			/* } */ $s = 3; continue; case 4:
+			_i++;
+		/* } */ $s = 1; continue; case 2:
+		_tmp$2 = granted;
+		_tmp$3 = tokens;
+		granted = _tmp$2;
+		tokens = _tmp$3;
+		$s = -1; return [granted, tokens];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: TokenBucket }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._r = _r; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f.amount = amount; $f.cfg = cfg; $f.currTokens = currTokens; $f.fraction = fraction; $f.granted = granted; $f.headOfQueue = headOfQueue; $f.i = i; $f.i$1 = i$1; $f.n = n; $f.now = now; $f.reqRate = reqRate; $f.reqUnits = reqUnits; $f.requested = requested; $f.t = t; $f.tickDuration = tickDuration; $f.ticks = ticks; $f.tokens = tokens; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.TokenBucket = TokenBucket;
 	Config.methods = [{prop: "NumTicks", name: "NumTicks", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "TimeForTick", name: "TimeForTick", pkg: "", typ: $funcType([$Int], [time.Duration], false)}, {prop: "TickForTime", name: "TickForTime", pkg: "", typ: $funcType([time.Duration], [$Int], false)}, {prop: "TimeAxis", name: "TimeAxis", pkg: "", typ: $funcType([], [sliceType], false)}];
-	ptrType.methods = [{prop: "tick", name: "tick", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([Config, $Int], [], false)}, {prop: "request", name: "request", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([Config, $Int, $Float64], [$Int], false)}];
-	ptrType$1.methods = [{prop: "distribute", name: "distribute", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([$Int, $Float64, $Int], [], false)}, {prop: "maintain", name: "maintain", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([Config, ptrType, $Int], [], false)}, {prop: "request", name: "request", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([Config, $Int, $Float64], [$Float64], false)}, {prop: "tick", name: "tick", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([Config, ptrType, $Int], [], false)}];
-	ptrType$2.methods = [{prop: "AddFunc", name: "AddFunc", pkg: "", typ: $funcType([Func], [], false)}, {prop: "Copy", name: "Copy", pkg: "", typ: $funcType([], [Workload], false)}, {prop: "Sum", name: "Sum", pkg: "", typ: $funcType([ptrType$2], [Workload], false)}, {prop: "Smooth", name: "Smooth", pkg: "", typ: $funcType([$Float64], [Workload], false)}];
+	Data.methods = [{prop: "Copy", name: "Copy", pkg: "", typ: $funcType([ptrType], [Data], false)}, {prop: "Sum", name: "Sum", pkg: "", typ: $funcType([ptrType, Data], [Data], false)}, {prop: "Smooth", name: "Smooth", pkg: "", typ: $funcType([ptrType, $Float64], [Data], false)}, {prop: "AddFuncTerm", name: "AddFuncTerm", pkg: "", typ: $funcType([ptrType, FuncTerm], [], false)}];
+	PerNodeData.methods = [{prop: "Copy", name: "Copy", pkg: "", typ: $funcType([ptrType], [PerNodeData], false)}, {prop: "Aggregate", name: "Aggregate", pkg: "", typ: $funcType([ptrType], [Data], false)}];
 	Config.init("", [{prop: "Timeframe", name: "Timeframe", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "Tick", name: "Tick", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "RatePerSec", name: "RatePerSec", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"rate_per_sec\""}, {prop: "InitialBurst", name: "InitialBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"initial_burst\""}, {prop: "MaxBurst", name: "MaxBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"max_burst\""}, {prop: "ReqAmount", name: "ReqAmount", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "LowWatermark", name: "LowWatermark", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "PreRequestTime", name: "PreRequestTime", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "Smoothing", name: "Smoothing", embedded: false, exported: true, typ: $Bool, tag: ""}]);
-	globalBucket.init("github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", [{prop: "currTokens", name: "currTokens", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "lastDeadline", name: "lastDeadline", embedded: false, exported: false, typ: $Int, tag: ""}]);
-	localBucket.init("github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", [{prop: "requested", name: "requested", embedded: false, exported: false, typ: Workload, tag: ""}, {prop: "requestedTick", name: "requestedTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "granted", name: "granted", embedded: false, exported: false, typ: Workload, tag: ""}, {prop: "currTokens", name: "currTokens", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "currRatePerTick", name: "currRatePerTick", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "deadlineTick", name: "deadlineTick", embedded: false, exported: false, typ: $Int, tag: ""}]);
+	Data.init($Float64);
+	FuncDesc.init("", [{prop: "Terms", name: "Terms", embedded: false, exported: true, typ: sliceType$9, tag: ""}]);
+	FuncTerm.init("", [{prop: "Type", name: "Type", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Start", name: "Start", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Duration", name: "Duration", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Delta", name: "Delta", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Period", name: "Period", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Amplitude", name: "Amplitude", embedded: false, exported: true, typ: $Float64, tag: ""}]);
+	PerNodeData.init(Data);
 	Input.init("", [{prop: "Config", name: "Config", embedded: false, exported: true, typ: Config, tag: ""}, {prop: "Nodes", name: "Nodes", embedded: false, exported: true, typ: sliceType$3, tag: ""}]);
-	Output.init("", [{prop: "TimeAxis", name: "TimeAxis", embedded: false, exported: true, typ: sliceType, tag: ""}, {prop: "Charts", name: "Charts", embedded: false, exported: true, typ: sliceType$6, tag: ""}]);
-	Chart.init("", [{prop: "Title", name: "Title", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Units", name: "Units", embedded: false, exported: true, typ: sliceType$8, tag: ""}, {prop: "Series", name: "Series", embedded: false, exported: true, typ: sliceType$7, tag: ""}]);
+	Output.init("", [{prop: "TimeAxis", name: "TimeAxis", embedded: false, exported: true, typ: sliceType, tag: ""}, {prop: "Charts", name: "Charts", embedded: false, exported: true, typ: sliceType$5, tag: ""}]);
+	Chart.init("", [{prop: "Title", name: "Title", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Units", name: "Units", embedded: false, exported: true, typ: sliceType$7, tag: ""}, {prop: "Series", name: "Series", embedded: false, exported: true, typ: sliceType$6, tag: ""}]);
 	Series.init("", [{prop: "Name", name: "Name", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Unit", name: "Unit", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Width", name: "Width", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Data", name: "Data", embedded: false, exported: true, typ: sliceType, tag: ""}]);
-	Workload.init("", [{prop: "Config", name: "Config", embedded: false, exported: true, typ: Config, tag: ""}, {prop: "Data", name: "Data", embedded: false, exported: true, typ: sliceType, tag: ""}]);
-	WorkloadDesc.init("", [{prop: "Funcs", name: "Funcs", embedded: false, exported: true, typ: sliceType$10, tag: ""}]);
-	Func.init("", [{prop: "Type", name: "Type", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Start", name: "Start", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Duration", name: "Duration", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Delta", name: "Delta", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Period", name: "Period", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Amplitude", name: "Amplitude", embedded: false, exported: true, typ: $Float64, tag: ""}]);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
