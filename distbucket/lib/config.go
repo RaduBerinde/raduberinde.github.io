@@ -22,11 +22,11 @@ type Config struct {
 	MaxBurst     float64 `yaml:"max_burst"`
 
 	// Algorithm knobs.
-	ReqAmount      float64
-	LowWatermark   float64
-	PreRequestTime time.Duration
+	RefillAmount   float64       `yaml:"refill_amount"`
+	RefillFraction float64       `yaml:"refill_fraction"`
+	PreRequestTime time.Duration `yaml:"pre_request_time"`
 
-	// Misc settions.
+	// Misc settings.
 	Smoothing bool
 }
 
@@ -51,14 +51,14 @@ func (c Config) TimeAxis() []float64 {
 }
 
 var DefaultConfig = Config{
-	Timeframe: 60 * time.Second,
-	Tick:      10 * time.Millisecond,
+	Timeframe: 300 * time.Second,
+	Tick:      100 * time.Millisecond,
 
 	RatePerSec:   240,
 	InitialBurst: 100,
 	MaxBurst:     100,
 
-	ReqAmount:      1000,
-	LowWatermark:   100,
-	PreRequestTime: 10 * time.Second,
+	RefillAmount:   1000,
+	RefillFraction: 0.1,
+	PreRequestTime: 5 * time.Second,
 }

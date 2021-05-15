@@ -19,12 +19,10 @@ func (d Data) Copy(cfg *Config) Data {
 	return res
 }
 
-func (w Data) Sum(cfg *Config, other Data) Data {
-	res := w.Copy(cfg)
-	for i := range res {
-		res[i] = w[i] + other[i]
+func (d Data) Scale(factor float64) {
+	for i := range d {
+		d[i] *= factor
 	}
-	return res
 }
 
 func DataSum(cfg *Config, d ...Data) Data {

@@ -1,12 +1,11 @@
 package lib
 
-/*
 type globalBucket struct {
 	currTokens   float64
 	lastDeadline int
 }
 
-func (gb *globalBucket) tick(cfg Config, now int) {
+func (gb *globalBucket) tick(cfg *Config, now int) {
 	if gb.lastDeadline >= now {
 		// We have already pre-distributed the tokens for this tick.
 		return
@@ -21,8 +20,11 @@ func (gb *globalBucket) tick(cfg Config, now int) {
 	}
 }
 
-func (gb *globalBucket) request(cfg Config, now int, amount float64) (deadlineTick int) {
+func (gb *globalBucket) request(cfg *Config, now int, amount float64) (deadlineTick int) {
 	if gb.currTokens >= amount {
+		if gb.lastDeadline > now {
+			panic("giving out tokens with outstanding deadline")
+		}
 		gb.currTokens -= amount
 		return now
 	}
@@ -33,23 +35,28 @@ func (gb *globalBucket) request(cfg Config, now int, amount float64) (deadlineTi
 	if n < 0 {
 		n = 1
 	}
-	gb.lastDeadline = now + n
+	if gb.lastDeadline <= now {
+		gb.lastDeadline = now
+	}
+	gb.lastDeadline += n
 	return gb.lastDeadline
 }
 
 type localBucket struct {
-	requested       Workload
+	requested       Data
 	requestedTick   int
-	granted         Workload
+	granted         Data
 	currTokens      float64
 	currRatePerTick float64
 	deadlineTick    int
 }
 
 func (l *localBucket) distribute(now int, amount float64, deadlineTick int) {
-	// Add up the tokens that were already pre-distributed.
-	if l.deadlineTick > now {
-		amount += float64(l.deadlineTick-now) * l.currRatePerTick
+	if deadlineTick < now {
+		panic("deadlineTick < now")
+	}
+	if deadlineTick < l.deadlineTick {
+		panic("deadlineTick < l.deadlineTick")
 	}
 	if deadlineTick <= now {
 		l.deadlineTick = now
@@ -57,25 +64,28 @@ func (l *localBucket) distribute(now int, amount float64, deadlineTick int) {
 		l.currRatePerTick = 0
 		return
 	}
+	// Add up the tokens that were already pre-distributed.
+	if l.deadlineTick > now {
+		amount += float64(l.deadlineTick-now) * l.currRatePerTick
+	}
 	l.deadlineTick = deadlineTick
 	l.currRatePerTick = amount / float64(deadlineTick-now)
 }
 
-func (l *localBucket) maintain(cfg Config, gb *globalBucket, now int) {
-	if l.currTokens > cfg.LowWatermark {
+func (l *localBucket) maintain(cfg *Config, gb *globalBucket, now int) {
+	if l.currTokens > cfg.RefillAmount*cfg.RefillFraction {
 		return
 	}
 	if float64(l.deadlineTick-now)*cfg.Tick.Seconds() < cfg.PreRequestTime.Seconds() {
-		deadlineTick := gb.request(cfg, now, cfg.ReqAmount)
+		deadlineTick := gb.request(cfg, now, cfg.RefillAmount)
 		// TODO(radu): simulate a delay.
-		l.distribute(now, cfg.ReqAmount, deadlineTick)
+		l.distribute(now, cfg.RefillAmount, deadlineTick)
 	}
 }
 
-func (l *localBucket) request(cfg Config, now int, amount float64) float64 {
-	l.currTokens += l.currRatePerTick
-	if l.currTokens >= amount {
-		l.currTokens = 0
+func (l *localBucket) request(cfg *Config, now int, amount float64) float64 {
+	if l.currTokens > amount {
+		l.currTokens -= amount
 		return amount
 	}
 	available := l.currTokens
@@ -83,55 +93,66 @@ func (l *localBucket) request(cfg Config, now int, amount float64) float64 {
 	return available
 }
 
-func (l *localBucket) tick(cfg Config, gb *globalBucket, now int) {
-	tickDuration := cfg.Tick.Seconds()
+func (l *localBucket) tick(cfg *Config, gb *globalBucket, now int) {
+	if l.currRatePerTick > 0 && l.deadlineTick >= now {
+		l.currTokens += l.currRatePerTick
+	}
 	l.maintain(cfg, gb, now)
 	for l.requestedTick <= now {
-		amount := l.requested.Data[l.requestedTick]
+		amount := l.requested[l.requestedTick]
 		if amount == 0 {
 			l.requestedTick++
 			continue
 		}
 		granted := l.request(cfg, now, amount)
-		l.granted.Data[now] += granted
-		l.requested.Data[l.requestedTick] -= granted
+		l.granted[now] += granted
+		l.requested[l.requestedTick] -= granted
 		if granted < amount {
 			return
 		}
 	}
 }
 
-func DistTokenBucket(
-	cfg Config, nodes []Workload,
-) (perNode []Workload, aggregate Workload, tokens Workload) {
-	aggregate = ZeroWorkload(cfg)
-	tokens = ZeroWorkload(cfg)
-	if len(nodes) == 0 {
-		return nil, aggregate, tokens
+func DistTokenBucket(cfg *Config, requested PerNodeData) (granted PerNodeData, globalTokens Data) {
+	globalTokens = ZeroData(cfg)
+	granted = MakePerNodeData(cfg, len(requested))
+	if len(requested) == 0 {
+		return granted, globalTokens
+	}
+
+	// Make copies of requested, since we are going to modify the data.
+	requested = requested.Copy(cfg)
+
+	tickDuration := cfg.Tick.Seconds()
+	// Convert from rate to absolute amount.
+	for i := range requested {
+		requested[i].Scale(tickDuration)
 	}
 
 	var global globalBucket
-	local := make([]localBucket, len(nodes))
+	local := make([]localBucket, len(requested))
 	for i := range local {
-		local[i].requested = nodes[i].Copy()
-		local[i].granted = ZeroWorkload(cfg)
+		local[i].requested = requested[i]
+		local[i].granted = ZeroData(cfg)
 	}
 
 	global.currTokens = cfg.InitialBurst
 
-	for now := range aggregate.Data {
+	for now := range globalTokens {
 		global.tick(cfg, now)
-		tokens.Data[now] = global.currTokens
+		globalTokens[now] = global.currTokens
 
-		for n := range nodes {
+		for n := range local {
 			local[n].tick(cfg, &global, now)
-			aggregate.Data[now] += local[n].granted.Data[now]
 		}
 	}
-	perNode = make([]Workload, len(local))
-	for i := range perNode {
-		perNode[i] = local[i].granted
+	for i := range granted {
+		granted[i] = local[i].granted
 	}
-	return perNode, aggregate, tokens
+
+	// Convert from absolute amount to rate.
+	for i := range granted {
+		granted[i].Scale(1.0 / tickDuration)
+	}
+	return granted, globalTokens
 }
-*/

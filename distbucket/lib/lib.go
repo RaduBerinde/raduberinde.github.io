@@ -73,43 +73,41 @@ func Process(inputYAML string) Output {
 		}),
 	})
 
-	/*
-		grantedPerNode, tokenBucketAggregate, tokens := DistTokenBucket(cfg, nodes)
-		nodeSeries = make([]Series, len(nodes))
-		for i := range nodeSeries {
-			w := tokenBucketPerNode[i]
-			if cfg.Smoothing {
-				w = w.Smooth(0.1)
-			}
-			nodeSeries[i] = Series{
-				Name:  fmt.Sprintf("n%d", i+1),
-				Unit:  "RU/s",
-				Width: 1,
-				Data:  w.Data,
-			}
+	granted, tokens := DistTokenBucket(cfg, requested)
+	nodeSeries = make([]Series, len(requested))
+	for i := range nodeSeries {
+		g := granted[i]
+		if cfg.Smoothing {
+			g = g.Smooth(cfg, 0.1)
 		}
+		nodeSeries[i] = Series{
+			Name:  fmt.Sprintf("n%d", i+1),
+			Unit:  "RU/s",
+			Width: 1,
+			Data:  g,
+		}
+	}
 
-		out.Charts = append(out.Charts, Chart{
-			Title: "Granted (distributed token bucket)",
-			Units: []string{"RU/s", "RU"},
-			Series: append(nodeSeries,
-				Series{
-					Name:  "aggregate",
-					Unit:  "RU/s",
-					Width: 2.5,
-					Data:  tokenBucketAggregate.Data,
-				},
-				Series{
-					Name:  "global tokens",
-					Unit:  "RU",
-					Width: 0.5,
-					Data:  tokens.Data,
-				},
-			),
-		})
-	*/
+	out.Charts = append(out.Charts, Chart{
+		Title: "Granted (distributed token bucket)",
+		Units: []string{"RU/s", "RU"},
+		Series: append(nodeSeries,
+			Series{
+				Name:  "aggregate",
+				Unit:  "RU/s",
+				Width: 2.5,
+				Data:  granted.Aggregate(cfg),
+			},
+			Series{
+				Name:  "global tokens",
+				Unit:  "RU",
+				Width: 0.5,
+				Data:  tokens,
+			},
+		),
+	})
 
-	granted, tokens := TokenBucket(cfg, requested)
+	granted, tokens = TokenBucket(cfg, requested)
 
 	nodeSeries = make([]Series, len(requested))
 	for i := range nodeSeries {

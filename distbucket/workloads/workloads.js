@@ -5,12 +5,12 @@ var workloads = {
       value: 100
 
     - type: ramp
-      start: 5
-      duration: 10
+      start: 25
+      duration: 50
       delta: 50
 
     - type: ramp
-      start: 25
+      start: 125
       duration: 2
       delta: -50
 
@@ -19,29 +19,29 @@ var workloads = {
       value: 50
 
     - type: ramp
-      start: 10
-      duration: 10
+      start: 50
+      duration: 50
       delta: 100
 
     - type: ramp
-      start: 20
-      duration: 5
+      start: 100
+      duration: 25
       delta: -60
 
     - type: ramp
       start: 27
-      duration: 1
+      duration: 5
       delta: -40
 
   - terms:
     - type: sine
-      period: 15
+      period: 75
       amplitude: 100
 
   - terms:
     - type: gaussian
-      start: 20
-      duration: 15
+      start: 100
+      duration: 75
       amplitude: 200
 `,
 };

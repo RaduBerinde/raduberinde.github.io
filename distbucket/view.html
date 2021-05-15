@@ -57,7 +57,7 @@
          <p/>
          <div class="width: 100%">
            <b>Max Burst (RU): <span id="max_burst_value">100</span></b>
-           <input id="max_burst" type="range" min="10" max="10000" value="100" class="slider">
+           <input id="max_burst" type="range" min="10" max="10000" value="10000" class="slider">
          </div>
          <p/>
          <div class="width: 100%">
@@ -73,7 +73,12 @@
              </textarea>
            </div>
          </div>
-         <p/>
+         <p> - Algorithm knobs - </p>
+         <div class="width: 100%">
+           <b>Refill amount (RUs): <span id="refill_amount_value">240</span></b>
+           <input id="refill_amount" type="range" min="1" max="5000" value="1000" class="slider">
+         </div>
+         <p> - Misc - </p>
          <div class="width: 100%">
            <input type="checkbox" id="smoothing">
            <b>Smoothing</b>
@@ -90,7 +95,7 @@
 
     <script>
       // sliderKeys are yaml fields and <input> ids.
-      const sliderKeys = ["rate_per_sec", "initial_burst", "max_burst"];
+      const sliderKeys = ["rate_per_sec", "initial_burst", "max_burst", "refill_amount"];
 
       var plots = [];
       var widthDeltas = [];

@@ -10,6 +10,12 @@ func TokenBucket(cfg *Config, requested PerNodeData) (granted PerNodeData, token
 	// Make copies of requested, since we are going to modify the data.
 	requested = requested.Copy(cfg)
 
+	tickDuration := cfg.Tick.Seconds()
+	// Convert from rate to absolute amount.
+	for i := range requested {
+		requested[i].Scale(tickDuration)
+	}
+
 	currTokens := cfg.InitialBurst
 
 	// Maintain the current tick per node that needs tokens; requested is 0 up to
@@ -29,7 +35,6 @@ func TokenBucket(cfg *Config, requested PerNodeData) (granted PerNodeData, token
 		return ticks[m]
 	}
 
-	tickDuration := cfg.Tick.Seconds()
 	for now := range tokens {
 		// If we have more than MaxBurst, then the initial burst was larger and we
 		// are still using it.
@@ -49,22 +54,19 @@ func TokenBucket(cfg *Config, requested PerNodeData) (granted PerNodeData, token
 
 			// Now find all nodes that are at this tick and sum up how much they are
 			// asking.
-			var reqRate float64
-			var n int
+			var totalReq float64
 			for i := range ticks {
 				if ticks[i] == t {
-					reqRate += requested[i][t]
-					n++
+					totalReq += requested[i][t]
 				}
 			}
-			reqUnits := reqRate * tickDuration
 			fraction := 1.0
-			if reqUnits > currTokens {
+			if totalReq > currTokens {
 				// We can only satisfy this fraction of the requested.
-				fraction = currTokens / reqUnits
+				fraction = currTokens / totalReq
 				currTokens = 0
 			} else {
-				currTokens -= reqUnits
+				currTokens -= totalReq
 			}
 			// Give out to each node, proportionally to the ask.
 			for i := range ticks {
@@ -73,6 +75,10 @@ func TokenBucket(cfg *Config, requested PerNodeData) (granted PerNodeData, token
 				granted[i][now] += amount
 			}
 		}
+	}
+	// Convert from absolute amount to rate.
+	for i := range granted {
+		granted[i].Scale(1.0 / tickDuration)
 	}
 
 	return granted, tokens
