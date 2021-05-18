@@ -3,6 +3,7 @@ package lib
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"time"
 )
 
@@ -87,6 +88,8 @@ type FuncTerm struct {
 
 	Period    float64 // used for "sine"
 	Amplitude float64 // used for "sine" and "gaussian"
+
+	Smoothness int // used for "noise"
 }
 
 func (s Data) AddFuncTerm(cfg *Config, f FuncTerm) {
@@ -124,10 +127,13 @@ func (s Data) AddFuncTerm(cfg *Config, f FuncTerm) {
 		}
 
 	case "sine":
+		if f.Period <= 0 {
+			panic("invalid sine period")
+		}
 		period := cfg.TickForTime(time.Duration(f.Period * float64(time.Second)))
 
 		for i := startTick; i < endTick; i++ {
-			s[i] = f.Amplitude * (0.5 + 0.5*math.Sin(-0.5*math.Pi+2*math.Pi*float64(i-startTick)/float64(period)))
+			s[i] += f.Amplitude * (0.5 + 0.5*math.Sin(-0.5*math.Pi+2*math.Pi*float64(i-startTick)/float64(period)))
 		}
 
 	case "gaussian":
@@ -143,6 +149,31 @@ func (s Data) AddFuncTerm(cfg *Config, f FuncTerm) {
 		for i := range s {
 			delta := (cfg.TimeForTick(i).Seconds() - b)
 			s[i] += a * math.Exp(-0.5*delta*delta/(c*c))
+		}
+
+	case "noise":
+		// We generate random gaussian noise for one tick in every f.Smoothness
+		// ticks and we use cosine interpolation in-between. See:
+		//   https://www.cs.umd.edu/class/spring2018/cmsc425/Lects/lect12-1d-perlin.pdf
+		if f.Smoothness == 0 {
+			panic("invalid noise smoothness")
+		}
+		// We choose the standard deviation so that Amplitude is width at 1% of maximum: 2*sqrt(2*ln(100)).
+		stddev := f.Amplitude / (2 * math.Sqrt(2*math.Log(100)))
+		r := rand.New(rand.NewSource(int64(f.Amplitude * float64(f.Smoothness))))
+		var last float64
+		next := r.NormFloat64() * stddev
+		for i := startTick; i < endTick; i++ {
+			sinceLast := (i - startTick) % f.Smoothness
+			if sinceLast == 0 {
+				last = next
+				next = r.NormFloat64() * stddev
+				s[i] += last
+				continue
+			}
+			alpha := float64(sinceLast) / float64(f.Smoothness)
+			gAlpha := (1 - math.Cos(math.Pi*alpha)) / 2
+			s[i] += (1-gAlpha)*last + gAlpha*next
 		}
 
 	default:

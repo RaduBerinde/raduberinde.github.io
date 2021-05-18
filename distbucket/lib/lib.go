@@ -2,6 +2,7 @@ package lib
 
 import (
 	"fmt"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
@@ -42,10 +43,18 @@ func Process(inputYAML string) Output {
 		return Output{}
 	}
 	cfg := &input.Config
+	if cfg.TargetRefillPeriodSecs != 0 {
+		cfg.TargetRefillPeriod = time.Duration(cfg.TargetRefillPeriodSecs * float64(time.Second))
+	}
 
 	requested := MakePerNodeData(cfg, len(input.Nodes))
 	for i := range requested {
 		requested[i] = DataFromFuncDesc(cfg, input.Nodes[i])
+		for j := range requested[i] {
+			if requested[i][j] < 0 {
+				requested[i][j] = 0
+			}
+		}
 	}
 
 	nodeSeries := make([]Series, len(requested))
@@ -73,10 +82,11 @@ func Process(inputYAML string) Output {
 		}),
 	})
 
-	granted, tokens := DistTokenBucket(cfg, requested)
+	grantedDist, tokensDist := DistTokenBucket(cfg, requested)
+	aggregateDist := grantedDist.Aggregate(cfg)
 	nodeSeries = make([]Series, len(requested))
 	for i := range nodeSeries {
-		g := granted[i]
+		g := grantedDist[i]
 		if cfg.Smoothing {
 			g = g.Smooth(cfg, 0.1)
 		}
@@ -96,22 +106,23 @@ func Process(inputYAML string) Output {
 				Name:  "aggregate",
 				Unit:  "RU/s",
 				Width: 2.5,
-				Data:  granted.Aggregate(cfg),
+				Data:  aggregateDist,
 			},
 			Series{
 				Name:  "global tokens",
 				Unit:  "RU",
 				Width: 0.5,
-				Data:  tokens,
+				Data:  tokensDist,
 			},
 		),
 	})
 
-	granted, tokens = TokenBucket(cfg, requested)
+	grantedIdeal, tokensIdeal := TokenBucket(cfg, requested)
+	aggregateIdeal := grantedIdeal.Aggregate(cfg)
 
 	nodeSeries = make([]Series, len(requested))
 	for i := range nodeSeries {
-		g := granted[i]
+		g := grantedIdeal[i]
 		if cfg.Smoothing {
 			g = g.Smooth(cfg, 0.1)
 		}
@@ -124,23 +135,55 @@ func Process(inputYAML string) Output {
 	}
 
 	out.Charts = append(out.Charts, Chart{
-		Title: "Granted (perfect token bucket)",
+		Title: "Granted (ideal token bucket)",
 		Units: []string{"RU/s", "RU"},
 		Series: append(nodeSeries,
 			Series{
 				Name:  "aggregate",
 				Unit:  "RU/s",
 				Width: 2.5,
-				Data:  granted.Aggregate(cfg),
+				Data:  aggregateIdeal,
 			},
 			Series{
 				Name:  "tokens",
 				Unit:  "RU",
 				Width: 0.5,
-				Data:  tokens,
+				Data:  tokensIdeal,
 			},
 		),
 	})
-	return out
 
+	// Generate total granted graphs.
+	totalDist := ZeroData(cfg)
+	var sum float64
+	for i := range totalDist {
+		sum += aggregateDist[i]
+		totalDist[i] = sum
+	}
+	totalIdeal := ZeroData(cfg)
+	sum = 0
+	for i := range totalIdeal {
+		sum += aggregateIdeal[i]
+		totalIdeal[i] = sum
+	}
+	out.Charts = append(out.Charts, Chart{
+		Title: "Total granted",
+		Units: []string{"RU"},
+		Series: []Series{
+			{
+				Name:  "distributed",
+				Unit:  "RU",
+				Width: 1,
+				Data:  totalDist,
+			},
+			{
+				Name:  "ideal",
+				Unit:  "RU",
+				Width: 1,
+				Data:  totalIdeal,
+			},
+		},
+	})
+
+	return out
 }

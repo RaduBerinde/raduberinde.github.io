@@ -46,17 +46,17 @@
       <div style="width: 300px; float: left; font-size:13px; position: fixed;">
          <p/>
          <div class="width: 100%">
-           <b>Refill rate (RU/s): <span id="rate_per_sec_value">240</span></b>
+           <b>Refill rate (RU/s): <span id="rate_per_sec_value"></span></b>
            <input id="rate_per_sec" type="range" min="1" max="1000" value="240" class="slider">
          </div>
          <p/>
          <div class="width: 100%">
-           <b>Initial Burst (RU): <span id="initial_burst_value">100</span></b>
+           <b>Initial Burst (RU): <span id="initial_burst_value"></span></b>
            <input id="initial_burst" type="range" min="0" max="10000" value="100" class="slider">
          </div>
          <p/>
          <div class="width: 100%">
-           <b>Max Burst (RU): <span id="max_burst_value">100</span></b>
+           <b>Max Burst (RU): <span id="max_burst_value"></span></b>
            <input id="max_burst" type="range" min="10" max="10000" value="10000" class="slider">
          </div>
          <p/>
@@ -75,14 +75,24 @@
          </div>
          <p> - Algorithm knobs - </p>
          <div class="width: 100%">
-           <b>Refill amount (RUs): <span id="refill_amount_value">240</span></b>
-           <input id="refill_amount" type="range" min="1" max="5000" value="1000" class="slider">
+           <b>Target global request period (s): <span id="target_refill_period_secs_value"></span></b>
+           <input id="target_refill_period_secs" type="range" min="1" max="100" value="10" class="slider">
          </div>
+         <div class="width: 100%">
+           <b>Min refill amount (RUs): <span id="min_refill_amount_value"></span></b>
+           <input id="min_refill_amount" type="range" min="10" max="1000" value="100" class="slider">
+         </div>
+         <div class="width: 100%">
+           <b>Max refill amount (RUs): <span id="max_refill_amount_value"></span></b>
+           <input id="max_refill_amount" type="range" min="100" max="10000" value="10000" class="slider">
+         </div>
+         <!--
          <p> - Misc - </p>
          <div class="width: 100%">
            <input type="checkbox" id="smoothing">
            <b>Smoothing</b>
          </div>
+         -->
       </div>
       <div style="margin-left:305px;" id="graphs_div">
       </div>
@@ -95,7 +105,7 @@
 
     <script>
       // sliderKeys are yaml fields and <input> ids.
-      const sliderKeys = ["rate_per_sec", "initial_burst", "max_burst", "refill_amount"];
+      const sliderKeys = ["rate_per_sec", "initial_burst", "max_burst", "target_refill_period_secs", "min_refill_amount", "max_refill_amount"];
 
       var plots = [];
       var widthDeltas = [];
@@ -114,8 +124,8 @@
           var elem = document.getElementById(key);
           inputYAML += "  " + key + ": " + elem.value + "\n";
         })
-        var smoothing = document.getElementById("smoothing");
-        inputYAML += "  smoothing: " + smoothing.checked;
+        //var smoothing = document.getElementById("smoothing");
+        //inputYAML += "  smoothing: " + smoothing.checked;
 
         var output = Process(inputYAML);
 
@@ -219,13 +229,14 @@
       sliderKeys.forEach(function(key) {
         var elem = document.getElementById(key);
         elem.oninput = function() {
-          document.getElementById(key + "_value").innerHTML = this.value
-          makeCharts()
+          document.getElementById(key + "_value").innerHTML = this.value;
+          makeCharts();
         }
+        elem.oninput();
       })
-      document.getElementById("smoothing").onchange = function() {
-        makeCharts();
-      };
+      //document.getElementById("smoothing").onchange = function() {
+      //  makeCharts();
+      //};
       document.getElementById("workload_yaml").oninput = function() {
         makeCharts();
       };

@@ -1,5 +1,7 @@
 package lib
 
+import "math"
+
 type globalBucket struct {
 	currTokens   float64
 	lastDeadline int
@@ -43,15 +45,21 @@ func (gb *globalBucket) request(cfg *Config, now int, amount float64) (deadlineT
 }
 
 type localBucket struct {
-	requested       Data
-	requestedTick   int
-	granted         Data
-	currTokens      float64
-	currRatePerTick float64
-	deadlineTick    int
+	requested              Data
+	requestedTick          int
+	granted                Data
+	currTokens             float64
+	currRatePerTick        float64
+	deadlineTick           int
+	lastRefillAmount       float64
+	lastRefillTick         int
+	grantedSinceLastRefill float64
 }
 
 func (l *localBucket) distribute(now int, amount float64, deadlineTick int) {
+	l.grantedSinceLastRefill = 0
+	l.lastRefillTick = now
+	l.lastRefillAmount = amount
 	if deadlineTick < now {
 		panic("deadlineTick < now")
 	}
@@ -73,23 +81,38 @@ func (l *localBucket) distribute(now int, amount float64, deadlineTick int) {
 }
 
 func (l *localBucket) maintain(cfg *Config, gb *globalBucket, now int) {
-	if l.currTokens > cfg.RefillAmount*cfg.RefillFraction {
+	if l.currTokens > l.lastRefillAmount*cfg.RefillFraction {
 		return
 	}
-	if float64(l.deadlineTick-now)*cfg.Tick.Seconds() < cfg.PreRequestTime.Seconds() {
-		deadlineTick := gb.request(cfg, now, cfg.RefillAmount)
-		// TODO(radu): simulate a delay.
-		l.distribute(now, cfg.RefillAmount, deadlineTick)
+	if float64(l.deadlineTick-now)*cfg.Tick.Seconds() > cfg.PreRequestTime.Seconds() {
+		return
 	}
+	// Calculate refill amount.
+	var amount float64
+	if l.lastRefillAmount == 0 {
+		// Initial request.
+		amount = 1000
+	} else {
+		timeSinceRefill := cfg.TimeForTick(now) - cfg.TimeForTick(l.lastRefillTick)
+		amount = l.grantedSinceLastRefill / float64(timeSinceRefill) * float64(cfg.TargetRefillPeriod)
+		amount = math.Max(amount, cfg.MinRefillAmount)
+		amount = math.Min(amount, cfg.MaxRefillAmount)
+	}
+
+	deadlineTick := gb.request(cfg, now, amount)
+	// TODO(radu): simulate RTT.
+	l.distribute(now, amount, deadlineTick)
 }
 
 func (l *localBucket) request(cfg *Config, now int, amount float64) float64 {
 	if l.currTokens > amount {
 		l.currTokens -= amount
+		l.grantedSinceLastRefill += amount
 		return amount
 	}
 	available := l.currTokens
 	l.currTokens = 0
+	l.grantedSinceLastRefill += available
 	return available
 }
 

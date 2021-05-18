@@ -22,9 +22,12 @@ type Config struct {
 	MaxBurst     float64 `yaml:"max_burst"`
 
 	// Algorithm knobs.
-	RefillAmount   float64       `yaml:"refill_amount"`
-	RefillFraction float64       `yaml:"refill_fraction"`
-	PreRequestTime time.Duration `yaml:"pre_request_time"`
+	TargetRefillPeriod     time.Duration `yaml:"-"`
+	TargetRefillPeriodSecs float64       `yaml:"target_refill_period_secs"`
+	MinRefillAmount        float64       `yaml:"min_refill_amount"`
+	MaxRefillAmount        float64       `yaml:"max_refill_amount"`
+	RefillFraction         float64       `yaml:"refill_fraction"`
+	PreRequestTime         time.Duration `yaml:"pre_request_time"`
 
 	// Misc settings.
 	Smoothing bool
@@ -58,7 +61,9 @@ var DefaultConfig = Config{
 	InitialBurst: 100,
 	MaxBurst:     100,
 
-	RefillAmount:   1000,
-	RefillFraction: 0.1,
-	PreRequestTime: 5 * time.Second,
+	TargetRefillPeriod: 10 * time.Second,
+	MinRefillAmount:    100,
+	MaxRefillAmount:    10000,
+	RefillFraction:     0.1,
+	PreRequestTime:     1 * time.Second,
 }

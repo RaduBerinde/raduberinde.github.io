@@ -1,7 +1,7 @@
-all: distbucketjs workloads
+all: workloads/workloads.js distbucketjs
 
 distbucketjs: $(wildcard lib/*)
 	gopherjs build
 
-workloads: $(wildcard workloads/*)
+workloads/workloads.js: $(wildcard workloads/*.yaml)
 	workloads/gen.sh
