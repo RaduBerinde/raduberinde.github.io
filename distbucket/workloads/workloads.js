@@ -2,15 +2,15 @@ var workloads = {
   noisy: `nodes:
   - terms:
     - type: constant
-      value: 100
+      value: 200
     
     - type: noise
-      amplitude: 10
-      smoothness: 50
+      amplitude: 100
+      smoothness: 100
 
   - terms:
     - type: constant
-      value: 30
+      value: 80
 
     - type: noise
       amplitude: 40
@@ -18,11 +18,11 @@ var workloads = {
 
   - terms:
     - type: sine
-      amplitude: 40
+      amplitude: 120
       period: 100
 
     - type: noise
-      amplitude: 20
+      amplitude: 40
       smoothness: 30
 `,
   test: `nodes:

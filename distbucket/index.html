@@ -185,9 +185,10 @@
             ],
           };
           for (let i = 0; i < chart.Units.length; i++) {
+            const unit = chart.Units[i].Name;
             let axis = {
-              scale: chart.Units[i],
-              label: chart.Units[i],
+              scale: unit,
+              label: unit,
               values: (u, vals, space) => vals.map(v => v.toFixed(1)),
             };
             if (i == 1) {
@@ -195,6 +196,13 @@
               axis.grid = {show: false};
             }
             opts.axes.push(axis);
+            console.log(unit, chart.Units[i].FixedRange)
+            if (chart.Units[i].FixedRange && chart.Units[i].FixedRange.length == 2) {
+              opts.scales[unit] = {
+                auto: false,
+                range: [ chart.Units[i].FixedRange[0], chart.Units[i].FixedRange[1] ],
+              }
+            }
           }
           var graphsDiv = document.getElementById("graphs_div")
           plots.push(new uPlot(opts, data, graphsDiv));

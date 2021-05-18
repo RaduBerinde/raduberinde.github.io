@@ -2,6 +2,7 @@ package lib
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -22,8 +23,13 @@ type Output struct {
 
 type Chart struct {
 	Title  string
-	Units  []string
+	Units  []Unit
 	Series []Series
+}
+
+type Unit struct {
+	Name       string
+	FixedRange []float64
 }
 
 type Series struct {
@@ -56,6 +62,24 @@ func Process(inputYAML string) Output {
 			}
 		}
 	}
+	aggregateRequested := requested.Aggregate(cfg)
+
+	grantedDist, tokensDist := DistTokenBucket(cfg, requested)
+	aggregateDist := grantedDist.Aggregate(cfg)
+
+	grantedIdeal, tokensIdeal := TokenBucket(cfg, requested)
+	aggregateIdeal := grantedIdeal.Aggregate(cfg)
+
+	var max float64
+	for _, v := range aggregateRequested {
+		max = math.Max(max, v)
+	}
+	for _, v := range aggregateDist {
+		max = math.Max(max, v)
+	}
+	for _, v := range aggregateIdeal {
+		max = math.Max(max, v)
+	}
 
 	nodeSeries := make([]Series, len(requested))
 	for i := range nodeSeries {
@@ -73,17 +97,20 @@ func Process(inputYAML string) Output {
 
 	out.Charts = append(out.Charts, Chart{
 		Title: "Requested",
-		Units: []string{"RU/s"},
+		Units: []Unit{
+			{
+				Name:       "RU/s",
+				FixedRange: []float64{0, max},
+			},
+		},
 		Series: append(nodeSeries, Series{
 			Name:  "aggregate",
 			Unit:  "RU/s",
 			Width: 2,
-			Data:  requested.Aggregate(cfg),
+			Data:  aggregateRequested,
 		}),
 	})
 
-	grantedDist, tokensDist := DistTokenBucket(cfg, requested)
-	aggregateDist := grantedDist.Aggregate(cfg)
 	nodeSeries = make([]Series, len(requested))
 	for i := range nodeSeries {
 		g := grantedDist[i]
@@ -100,7 +127,15 @@ func Process(inputYAML string) Output {
 
 	out.Charts = append(out.Charts, Chart{
 		Title: "Granted (distributed token bucket)",
-		Units: []string{"RU/s", "RU"},
+		Units: []Unit{
+			{
+				Name:       "RU/s",
+				FixedRange: []float64{0, max},
+			},
+			{
+				Name: "RU",
+			},
+		},
 		Series: append(nodeSeries,
 			Series{
 				Name:  "aggregate",
@@ -116,9 +151,6 @@ func Process(inputYAML string) Output {
 			},
 		),
 	})
-
-	grantedIdeal, tokensIdeal := TokenBucket(cfg, requested)
-	aggregateIdeal := grantedIdeal.Aggregate(cfg)
 
 	nodeSeries = make([]Series, len(requested))
 	for i := range nodeSeries {
@@ -136,7 +168,15 @@ func Process(inputYAML string) Output {
 
 	out.Charts = append(out.Charts, Chart{
 		Title: "Granted (ideal token bucket)",
-		Units: []string{"RU/s", "RU"},
+		Units: []Unit{
+			{
+				Name:       "RU/s",
+				FixedRange: []float64{0, max},
+			},
+			{
+				Name: "RU",
+			},
+		},
 		Series: append(nodeSeries,
 			Series{
 				Name:  "aggregate",
@@ -167,8 +207,12 @@ func Process(inputYAML string) Output {
 		totalIdeal[i] = sum
 	}
 	out.Charts = append(out.Charts, Chart{
-		Title: "Total granted",
-		Units: []string{"RU"},
+		Title: "Total granted (vs ideal)",
+		Units: []Unit{
+			{
+				Name: "RU",
+			},
+		},
 		Series: []Series{
 			{
 				Name:  "distributed",
