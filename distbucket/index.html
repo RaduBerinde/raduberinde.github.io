@@ -57,7 +57,7 @@
          <p/>
          <div class="width: 100%">
            <b>Max Burst (RU): <span id="max_burst_value"></span></b>
-           <input id="max_burst" type="range" min="10" max="10000" value="10000" class="slider">
+           <input id="max_burst" type="range" min="1000" max="100000" value="10000" class="slider">
          </div>
          <p/>
          <div class="width: 100%">
@@ -84,7 +84,7 @@
          </div>
          <div class="width: 100%">
            <b>Max refill amount (RUs): <span id="max_refill_amount_value"></span></b>
-           <input id="max_refill_amount" type="range" min="100" max="10000" value="10000" class="slider">
+           <input id="max_refill_amount" type="range" min="100" max="100000" value="10000" class="slider">
          </div>
          <!--
          <p> - Misc - </p>
@@ -196,7 +196,6 @@
               axis.grid = {show: false};
             }
             opts.axes.push(axis);
-            console.log(unit, chart.Units[i].FixedRange)
             if (chart.Units[i].FixedRange && chart.Units[i].FixedRange.length == 2) {
               opts.scales[unit] = {
                 auto: false,

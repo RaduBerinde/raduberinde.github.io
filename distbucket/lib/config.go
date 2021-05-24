@@ -54,7 +54,7 @@ func (c Config) TimeAxis() []float64 {
 }
 
 var DefaultConfig = Config{
-	Timeframe: 300 * time.Second,
+	Timeframe: 900 * time.Second,
 	Tick:      100 * time.Millisecond,
 
 	RatePerSec:   240,

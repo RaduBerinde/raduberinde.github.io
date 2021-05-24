@@ -64,7 +64,7 @@ func Process(inputYAML string) Output {
 	}
 	aggregateRequested := requested.Aggregate(cfg)
 
-	grantedDist, tokensDist := DistTokenBucket(cfg, requested)
+	grantedDist, tokensDist := DistTokenBucket2(cfg, requested)
 	aggregateDist := grantedDist.Aggregate(cfg)
 
 	grantedIdeal, tokensIdeal := TokenBucket(cfg, requested)

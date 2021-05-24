@@ -1,4 +1,30 @@
 var workloads = {
+  a: `nodes:
+  - terms:
+    - type: constant
+      value: 200
+    
+    - type: noise
+      amplitude: 100
+      smoothness: 100
+
+    - type: constant
+      value: -500
+      start: 300
+
+  - terms:
+    - type: constant
+      value: 80
+
+    - type: noise
+      amplitude: 40
+      smoothness: 10
+
+  - terms:
+    - type: constant
+      value: 400
+      start: 50
+`,
   noisy: `nodes:
   - terms:
     - type: constant

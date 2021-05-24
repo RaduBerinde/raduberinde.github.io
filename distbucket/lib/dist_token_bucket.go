@@ -1,5 +1,7 @@
 package lib
 
+/*
+
 import "math"
 
 type globalBucket struct {
@@ -95,6 +97,21 @@ func (l *localBucket) maintain(cfg *Config, gb *globalBucket, now int) {
 	} else {
 		timeSinceRefill := cfg.TimeForTick(now) - cfg.TimeForTick(l.lastRefillTick)
 		amount = l.grantedSinceLastRefill / float64(timeSinceRefill) * float64(cfg.TargetRefillPeriod)
+
+		//// Estimate TargetRefillPeriod more seconds of requests.
+		//lastTick := now - cfg.TickForTime(cfg.TargetRefillPeriod)
+		//if lastTick < 0 {
+		//	lastTick = 0
+		//}
+		//for i := lastTick; i < now; i++ {
+		//	amount += l.requested[i]
+		//}
+
+		// Add the queued work that has not been granted yet.
+		for i := l.requestedTick; i <= now; i++ {
+			amount += l.requested[i]
+		}
+
 		amount = math.Max(amount, cfg.MinRefillAmount)
 		amount = math.Min(amount, cfg.MaxRefillAmount)
 	}
@@ -179,3 +196,4 @@ func DistTokenBucket(cfg *Config, requested PerNodeData) (granted PerNodeData, g
 	}
 	return granted, globalTokens
 }
+*/
