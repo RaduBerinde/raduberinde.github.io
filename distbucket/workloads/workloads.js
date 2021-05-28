@@ -24,6 +24,17 @@ var workloads = {
     - type: constant
       value: 400
       start: 50
+    - type: constant
+      value: -400
+      start: 600
+`,
+  b: `nodes:
+  - terms:
+    - type: constant
+      value: 200
+  - terms:
+    - type: constant
+      value: 200
 `,
   noisy: `nodes:
   - terms:

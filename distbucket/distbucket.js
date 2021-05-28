@@ -5004,7 +5004,7 @@ $packages["math/bits"] = (function() {
 	return $pkg;
 })();
 $packages["math"] = (function() {
-	var $pkg = {}, $init, js, bits, arrayType, arrayType$1, arrayType$2, structType, math, _zero, posInf, negInf, nan, buf, Cos, Exp, Inf, IsInf, IsNaN, Log, Max, NaN, Pow, Signbit, Sin, Sqrt, init, Float32bits, Float32frombits, Float64bits, Float64frombits, max;
+	var $pkg = {}, $init, js, bits, arrayType, arrayType$1, arrayType$2, structType, math, _zero, posInf, negInf, nan, buf, Cos, Exp, Inf, IsInf, IsNaN, Log, Max, Min, NaN, Pow, Signbit, Sin, Sqrt, init, Float32bits, Float32frombits, Float64bits, Float64frombits, max, min;
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	bits = $packages["math/bits"];
 	arrayType = $arrayType($Uint32, 2);
@@ -5061,6 +5061,11 @@ $packages["math"] = (function() {
 		return max(x, y);
 	};
 	$pkg.Max = Max;
+	Min = function(x, y) {
+		var x, y;
+		return min(x, y);
+	};
+	$pkg.Min = Min;
 	NaN = function() {
 		return nan;
 	};
@@ -5133,6 +5138,23 @@ $packages["math"] = (function() {
 			return x;
 		}
 		if (x > y) {
+			return x;
+		}
+		return y;
+	};
+	min = function(x, y) {
+		var x, y;
+		if (IsInf(x, -1) || IsInf(y, -1)) {
+			return Inf(-1);
+		} else if (IsNaN(x) || IsNaN(y)) {
+			return NaN();
+		} else if ((x === 0) && (x === y)) {
+			if (Signbit(x)) {
+				return x;
+			}
+			return y;
+		}
+		if (x < y) {
 			return x;
 		}
 		return y;
@@ -41051,13 +41073,13 @@ $packages["math/rand"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (function() {
-	var $pkg = {}, $init, fmt, yaml, math, rand, time, Config, Data, FuncDesc, FuncTerm, PerNodeData, globalBucket, localBucket, Input, Output, Chart, Unit, Series, sliceType, sliceType$1, sliceType$2, sliceType$3, sliceType$4, sliceType$5, sliceType$6, sliceType$7, sliceType$8, sliceType$9, ptrType, sliceType$10, ptrType$1, ptrType$2, ptrType$3, ZeroData, DataSum, DataFromFuncDesc, MakePerNodeData, DistTokenBucket2, Process, TokenBucket;
+	var $pkg = {}, $init, fmt, yaml, math, rand, time, Config, Data, FuncDesc, FuncTerm, PerNodeData, globalBucket, localBucket, Input, Output, Chart, Unit, Series, sliceType, sliceType$1, sliceType$2, sliceType$3, sliceType$4, sliceType$5, sliceType$6, sliceType$7, sliceType$8, sliceType$9, ptrType, sliceType$10, ptrType$1, ptrType$2, ptrType$3, ZeroData, DataSum, DataFromFuncDesc, MakePerNodeData, DistTokenBucket3, Process, TokenBucket;
 	fmt = $packages["fmt"];
 	yaml = $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/vendor/gopkg.in/yaml.v2"];
 	math = $packages["math"];
 	rand = $packages["math/rand"];
 	time = $packages["time"];
-	Config = $pkg.Config = $newType(0, $kindStruct, "lib.Config", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Timeframe_, Tick_, RatePerSec_, InitialBurst_, MaxBurst_, TargetRefillPeriod_, TargetRefillPeriodSecs_, MinRefillAmount_, MaxRefillAmount_, RefillFraction_, PreRequestTime_, Smoothing_) {
+	Config = $pkg.Config = $newType(0, $kindStruct, "lib.Config", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Timeframe_, Tick_, RatePerSec_, InitialBurst_, MaxBurst_, TargetRefillPeriod_, TargetRefillPeriodSecs_, MinRefillAmount_, MaxRefillAmount_, RefillFraction_, PreRequestTime_, EWMAFactor_, QueuedTimeScale_, QueuedTimeScaleSecs_, Smoothing_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Timeframe = new time.Duration(0, 0);
@@ -41071,6 +41093,9 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			this.MaxRefillAmount = 0;
 			this.RefillFraction = 0;
 			this.PreRequestTime = new time.Duration(0, 0);
+			this.EWMAFactor = 0;
+			this.QueuedTimeScale = new time.Duration(0, 0);
+			this.QueuedTimeScaleSecs = 0;
 			this.Smoothing = false;
 			return;
 		}
@@ -41085,6 +41110,9 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		this.MaxRefillAmount = MaxRefillAmount_;
 		this.RefillFraction = RefillFraction_;
 		this.PreRequestTime = PreRequestTime_;
+		this.EWMAFactor = EWMAFactor_;
+		this.QueuedTimeScale = QueuedTimeScale_;
+		this.QueuedTimeScaleSecs = QueuedTimeScaleSecs_;
 		this.Smoothing = Smoothing_;
 	});
 	Data = $pkg.Data = $newType(12, $kindSlice, "lib.Data", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, null);
@@ -41129,7 +41157,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		this.currTokens = currTokens_;
 		this.sharesSum = sharesSum_;
 	});
-	localBucket = $pkg.localBucket = $newType(0, $kindStruct, "lib.localBucket", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", false, function(requested_, expTable_, outstanding_, outstandingTick_, granted_, currTokens_, currRatePerTick_, lastShares_, lastUpdateTick_, reqEWMA_, nextUpdateTick_, r_) {
+	localBucket = $pkg.localBucket = $newType(0, $kindStruct, "lib.localBucket", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", false, function(requested_, expTable_, outstanding_, outstandingTick_, granted_, currTokens_, currRatePerTick_, deadlineTick_, lastShares_, lastRefillTick_, lastRefillAmount_, reqEWMA_, nextUpdateTick_, r_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.requested = Data.nil;
@@ -41139,8 +41167,10 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			this.granted = Data.nil;
 			this.currTokens = 0;
 			this.currRatePerTick = 0;
+			this.deadlineTick = 0;
 			this.lastShares = 0;
-			this.lastUpdateTick = 0;
+			this.lastRefillTick = 0;
+			this.lastRefillAmount = 0;
 			this.reqEWMA = 0;
 			this.nextUpdateTick = 0;
 			this.r = ptrType$2.nil;
@@ -41153,8 +41183,10 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		this.granted = granted_;
 		this.currTokens = currTokens_;
 		this.currRatePerTick = currRatePerTick_;
+		this.deadlineTick = deadlineTick_;
 		this.lastShares = lastShares_;
-		this.lastUpdateTick = lastUpdateTick_;
+		this.lastRefillTick = lastRefillTick_;
+		this.lastRefillAmount = lastRefillAmount_;
 		this.reqEWMA = reqEWMA_;
 		this.nextUpdateTick = nextUpdateTick_;
 		this.r = r_;
@@ -41162,7 +41194,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	Input = $pkg.Input = $newType(0, $kindStruct, "lib.Input", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Config_, Nodes_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Config = new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, new time.Duration(0, 0), 0, 0, 0, 0, new time.Duration(0, 0), false);
+			this.Config = new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, new time.Duration(0, 0), 0, 0, 0, 0, new time.Duration(0, 0), 0, new time.Duration(0, 0), 0, false);
 			this.Nodes = sliceType$4.nil;
 			return;
 		}
@@ -41528,24 +41560,60 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		}
 	};
 	globalBucket.prototype.tick = function(cfg, now) { return this.$val.tick(cfg, now); };
-	globalBucket.ptr.prototype.updateRate = function(cfg, prevShares, shares, refilledTokens, currTokens) {
-		var _tmp, _tmp$1, allowedRate, availableRate, cfg, currTokens, gb, prevShares, refilledTokens, shares, tokens;
-		allowedRate = 0;
-		tokens = 0;
+	globalBucket.ptr.prototype.request = function(cfg, now, prevShares, shares, tokens) {
+		var _tmp, _tmp$1, _tmp$2, _tmp$3, allowedRate, allowedRatePerTick, availableRate, cfg, deadlineTick, debt, debtRate, gb, grantedTokens, maxTicks, now, prevShares, shares, ticks, tokens;
+		grantedTokens = 0;
+		deadlineTick = 0;
 		gb = this;
-		gb.currTokens = gb.currTokens - (refilledTokens);
-		gb.currTokens = gb.currTokens + (currTokens);
+		if (tokens < 0) {
+			$panic(new $String("requested negative tokens"));
+		}
 		gb.sharesSum = gb.sharesSum - prevShares + shares;
+		if (gb.currTokens >= tokens) {
+			gb.currTokens = gb.currTokens - (tokens);
+			_tmp = tokens;
+			_tmp$1 = now;
+			grantedTokens = _tmp;
+			deadlineTick = _tmp$1;
+			return [grantedTokens, deadlineTick];
+		}
+		if (gb.currTokens > 0) {
+			grantedTokens = gb.currTokens;
+			tokens = tokens - (gb.currTokens);
+		}
 		availableRate = cfg.RatePerSec;
+		if (gb.currTokens < 0) {
+			debt = -gb.currTokens;
+			debt = debt - (cfg.TargetRefillPeriod.Seconds() * cfg.RatePerSec);
+			if (debt > 0) {
+				debtRate = debt / cfg.TargetRefillPeriod.Seconds();
+				availableRate = availableRate - (debtRate);
+				availableRate = math.Max(availableRate, 0.01 * cfg.RatePerSec);
+			}
+		}
 		allowedRate = availableRate * shares / gb.sharesSum;
-		tokens = 0;
-		_tmp = allowedRate;
-		_tmp$1 = tokens;
-		allowedRate = _tmp;
-		tokens = _tmp$1;
-		return [allowedRate, tokens];
+		allowedRate = math.Max(allowedRate, 0.001);
+		allowedRatePerTick = allowedRate * cfg.Tick.Seconds();
+		ticks = ((tokens / allowedRatePerTick + 0.5 >> 0));
+		maxTicks = $clone(cfg, Config).TickForTime(cfg.TargetRefillPeriod);
+		if (ticks < 0) {
+			$panic(new $String("FOO"));
+		}
+		if (ticks <= maxTicks) {
+			grantedTokens = grantedTokens + (tokens);
+			deadlineTick = now + ticks >> 0;
+		} else {
+			grantedTokens = grantedTokens + (allowedRatePerTick * (maxTicks));
+			deadlineTick = now + maxTicks >> 0;
+		}
+		gb.currTokens = gb.currTokens - (grantedTokens);
+		_tmp$2 = grantedTokens;
+		_tmp$3 = deadlineTick;
+		grantedTokens = _tmp$2;
+		deadlineTick = _tmp$3;
+		return [grantedTokens, deadlineTick];
 	};
-	globalBucket.prototype.updateRate = function(cfg, prevShares, shares, refilledTokens, currTokens) { return this.$val.updateRate(cfg, prevShares, shares, refilledTokens, currTokens); };
+	globalBucket.prototype.request = function(cfg, now, prevShares, shares, tokens) { return this.$val.request(cfg, now, prevShares, shares, tokens); };
 	localBucket.ptr.prototype.init = function(cfg, requested, nodeIdx) {
 		var _i, _ref, cfg, i, l, nodeIdx, requested, x;
 		l = this;
@@ -41558,57 +41626,73 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		while (true) {
 			if (!(_i < _ref.$length)) { break; }
 			i = _i;
-			(x = l.expTable, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i] = math.Exp($clone(cfg, Config).TimeForTick(i).Seconds() / cfg.TargetRefillPeriod.Seconds())));
+			(x = l.expTable, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i] = math.Exp(($flatten64($clone(cfg, Config).TimeForTick(i))) / ($flatten64(cfg.QueuedTimeScale)))));
 			_i++;
 		}
 		l.r = rand.New(rand.NewSource((new $Int64(0, nodeIdx))));
 	};
 	localBucket.prototype.init = function(cfg, requested, nodeIdx) { return this.$val.init(cfg, requested, nodeIdx); };
-	localBucket.ptr.prototype.maintain = function(cfg, gb, now) {
-		var _r, _tuple, alpha, cfg, currRate, gb, i, i$1, l, newTokens, now, queued, randDeviation, shares, sum, ticksSinceUpdate, x, x$1, x$2, x$3, x$4, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; alpha = $f.alpha; cfg = $f.cfg; currRate = $f.currRate; gb = $f.gb; i = $f.i; i$1 = $f.i$1; l = $f.l; newTokens = $f.newTokens; now = $f.now; queued = $f.queued; randDeviation = $f.randDeviation; shares = $f.shares; sum = $f.sum; ticksSinceUpdate = $f.ticksSinceUpdate; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	localBucket.ptr.prototype.distribute = function(now, amount, deadlineTick) {
+		var amount, deadlineTick, l, now;
 		l = this;
-		alpha = math.Pow(0.5, cfg.Tick.Seconds());
-		l.reqEWMA = l.reqEWMA * alpha + (x = l.requested, ((now < 0 || now >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + now])) * (1 - alpha);
-		ticksSinceUpdate = now - l.lastUpdateTick >> 0;
-		if (now === 0) {
-			ticksSinceUpdate = 1;
+		l.lastRefillTick = now;
+		l.lastRefillAmount = amount;
+		if (deadlineTick < now) {
+			$panic(new $String("deadlineTick < now"));
 		}
-		/* */ if (now >= l.nextUpdateTick) { $s = 1; continue; }
-		/* */ $s = 2; continue;
-		/* if (now >= l.nextUpdateTick) { */ case 1:
-			sum = 0;
-			i = (now - ticksSinceUpdate >> 0) + 1 >> 0;
+		if (deadlineTick <= now) {
+			l.deadlineTick = now;
+			l.currTokens = l.currTokens + (amount);
+			l.currRatePerTick = 0;
+			return;
+		}
+		if (l.deadlineTick > now) {
+			amount = amount + (((l.deadlineTick - now >> 0)) * l.currRatePerTick);
+		}
+		l.deadlineTick = deadlineTick;
+		l.currRatePerTick = amount / ((deadlineTick - now >> 0));
+	};
+	localBucket.prototype.distribute = function(now, amount, deadlineTick) { return this.$val.distribute(now, amount, deadlineTick); };
+	localBucket.ptr.prototype.maintain = function(cfg, gb, now) {
+		var _tuple, alpha, amount, cfg, deadlineTick, gb, granted, i, i$1, l, now, queued, shares, x, x$1, x$2, x$3, x$4;
+		l = this;
+		if (l.currTokens > l.lastRefillAmount * cfg.RefillFraction) {
+			return;
+		}
+		if (((l.deadlineTick - now >> 0)) * cfg.Tick.Seconds() > cfg.PreRequestTime.Seconds()) {
+			return;
+		}
+		alpha = math.Pow(cfg.EWMAFactor, cfg.Tick.Seconds());
+		l.reqEWMA = l.reqEWMA * alpha + (x = l.requested, ((now < 0 || now >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + now])) * (1 - alpha);
+		amount = 0;
+		if (l.lastRefillAmount === 0) {
+			amount = 1000;
+		} else {
+			amount = l.reqEWMA * (cfg.TargetRefillPeriod.Seconds() / cfg.Tick.Seconds());
+			i = l.outstandingTick;
 			while (true) {
 				if (!(i <= now)) { break; }
-				sum = sum + ((x$1 = l.requested, ((i < 0 || i >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + i])));
+				amount = amount + ((x$1 = l.outstanding, ((i < 0 || i >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + i])));
 				i = i + (1) >> 0;
 			}
-			shares = sum / $clone(cfg, Config).TimeForTick(ticksSinceUpdate).Seconds();
-			shares = l.reqEWMA;
-			queued = 0;
-			i$1 = l.outstandingTick;
-			while (true) {
-				if (!(i$1 <= now)) { break; }
-				queued = queued + ((x$2 = l.outstanding, ((i$1 < 0 || i$1 >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + i$1])) * (x$3 = l.expTable, x$4 = now - i$1 >> 0, ((x$4 < 0 || x$4 >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + x$4])));
-				i$1 = i$1 + (1) >> 0;
-			}
-			shares = shares + (queued);
-			shares = shares + (0.1);
-			_tuple = gb.updateRate(cfg, l.lastShares, shares, l.currRatePerTick * ((now - l.lastUpdateTick >> 0)), l.currTokens);
-			currRate = _tuple[0];
-			newTokens = _tuple[1];
-			l.currTokens = newTokens;
-			l.lastShares = shares;
-			l.lastUpdateTick = now;
-			l.currRatePerTick = currRate * cfg.Tick.Seconds();
-			_r = l.r.NormFloat64(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-			randDeviation = _r * 0.2;
-			randDeviation = math.Max(randDeviation, -0.5);
-			l.nextUpdateTick = now + ((($clone(cfg, Config).TickForTime(cfg.TargetRefillPeriod)) * (1 + randDeviation) >> 0)) >> 0;
-		/* } */ case 2:
-		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: localBucket.ptr.prototype.maintain }; } $f._r = _r; $f._tuple = _tuple; $f.alpha = alpha; $f.cfg = cfg; $f.currRate = currRate; $f.gb = gb; $f.i = i; $f.i$1 = i$1; $f.l = l; $f.newTokens = newTokens; $f.now = now; $f.queued = queued; $f.randDeviation = randDeviation; $f.shares = shares; $f.sum = sum; $f.ticksSinceUpdate = ticksSinceUpdate; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.$s = $s; $f.$r = $r; return $f;
+			amount = math.Max(amount, cfg.MinRefillAmount);
+			amount = math.Min(amount, cfg.MaxRefillAmount);
+		}
+		shares = 1e-10;
+		shares = shares + (l.reqEWMA);
+		queued = 0;
+		i$1 = l.outstandingTick;
+		while (true) {
+			if (!(i$1 <= now)) { break; }
+			queued = queued + ((x$2 = l.outstanding, ((i$1 < 0 || i$1 >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + i$1])) * (x$3 = l.expTable, x$4 = now - i$1 >> 0, ((x$4 < 0 || x$4 >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + x$4])));
+			i$1 = i$1 + (1) >> 0;
+		}
+		shares = shares + (queued * 0.01);
+		_tuple = gb.request(cfg, now, l.lastShares, shares, amount);
+		granted = _tuple[0];
+		deadlineTick = _tuple[1];
+		l.lastShares = shares;
+		l.distribute(now, granted, deadlineTick);
 	};
 	localBucket.prototype.maintain = function(cfg, gb, now) { return this.$val.maintain(cfg, gb, now); };
 	localBucket.ptr.prototype.request = function(cfg, now, amount) {
@@ -41624,11 +41708,12 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	};
 	localBucket.prototype.request = function(cfg, now, amount) { return this.$val.request(cfg, now, amount); };
 	localBucket.ptr.prototype.tick = function(cfg, gb, now) {
-		var amount, cfg, gb, granted, l, now, x, x$1, x$2, x$3, x$4, x$5, x$6, x$7, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; amount = $f.amount; cfg = $f.cfg; gb = $f.gb; granted = $f.granted; l = $f.l; now = $f.now; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var amount, cfg, gb, granted, l, now, x, x$1, x$2, x$3, x$4, x$5, x$6, x$7;
 		l = this;
-		$r = l.maintain(cfg, gb, now); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		l.currTokens = l.currTokens + (l.currRatePerTick);
+		l.maintain(cfg, gb, now);
+		if (l.deadlineTick >= now) {
+			l.currTokens = l.currTokens + (l.currRatePerTick);
+		}
 		while (true) {
 			if (!(l.outstandingTick <= now)) { break; }
 			amount = (x = l.outstanding, x$1 = l.outstandingTick, ((x$1 < 0 || x$1 >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + x$1]));
@@ -41640,17 +41725,13 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			(x$3 = l.granted, ((now < 0 || now >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + now] = (x$2 = l.granted, ((now < 0 || now >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + now])) + (granted)));
 			(x$6 = l.outstanding, x$7 = l.outstandingTick, ((x$7 < 0 || x$7 >= x$6.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$6.$array[x$6.$offset + x$7] = (x$4 = l.outstanding, x$5 = l.outstandingTick, ((x$5 < 0 || x$5 >= x$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$4.$array[x$4.$offset + x$5])) - (granted)));
 			if (granted < amount) {
-				$s = -1; return;
+				return;
 			}
 		}
-		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: localBucket.ptr.prototype.tick }; } $f.amount = amount; $f.cfg = cfg; $f.gb = gb; $f.granted = granted; $f.l = l; $f.now = now; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	localBucket.prototype.tick = function(cfg, gb, now) { return this.$val.tick(cfg, gb, now); };
-	DistTokenBucket2 = function(cfg, requested) {
-		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _tmp, _tmp$1, _tmp$2, _tmp$3, cfg, global, globalTokens, granted, i, i$1, i$2, i$3, local, n, now, requested, tickDuration, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _i$5 = $f._i$5; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _ref$5 = $f._ref$5; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; cfg = $f.cfg; global = $f.global; globalTokens = $f.globalTokens; granted = $f.granted; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; local = $f.local; n = $f.n; now = $f.now; requested = $f.requested; tickDuration = $f.tickDuration; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		global = [global];
+	DistTokenBucket3 = function(cfg, requested) {
+		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _tmp, _tmp$1, _tmp$2, _tmp$3, cfg, global, globalTokens, granted, i, i$1, i$2, i$3, local, n, now, requested, tickDuration;
 		granted = PerNodeData.nil;
 		globalTokens = Data.nil;
 		globalTokens = ZeroData(cfg);
@@ -41660,7 +41741,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			_tmp$1 = globalTokens;
 			granted = _tmp;
 			globalTokens = _tmp$1;
-			$s = -1; return [granted, globalTokens];
+			return [granted, globalTokens];
 		}
 		requested = requested.Copy(cfg);
 		tickDuration = cfg.Tick.Seconds();
@@ -41672,8 +41753,8 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			((i < 0 || i >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i]).Scale(tickDuration);
 			_i++;
 		}
-		global[0] = new globalBucket.ptr(0, 0);
-		global[0].init(cfg);
+		global = new globalBucket.ptr(0, 0);
+		global.init(cfg);
 		local = $makeSlice(sliceType$3, requested.$length);
 		_ref$1 = local;
 		_i$1 = 0;
@@ -41685,21 +41766,21 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		}
 		_ref$2 = globalTokens;
 		_i$2 = 0;
-		/* while (true) { */ case 1:
-			/* if (!(_i$2 < _ref$2.$length)) { break; } */ if(!(_i$2 < _ref$2.$length)) { $s = 2; continue; }
+		while (true) {
+			if (!(_i$2 < _ref$2.$length)) { break; }
 			now = _i$2;
-			global[0].tick(cfg, now);
-			((now < 0 || now >= globalTokens.$length) ? ($throwRuntimeError("index out of range"), undefined) : globalTokens.$array[globalTokens.$offset + now] = global[0].currTokens);
+			global.tick(cfg, now);
+			((now < 0 || now >= globalTokens.$length) ? ($throwRuntimeError("index out of range"), undefined) : globalTokens.$array[globalTokens.$offset + now] = global.currTokens);
 			_ref$3 = local;
 			_i$3 = 0;
-			/* while (true) { */ case 3:
-				/* if (!(_i$3 < _ref$3.$length)) { break; } */ if(!(_i$3 < _ref$3.$length)) { $s = 4; continue; }
+			while (true) {
+				if (!(_i$3 < _ref$3.$length)) { break; }
 				n = _i$3;
-				$r = ((n < 0 || n >= local.$length) ? ($throwRuntimeError("index out of range"), undefined) : local.$array[local.$offset + n]).tick(cfg, global[0], now); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+				((n < 0 || n >= local.$length) ? ($throwRuntimeError("index out of range"), undefined) : local.$array[local.$offset + n]).tick(cfg, global, now);
 				_i$3++;
-			/* } */ $s = 3; continue; case 4:
+			}
 			_i$2++;
-		/* } */ $s = 1; continue; case 2:
+		}
 		_ref$4 = granted;
 		_i$4 = 0;
 		while (true) {
@@ -41720,13 +41801,12 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		_tmp$3 = globalTokens;
 		granted = _tmp$2;
 		globalTokens = _tmp$3;
-		$s = -1; return [granted, globalTokens];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: DistTokenBucket2 }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f.cfg = cfg; $f.global = global; $f.globalTokens = globalTokens; $f.granted = granted; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.local = local; $f.n = n; $f.now = now; $f.requested = requested; $f.tickDuration = tickDuration; $f.$s = $s; $f.$r = $r; return $f;
+		return [granted, globalTokens];
 	};
-	$pkg.DistTokenBucket2 = DistTokenBucket2;
+	$pkg.DistTokenBucket3 = DistTokenBucket3;
 	Process = function(inputYAML) {
-		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _i$6, _i$7, _i$8, _i$9, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _ref$6, _ref$7, _ref$8, _ref$9, _tuple, _tuple$1, aggregateDist, aggregateIdeal, aggregateRequested, cfg, err, g, g$1, grantedDist, grantedIdeal, i, i$1, i$2, i$3, i$4, i$5, input, inputYAML, j, max, nodeSeries, out, requested, sum, tokensDist, tokensIdeal, totalDist, totalIdeal, v, v$1, v$2, x, x$1, x$2, x$3, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _i$5 = $f._i$5; _i$6 = $f._i$6; _i$7 = $f._i$7; _i$8 = $f._i$8; _i$9 = $f._i$9; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _ref$5 = $f._ref$5; _ref$6 = $f._ref$6; _ref$7 = $f._ref$7; _ref$8 = $f._ref$8; _ref$9 = $f._ref$9; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; aggregateDist = $f.aggregateDist; aggregateIdeal = $f.aggregateIdeal; aggregateRequested = $f.aggregateRequested; cfg = $f.cfg; err = $f.err; g = $f.g; g$1 = $f.g$1; grantedDist = $f.grantedDist; grantedIdeal = $f.grantedIdeal; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; i$5 = $f.i$5; input = $f.input; inputYAML = $f.inputYAML; j = $f.j; max = $f.max; nodeSeries = $f.nodeSeries; out = $f.out; requested = $f.requested; sum = $f.sum; tokensDist = $f.tokensDist; tokensIdeal = $f.tokensIdeal; totalDist = $f.totalDist; totalIdeal = $f.totalIdeal; v = $f.v; v$1 = $f.v$1; v$2 = $f.v$2; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _i$6, _i$7, _i$8, _i$9, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _ref$6, _ref$7, _ref$8, _ref$9, _tuple, _tuple$1, aggregateDist, aggregateIdeal, aggregateRequested, cfg, err, g, g$1, grantedDist, grantedIdeal, i, i$1, i$2, i$3, i$4, i$5, input, inputYAML, j, max, nodeSeries, out, requested, sum, tokensDist, tokensIdeal, totalDist, totalIdeal, v, v$1, v$2, x, x$1, x$2, x$3, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _i$5 = $f._i$5; _i$6 = $f._i$6; _i$7 = $f._i$7; _i$8 = $f._i$8; _i$9 = $f._i$9; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _ref$5 = $f._ref$5; _ref$6 = $f._ref$6; _ref$7 = $f._ref$7; _ref$8 = $f._ref$8; _ref$9 = $f._ref$9; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; aggregateDist = $f.aggregateDist; aggregateIdeal = $f.aggregateIdeal; aggregateRequested = $f.aggregateRequested; cfg = $f.cfg; err = $f.err; g = $f.g; g$1 = $f.g$1; grantedDist = $f.grantedDist; grantedIdeal = $f.grantedIdeal; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; i$5 = $f.i$5; input = $f.input; inputYAML = $f.inputYAML; j = $f.j; max = $f.max; nodeSeries = $f.nodeSeries; out = $f.out; requested = $f.requested; sum = $f.sum; tokensDist = $f.tokensDist; tokensIdeal = $f.tokensIdeal; totalDist = $f.totalDist; totalIdeal = $f.totalIdeal; v = $f.v; v$1 = $f.v$1; v$2 = $f.v$2; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		input = [input];
 		input[0] = new Input.ptr($clone($pkg.DefaultConfig, Config), sliceType$4.nil);
 		_r = yaml.UnmarshalStrict((new sliceType$5($stringToBytes(inputYAML))), input[0]); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
@@ -41741,6 +41821,9 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		cfg = input[0].Config;
 		if (!((cfg.TargetRefillPeriodSecs === 0))) {
 			cfg.TargetRefillPeriod = (new time.Duration(0, cfg.TargetRefillPeriodSecs * 1e+09));
+		}
+		if (!((cfg.QueuedTimeScaleSecs === 0))) {
+			cfg.QueuedTimeScale = (new time.Duration(0, cfg.QueuedTimeScaleSecs * 1e+09));
 		}
 		requested = MakePerNodeData(cfg, input[0].Nodes.$length);
 		_ref = requested;
@@ -41763,13 +41846,12 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			_i++;
 		/* } */ $s = 5; continue; case 6:
 		aggregateRequested = requested.Aggregate(cfg);
-		_r$3 = DistTokenBucket2(cfg, requested); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-		_tuple = _r$3;
+		_tuple = DistTokenBucket3(cfg, requested);
 		grantedDist = _tuple[0];
 		tokensDist = _tuple[1];
 		aggregateDist = grantedDist.Aggregate(cfg);
-		_r$4 = TokenBucket(cfg, requested); /* */ $s = 9; case 9: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
-		_tuple$1 = _r$4;
+		_r$3 = TokenBucket(cfg, requested); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		_tuple$1 = _r$3;
 		grantedIdeal = _tuple$1[0];
 		tokensIdeal = _tuple$1[1];
 		aggregateIdeal = grantedIdeal.Aggregate(cfg);
@@ -41801,44 +41883,44 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		nodeSeries = $makeSlice(sliceType$7, requested.$length);
 		_ref$5 = nodeSeries;
 		_i$5 = 0;
-		/* while (true) { */ case 10:
-			/* if (!(_i$5 < _ref$5.$length)) { break; } */ if(!(_i$5 < _ref$5.$length)) { $s = 11; continue; }
+		/* while (true) { */ case 9:
+			/* if (!(_i$5 < _ref$5.$length)) { break; } */ if(!(_i$5 < _ref$5.$length)) { $s = 10; continue; }
 			i$1 = _i$5;
-			_r$5 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$1 + 1 >> 0))])); /* */ $s = 12; case 12: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
-			Series.copy(((i$1 < 0 || i$1 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$1]), new Series.ptr(_r$5, "RU/s", 1, (x$3 = ((i$1 < 0 || i$1 >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i$1]), $subslice(new sliceType(x$3.$array), x$3.$offset, x$3.$offset + x$3.$length))));
+			_r$4 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$1 + 1 >> 0))])); /* */ $s = 11; case 11: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+			Series.copy(((i$1 < 0 || i$1 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$1]), new Series.ptr(_r$4, "RU/s", 1, (x$3 = ((i$1 < 0 || i$1 >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i$1]), $subslice(new sliceType(x$3.$array), x$3.$offset, x$3.$offset + x$3.$length))));
 			_i$5++;
-		/* } */ $s = 10; continue; case 11:
+		/* } */ $s = 9; continue; case 10:
 		out = new Output.ptr($clone(cfg, Config).TimeAxis(), sliceType$6.nil);
 		out.Charts = $append(out.Charts, new Chart.ptr("Requested", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, max]))]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2, $subslice(new sliceType(aggregateRequested.$array), aggregateRequested.$offset, aggregateRequested.$offset + aggregateRequested.$length)))));
 		nodeSeries = $makeSlice(sliceType$7, requested.$length);
 		_ref$6 = nodeSeries;
 		_i$6 = 0;
-		/* while (true) { */ case 13:
-			/* if (!(_i$6 < _ref$6.$length)) { break; } */ if(!(_i$6 < _ref$6.$length)) { $s = 14; continue; }
+		/* while (true) { */ case 12:
+			/* if (!(_i$6 < _ref$6.$length)) { break; } */ if(!(_i$6 < _ref$6.$length)) { $s = 13; continue; }
 			i$2 = _i$6;
 			g = ((i$2 < 0 || i$2 >= grantedDist.$length) ? ($throwRuntimeError("index out of range"), undefined) : grantedDist.$array[grantedDist.$offset + i$2]);
 			if (cfg.Smoothing) {
 				g = g.Smooth(cfg, 0.1);
 			}
-			_r$6 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$2 + 1 >> 0))])); /* */ $s = 15; case 15: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
-			Series.copy(((i$2 < 0 || i$2 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$2]), new Series.ptr(_r$6, "RU/s", 1, $subslice(new sliceType(g.$array), g.$offset, g.$offset + g.$length)));
+			_r$5 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$2 + 1 >> 0))])); /* */ $s = 14; case 14: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+			Series.copy(((i$2 < 0 || i$2 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$2]), new Series.ptr(_r$5, "RU/s", 1, $subslice(new sliceType(g.$array), g.$offset, g.$offset + g.$length)));
 			_i$6++;
-		/* } */ $s = 13; continue; case 14:
+		/* } */ $s = 12; continue; case 13:
 		out.Charts = $append(out.Charts, new Chart.ptr("Granted (distributed token bucket)", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, max])), new Unit.ptr("RU", sliceType.nil)]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, $subslice(new sliceType(aggregateDist.$array), aggregateDist.$offset, aggregateDist.$offset + aggregateDist.$length)), new Series.ptr("global tokens", "RU", 0.5, $subslice(new sliceType(tokensDist.$array), tokensDist.$offset, tokensDist.$offset + tokensDist.$length)))));
 		nodeSeries = $makeSlice(sliceType$7, requested.$length);
 		_ref$7 = nodeSeries;
 		_i$7 = 0;
-		/* while (true) { */ case 16:
-			/* if (!(_i$7 < _ref$7.$length)) { break; } */ if(!(_i$7 < _ref$7.$length)) { $s = 17; continue; }
+		/* while (true) { */ case 15:
+			/* if (!(_i$7 < _ref$7.$length)) { break; } */ if(!(_i$7 < _ref$7.$length)) { $s = 16; continue; }
 			i$3 = _i$7;
 			g$1 = ((i$3 < 0 || i$3 >= grantedIdeal.$length) ? ($throwRuntimeError("index out of range"), undefined) : grantedIdeal.$array[grantedIdeal.$offset + i$3]);
 			if (cfg.Smoothing) {
 				g$1 = g$1.Smooth(cfg, 0.1);
 			}
-			_r$7 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$3 + 1 >> 0))])); /* */ $s = 18; case 18: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
-			Series.copy(((i$3 < 0 || i$3 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$3]), new Series.ptr(_r$7, "RU/s", 1, $subslice(new sliceType(g$1.$array), g$1.$offset, g$1.$offset + g$1.$length)));
+			_r$6 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$3 + 1 >> 0))])); /* */ $s = 17; case 17: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+			Series.copy(((i$3 < 0 || i$3 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$3]), new Series.ptr(_r$6, "RU/s", 1, $subslice(new sliceType(g$1.$array), g$1.$offset, g$1.$offset + g$1.$length)));
 			_i$7++;
-		/* } */ $s = 16; continue; case 17:
+		/* } */ $s = 15; continue; case 16:
 		out.Charts = $append(out.Charts, new Chart.ptr("Granted (ideal token bucket)", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, max])), new Unit.ptr("RU", sliceType.nil)]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, $subslice(new sliceType(aggregateIdeal.$array), aggregateIdeal.$offset, aggregateIdeal.$offset + aggregateIdeal.$length)), new Series.ptr("tokens", "RU", 0.5, $subslice(new sliceType(tokensIdeal.$array), tokensIdeal.$offset, tokensIdeal.$offset + tokensIdeal.$length)))));
 		totalDist = ZeroData(cfg);
 		sum = 0;
@@ -41864,7 +41946,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		}
 		out.Charts = $append(out.Charts, new Chart.ptr("Total granted (vs ideal)", new sliceType$8([new Unit.ptr("RU", sliceType.nil)]), new sliceType$7([new Series.ptr("distributed", "RU", 1, $subslice(new sliceType(totalDist.$array), totalDist.$offset, totalDist.$offset + totalDist.$length)), new Series.ptr("ideal", "RU", 1, $subslice(new sliceType(totalIdeal.$array), totalIdeal.$offset, totalIdeal.$offset + totalIdeal.$length))])));
 		$s = -1; return out;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Process }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._i$6 = _i$6; $f._i$7 = _i$7; $f._i$8 = _i$8; $f._i$9 = _i$9; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._ref$6 = _ref$6; $f._ref$7 = _ref$7; $f._ref$8 = _ref$8; $f._ref$9 = _ref$9; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.aggregateDist = aggregateDist; $f.aggregateIdeal = aggregateIdeal; $f.aggregateRequested = aggregateRequested; $f.cfg = cfg; $f.err = err; $f.g = g; $f.g$1 = g$1; $f.grantedDist = grantedDist; $f.grantedIdeal = grantedIdeal; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.i$5 = i$5; $f.input = input; $f.inputYAML = inputYAML; $f.j = j; $f.max = max; $f.nodeSeries = nodeSeries; $f.out = out; $f.requested = requested; $f.sum = sum; $f.tokensDist = tokensDist; $f.tokensIdeal = tokensIdeal; $f.totalDist = totalDist; $f.totalIdeal = totalIdeal; $f.v = v; $f.v$1 = v$1; $f.v$2 = v$2; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Process }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._i$6 = _i$6; $f._i$7 = _i$7; $f._i$8 = _i$8; $f._i$9 = _i$9; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._ref$6 = _ref$6; $f._ref$7 = _ref$7; $f._ref$8 = _ref$8; $f._ref$9 = _ref$9; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.aggregateDist = aggregateDist; $f.aggregateIdeal = aggregateIdeal; $f.aggregateRequested = aggregateRequested; $f.cfg = cfg; $f.err = err; $f.g = g; $f.g$1 = g$1; $f.grantedDist = grantedDist; $f.grantedIdeal = grantedIdeal; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.i$5 = i$5; $f.input = input; $f.inputYAML = inputYAML; $f.j = j; $f.max = max; $f.nodeSeries = nodeSeries; $f.out = out; $f.requested = requested; $f.sum = sum; $f.tokensDist = tokensDist; $f.tokensIdeal = tokensIdeal; $f.totalDist = totalDist; $f.totalIdeal = totalIdeal; $f.v = v; $f.v$1 = v$1; $f.v$2 = v$2; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Process = Process;
 	TokenBucket = function(cfg, requested) {
@@ -41983,15 +42065,15 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	Config.methods = [{prop: "NumTicks", name: "NumTicks", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "TimeForTick", name: "TimeForTick", pkg: "", typ: $funcType([$Int], [time.Duration], false)}, {prop: "TickForTime", name: "TickForTime", pkg: "", typ: $funcType([time.Duration], [$Int], false)}, {prop: "TimeAxis", name: "TimeAxis", pkg: "", typ: $funcType([], [sliceType], false)}];
 	Data.methods = [{prop: "Copy", name: "Copy", pkg: "", typ: $funcType([ptrType], [Data], false)}, {prop: "Scale", name: "Scale", pkg: "", typ: $funcType([$Float64], [], false)}, {prop: "Smooth", name: "Smooth", pkg: "", typ: $funcType([ptrType, $Float64], [Data], false)}, {prop: "AddFuncTerm", name: "AddFuncTerm", pkg: "", typ: $funcType([ptrType, FuncTerm], [], false)}];
 	PerNodeData.methods = [{prop: "Copy", name: "Copy", pkg: "", typ: $funcType([ptrType], [PerNodeData], false)}, {prop: "Aggregate", name: "Aggregate", pkg: "", typ: $funcType([ptrType], [Data], false)}];
-	ptrType$1.methods = [{prop: "init", name: "init", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType], [], false)}, {prop: "tick", name: "tick", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, $Int], [], false)}, {prop: "updateRate", name: "updateRate", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, $Float64, $Float64, $Float64, $Float64], [$Float64, $Float64], false)}];
-	ptrType$3.methods = [{prop: "init", name: "init", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, Data, $Int], [], false)}, {prop: "maintain", name: "maintain", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, ptrType$1, $Int], [], false)}, {prop: "request", name: "request", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, $Int, $Float64], [$Float64], false)}, {prop: "tick", name: "tick", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, ptrType$1, $Int], [], false)}];
-	Config.init("", [{prop: "Timeframe", name: "Timeframe", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "Tick", name: "Tick", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "RatePerSec", name: "RatePerSec", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"rate_per_sec\""}, {prop: "InitialBurst", name: "InitialBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"initial_burst\""}, {prop: "MaxBurst", name: "MaxBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"max_burst\""}, {prop: "TargetRefillPeriod", name: "TargetRefillPeriod", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"-\""}, {prop: "TargetRefillPeriodSecs", name: "TargetRefillPeriodSecs", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"target_refill_period_secs\""}, {prop: "MinRefillAmount", name: "MinRefillAmount", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"min_refill_amount\""}, {prop: "MaxRefillAmount", name: "MaxRefillAmount", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"max_refill_amount\""}, {prop: "RefillFraction", name: "RefillFraction", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"refill_fraction\""}, {prop: "PreRequestTime", name: "PreRequestTime", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"pre_request_time\""}, {prop: "Smoothing", name: "Smoothing", embedded: false, exported: true, typ: $Bool, tag: ""}]);
+	ptrType$1.methods = [{prop: "init", name: "init", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType], [], false)}, {prop: "tick", name: "tick", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, $Int], [], false)}, {prop: "request", name: "request", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, $Int, $Float64, $Float64, $Float64], [$Float64, $Int], false)}];
+	ptrType$3.methods = [{prop: "init", name: "init", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, Data, $Int], [], false)}, {prop: "distribute", name: "distribute", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([$Int, $Float64, $Int], [], false)}, {prop: "maintain", name: "maintain", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, ptrType$1, $Int], [], false)}, {prop: "request", name: "request", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, $Int, $Float64], [$Float64], false)}, {prop: "tick", name: "tick", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, ptrType$1, $Int], [], false)}];
+	Config.init("", [{prop: "Timeframe", name: "Timeframe", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "Tick", name: "Tick", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "RatePerSec", name: "RatePerSec", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"rate_per_sec\""}, {prop: "InitialBurst", name: "InitialBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"initial_burst\""}, {prop: "MaxBurst", name: "MaxBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"max_burst\""}, {prop: "TargetRefillPeriod", name: "TargetRefillPeriod", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"-\""}, {prop: "TargetRefillPeriodSecs", name: "TargetRefillPeriodSecs", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"target_refill_period_secs\""}, {prop: "MinRefillAmount", name: "MinRefillAmount", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"min_refill_amount\""}, {prop: "MaxRefillAmount", name: "MaxRefillAmount", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"max_refill_amount\""}, {prop: "RefillFraction", name: "RefillFraction", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"refill_fraction\""}, {prop: "PreRequestTime", name: "PreRequestTime", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"pre_request_time\""}, {prop: "EWMAFactor", name: "EWMAFactor", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"ewma_factor\""}, {prop: "QueuedTimeScale", name: "QueuedTimeScale", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"queued_time_scale\""}, {prop: "QueuedTimeScaleSecs", name: "QueuedTimeScaleSecs", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"queued_time_scale_secs\""}, {prop: "Smoothing", name: "Smoothing", embedded: false, exported: true, typ: $Bool, tag: ""}]);
 	Data.init($Float64);
 	FuncDesc.init("", [{prop: "Terms", name: "Terms", embedded: false, exported: true, typ: sliceType$10, tag: ""}]);
 	FuncTerm.init("", [{prop: "Type", name: "Type", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Start", name: "Start", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Duration", name: "Duration", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Delta", name: "Delta", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Period", name: "Period", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Amplitude", name: "Amplitude", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Smoothness", name: "Smoothness", embedded: false, exported: true, typ: $Int, tag: ""}]);
 	PerNodeData.init(Data);
 	globalBucket.init("github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", [{prop: "currTokens", name: "currTokens", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "sharesSum", name: "sharesSum", embedded: false, exported: false, typ: $Float64, tag: ""}]);
-	localBucket.init("github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", [{prop: "requested", name: "requested", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "expTable", name: "expTable", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "outstanding", name: "outstanding", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "outstandingTick", name: "outstandingTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "granted", name: "granted", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "currTokens", name: "currTokens", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "currRatePerTick", name: "currRatePerTick", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "lastShares", name: "lastShares", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "lastUpdateTick", name: "lastUpdateTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "reqEWMA", name: "reqEWMA", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "nextUpdateTick", name: "nextUpdateTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "r", name: "r", embedded: false, exported: false, typ: ptrType$2, tag: ""}]);
+	localBucket.init("github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", [{prop: "requested", name: "requested", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "expTable", name: "expTable", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "outstanding", name: "outstanding", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "outstandingTick", name: "outstandingTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "granted", name: "granted", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "currTokens", name: "currTokens", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "currRatePerTick", name: "currRatePerTick", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "deadlineTick", name: "deadlineTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "lastShares", name: "lastShares", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "lastRefillTick", name: "lastRefillTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "lastRefillAmount", name: "lastRefillAmount", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "reqEWMA", name: "reqEWMA", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "nextUpdateTick", name: "nextUpdateTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "r", name: "r", embedded: false, exported: false, typ: ptrType$2, tag: ""}]);
 	Input.init("", [{prop: "Config", name: "Config", embedded: false, exported: true, typ: Config, tag: ""}, {prop: "Nodes", name: "Nodes", embedded: false, exported: true, typ: sliceType$4, tag: ""}]);
 	Output.init("", [{prop: "TimeAxis", name: "TimeAxis", embedded: false, exported: true, typ: sliceType, tag: ""}, {prop: "Charts", name: "Charts", embedded: false, exported: true, typ: sliceType$6, tag: ""}]);
 	Chart.init("", [{prop: "Title", name: "Title", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Units", name: "Units", embedded: false, exported: true, typ: sliceType$8, tag: ""}, {prop: "Series", name: "Series", embedded: false, exported: true, typ: sliceType$7, tag: ""}]);
@@ -42005,7 +42087,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		$r = math.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = rand.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = time.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$pkg.DefaultConfig = new Config.ptr(new time.Duration(209, 2351835136), new time.Duration(0, 100000000), 240, 100, 100, new time.Duration(2, 1410065408), 0, 100, 10000, 0.1, new time.Duration(0, 1000000000), false);
+		$pkg.DefaultConfig = new Config.ptr(new time.Duration(209, 2351835136), new time.Duration(0, 100000000), 240, 100, 100, new time.Duration(2, 1410065408), 0, 100, 10000, 0.1, new time.Duration(0, 1000000000), 0.5, new time.Duration(2, 1410065408), 0, false);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;

@@ -29,6 +29,10 @@ type Config struct {
 	RefillFraction         float64       `yaml:"refill_fraction"`
 	PreRequestTime         time.Duration `yaml:"pre_request_time"`
 
+	EWMAFactor          float64       `yaml:"ewma_factor"`
+	QueuedTimeScale     time.Duration `yaml:"queued_time_scale"`
+	QueuedTimeScaleSecs float64       `yaml:"queued_time_scale_secs"`
+
 	// Misc settings.
 	Smoothing bool
 }
@@ -66,4 +70,7 @@ var DefaultConfig = Config{
 	MaxRefillAmount:    10000,
 	RefillFraction:     0.1,
 	PreRequestTime:     1 * time.Second,
+
+	EWMAFactor:      0.5,
+	QueuedTimeScale: 10 * time.Second,
 }

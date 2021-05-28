@@ -52,6 +52,9 @@ func Process(inputYAML string) Output {
 	if cfg.TargetRefillPeriodSecs != 0 {
 		cfg.TargetRefillPeriod = time.Duration(cfg.TargetRefillPeriodSecs * float64(time.Second))
 	}
+	if cfg.QueuedTimeScaleSecs != 0 {
+		cfg.QueuedTimeScale = time.Duration(cfg.QueuedTimeScaleSecs * float64(time.Second))
+	}
 
 	requested := MakePerNodeData(cfg, len(input.Nodes))
 	for i := range requested {
@@ -64,7 +67,7 @@ func Process(inputYAML string) Output {
 	}
 	aggregateRequested := requested.Aggregate(cfg)
 
-	grantedDist, tokensDist := DistTokenBucket2(cfg, requested)
+	grantedDist, tokensDist := DistTokenBucket3(cfg, requested)
 	aggregateDist := grantedDist.Aggregate(cfg)
 
 	grantedIdeal, tokensIdeal := TokenBucket(cfg, requested)

@@ -23,3 +23,6 @@ nodes:
     - type: constant
       value: 400
       start: 50
+    - type: constant
+      value: -400
+      start: 600
