@@ -24619,7 +24619,7 @@ $packages["os"] = (function() {
 	return $pkg;
 })();
 $packages["fmt"] = (function() {
-	var $pkg = {}, $init, errors, fmtsort, io, math, os, reflect, strconv, sync, utf8, wrapError, fmtFlags, fmt, State, Formatter, Stringer, GoStringer, buffer, pp, scanError, ss, ssave, sliceType, ptrType, ptrType$1, arrayType, arrayType$1, sliceType$1, sliceType$2, arrayType$2, ptrType$2, ptrType$5, ptrType$25, ptrType$26, funcType, ppFree, space, ssFree, complexError, boolError, Errorf, newPrinter, Fprintf, Printf, Sprintf, getField, tooLarge, parsenum, intFromArg, parseArgNumber, isSpace, notSpace, indexRune;
+	var $pkg = {}, $init, errors, fmtsort, io, math, os, reflect, strconv, sync, utf8, wrapError, fmtFlags, fmt, State, Formatter, Stringer, GoStringer, buffer, pp, scanError, ss, ssave, sliceType, ptrType, ptrType$1, arrayType, arrayType$1, sliceType$1, sliceType$2, arrayType$2, ptrType$2, ptrType$5, ptrType$25, ptrType$26, funcType, ppFree, space, ssFree, complexError, boolError, Errorf, newPrinter, Sprintf, getField, tooLarge, parsenum, intFromArg, parseArgNumber, isSpace, notSpace, indexRune;
 	errors = $packages["errors"];
 	fmtsort = $packages["internal/fmtsort"];
 	io = $packages["io"];
@@ -25434,36 +25434,6 @@ $packages["fmt"] = (function() {
 		return [ret, err];
 	};
 	pp.prototype.WriteString = function(s) { return this.$val.WriteString(s); };
-	Fprintf = function(w, format, a) {
-		var _r, _r$1, _tuple, a, err, format, n, p, w, x, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; a = $f.a; err = $f.err; format = $f.format; n = $f.n; p = $f.p; w = $f.w; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		n = 0;
-		err = $ifaceNil;
-		_r = newPrinter(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		p = _r;
-		$r = p.doPrintf(format, a); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		_r$1 = w.Write((x = p.buf, $subslice(new sliceType$2(x.$array), x.$offset, x.$offset + x.$length))); /* */ $s = 3; case 3: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		_tuple = _r$1;
-		n = _tuple[0];
-		err = _tuple[1];
-		p.free();
-		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Fprintf }; } $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f.a = a; $f.err = err; $f.format = format; $f.n = n; $f.p = p; $f.w = w; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.Fprintf = Fprintf;
-	Printf = function(format, a) {
-		var _r, _tuple, a, err, format, n, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; a = $f.a; err = $f.err; format = $f.format; n = $f.n; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		n = 0;
-		err = $ifaceNil;
-		_r = Fprintf(os.Stdout, format, a); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		n = _tuple[0];
-		err = _tuple[1];
-		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Printf }; } $f._r = _r; $f._tuple = _tuple; $f.a = a; $f.err = err; $f.format = format; $f.n = n; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.Printf = Printf;
 	Sprintf = function(format, a) {
 		var _r, a, format, p, s, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; a = $f.a; format = $f.format; p = $f.p; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -41073,7 +41043,8 @@ $packages["math/rand"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (function() {
-	var $pkg = {}, $init, fmt, yaml, math, rand, time, Config, Data, FuncDesc, FuncTerm, PerNodeData, globalBucket, localBucket, Input, Output, Chart, Unit, Series, sliceType, sliceType$1, sliceType$2, sliceType$3, sliceType$4, sliceType$5, sliceType$6, sliceType$7, sliceType$8, sliceType$9, ptrType, sliceType$10, ptrType$1, ptrType$2, ptrType$3, ZeroData, DataSum, DataFromFuncDesc, MakePerNodeData, DistTokenBucket3, Process, TokenBucket;
+	var $pkg = {}, $init, errors, fmt, yaml, math, rand, time, Config, Data, FuncDesc, FuncTerm, PerNodeData, globalBucket, localBucket, Input, Output, Chart, Unit, Series, sliceType, sliceType$1, sliceType$2, sliceType$3, sliceType$4, sliceType$5, sliceType$6, sliceType$7, sliceType$8, sliceType$9, ptrType, sliceType$10, ptrType$1, ptrType$2, ptrType$3, ZeroData, DataSum, DataFromFuncDesc, MakePerNodeData, DistTokenBucket3, throw$1, Process, TokenBucket;
+	errors = $packages["errors"];
 	fmt = $packages["fmt"];
 	yaml = $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/vendor/gopkg.in/yaml.v2"];
 	math = $packages["math"];
@@ -41195,21 +41166,23 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Config = new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, new time.Duration(0, 0), 0, 0, 0, 0, new time.Duration(0, 0), 0, new time.Duration(0, 0), 0, false);
-			this.Nodes = sliceType$4.nil;
+			this.Nodes = sliceType$5.nil;
 			return;
 		}
 		this.Config = Config_;
 		this.Nodes = Nodes_;
 	});
-	Output = $pkg.Output = $newType(0, $kindStruct, "lib.Output", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(TimeAxis_, Charts_) {
+	Output = $pkg.Output = $newType(0, $kindStruct, "lib.Output", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(TimeAxis_, Charts_, Error_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.TimeAxis = sliceType.nil;
-			this.Charts = sliceType$6.nil;
+			this.Charts = sliceType$4.nil;
+			this.Error = "";
 			return;
 		}
 		this.TimeAxis = TimeAxis_;
 		this.Charts = Charts_;
+		this.Error = Error_;
 	});
 	Chart = $pkg.Chart = $newType(0, $kindStruct, "lib.Chart", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Title_, Units_, Series_) {
 		this.$val = this;
@@ -41251,9 +41224,9 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	sliceType$1 = $sliceType($emptyInterface);
 	sliceType$2 = $sliceType(Data);
 	sliceType$3 = $sliceType(localBucket);
-	sliceType$4 = $sliceType(FuncDesc);
-	sliceType$5 = $sliceType($Uint8);
-	sliceType$6 = $sliceType(Chart);
+	sliceType$4 = $sliceType(Chart);
+	sliceType$5 = $sliceType(FuncDesc);
+	sliceType$6 = $sliceType($Uint8);
 	sliceType$7 = $sliceType(Series);
 	sliceType$8 = $sliceType(Unit);
 	sliceType$9 = $sliceType($Int);
@@ -41366,8 +41339,8 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	};
 	$ptrType(Data).prototype.Smooth = function(cfg, alpha) { return this.$get().Smooth(cfg, alpha); };
 	Data.prototype.AddFuncTerm = function(cfg, f) {
-		var _1, _i, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _ref, a, alpha, b, c, cfg, convTime, convTimeCheck, delta, end, endTick, f, gAlpha, i, i$1, i$2, i$3, i$4, i$5, last, next, period, r, s, sinceLast, startTick, stddev, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _ref = $f._ref; a = $f.a; alpha = $f.alpha; b = $f.b; c = $f.c; cfg = $f.cfg; convTime = $f.convTime; convTimeCheck = $f.convTimeCheck; delta = $f.delta; end = $f.end; endTick = $f.endTick; f = $f.f; gAlpha = $f.gAlpha; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; i$5 = $f.i$5; last = $f.last; next = $f.next; period = $f.period; r = $f.r; s = $f.s; sinceLast = $f.sinceLast; startTick = $f.startTick; stddev = $f.stddev; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _1, _i, _r, _r$1, _r$2, _r$3, _r$4, _ref, a, alpha, b, c, cfg, convTime, convTimeCheck, delta, end, endTick, f, gAlpha, i, i$1, i$2, i$3, i$4, i$5, last, next, period, r, s, sinceLast, startTick, stddev, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _ref = $f._ref; a = $f.a; alpha = $f.alpha; b = $f.b; c = $f.c; cfg = $f.cfg; convTime = $f.convTime; convTimeCheck = $f.convTimeCheck; delta = $f.delta; end = $f.end; endTick = $f.endTick; f = $f.f; gAlpha = $f.gAlpha; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; i$5 = $f.i$5; last = $f.last; next = $f.next; period = $f.period; r = $f.r; s = $f.s; sinceLast = $f.sinceLast; startTick = $f.startTick; stddev = $f.stddev; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		cfg = [cfg];
 		s = this;
 		convTime = (function(cfg) { return function(v) {
@@ -41382,7 +41355,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			/* */ $s = 2; continue;
 			/* if ((d.$high < 0 || (d.$high === 0 && d.$low < 0)) || (x = cfg[0].Timeframe, (d.$high > x.$high || (d.$high === x.$high && d.$low > x.$low)))) { */ case 1:
 				_r = fmt.Sprintf("time %v out of range", new sliceType$1([new $Float64(v)])); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-				$panic(new $String(_r));
+				$r = throw$1(_r, new sliceType$1([])); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			/* } */ case 2:
 			$s = -1; return $clone(cfg[0], Config).TickForTime((new time.Duration(0, v * 1e+09)));
 			/* */ } return; } if ($f === undefined) { $f = { $blk: $b }; } $f._r = _r; $f.d = d; $f.v = v; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
@@ -41429,9 +41402,11 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 				}
 				$s = 12; continue;
 			/* } else if (_1 === ("sine")) { */ case 8:
-				if (f.Period <= 0) {
-					$panic(new $String("invalid sine period"));
-				}
+				/* */ if (f.Period <= 0) { $s = 13; continue; }
+				/* */ $s = 14; continue;
+				/* if (f.Period <= 0) { */ case 13:
+					$r = throw$1("invalid sine period", new sliceType$1([])); /* */ $s = 15; case 15: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+				/* } */ case 14:
 				period = $clone(cfg[0], Config).TickForTime((new time.Duration(0, f.Period * 1e+09)));
 				i$3 = startTick;
 				while (true) {
@@ -41455,41 +41430,42 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 				}
 				$s = 12; continue;
 			/* } else if (_1 === ("noise")) { */ case 10:
-				if (f.Smoothness === 0) {
-					$panic(new $String("invalid noise smoothness"));
-				}
+				/* */ if (f.Smoothness === 0) { $s = 16; continue; }
+				/* */ $s = 17; continue;
+				/* if (f.Smoothness === 0) { */ case 16:
+					$r = throw$1("invalid noise smoothness", new sliceType$1([])); /* */ $s = 18; case 18: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+				/* } */ case 17:
 				stddev = f.Amplitude / (2 * math.Sqrt(2 * math.Log(100)));
 				r = rand.New(rand.NewSource((new $Int64(0, f.Amplitude * (f.Smoothness)))));
 				last = 0;
-				_r$2 = r.NormFloat64(); /* */ $s = 13; case 13: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+				_r$2 = r.NormFloat64(); /* */ $s = 19; case 19: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 				next = _r$2 * stddev;
 				i$5 = startTick;
-				/* while (true) { */ case 14:
-					/* if (!(i$5 < endTick)) { break; } */ if(!(i$5 < endTick)) { $s = 15; continue; }
+				/* while (true) { */ case 20:
+					/* if (!(i$5 < endTick)) { break; } */ if(!(i$5 < endTick)) { $s = 21; continue; }
 					sinceLast = (_r$3 = ((i$5 - startTick >> 0)) % f.Smoothness, _r$3 === _r$3 ? _r$3 : $throwRuntimeError("integer divide by zero"));
-					/* */ if (sinceLast === 0) { $s = 16; continue; }
-					/* */ $s = 17; continue;
-					/* if (sinceLast === 0) { */ case 16:
+					/* */ if (sinceLast === 0) { $s = 22; continue; }
+					/* */ $s = 23; continue;
+					/* if (sinceLast === 0) { */ case 22:
 						last = next;
-						_r$4 = r.NormFloat64(); /* */ $s = 18; case 18: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+						_r$4 = r.NormFloat64(); /* */ $s = 24; case 24: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 						next = _r$4 * stddev;
 						((i$5 < 0 || i$5 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$5] = ((i$5 < 0 || i$5 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$5]) + (last));
 						i$5 = i$5 + (1) >> 0;
-						/* continue; */ $s = 14; continue;
-					/* } */ case 17:
+						/* continue; */ $s = 20; continue;
+					/* } */ case 23:
 					alpha = (sinceLast) / (f.Smoothness);
 					gAlpha = (1 - math.Cos(3.141592653589793 * alpha)) / 2;
 					((i$5 < 0 || i$5 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$5] = ((i$5 < 0 || i$5 >= s.$length) ? ($throwRuntimeError("index out of range"), undefined) : s.$array[s.$offset + i$5]) + ((1 - gAlpha) * last + gAlpha * next));
 					i$5 = i$5 + (1) >> 0;
-				/* } */ $s = 14; continue; case 15:
+				/* } */ $s = 20; continue; case 21:
 				$s = 12; continue;
 			/* } else { */ case 11:
-				_r$5 = fmt.Sprintf("func type '%s' not supported", new sliceType$1([new $String(f.Type)])); /* */ $s = 19; case 19: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
-				$panic(new $String(_r$5));
+				$r = throw$1("func type '%s' not supported", new sliceType$1([new $String(f.Type)])); /* */ $s = 25; case 25: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			/* } */ case 12:
 		case 5:
 		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Data.prototype.AddFuncTerm }; } $f._1 = _1; $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._ref = _ref; $f.a = a; $f.alpha = alpha; $f.b = b; $f.c = c; $f.cfg = cfg; $f.convTime = convTime; $f.convTimeCheck = convTimeCheck; $f.delta = delta; $f.end = end; $f.endTick = endTick; $f.f = f; $f.gAlpha = gAlpha; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.i$5 = i$5; $f.last = last; $f.next = next; $f.period = period; $f.r = r; $f.s = s; $f.sinceLast = sinceLast; $f.startTick = startTick; $f.stddev = stddev; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Data.prototype.AddFuncTerm }; } $f._1 = _1; $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._ref = _ref; $f.a = a; $f.alpha = alpha; $f.b = b; $f.c = c; $f.cfg = cfg; $f.convTime = convTime; $f.convTimeCheck = convTimeCheck; $f.delta = delta; $f.end = end; $f.endTick = endTick; $f.f = f; $f.gAlpha = gAlpha; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.i$5 = i$5; $f.last = last; $f.next = next; $f.period = period; $f.r = r; $f.s = s; $f.sinceLast = sinceLast; $f.startTick = startTick; $f.stddev = stddev; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$ptrType(Data).prototype.AddFuncTerm = function(cfg, f) { return this.$get().AddFuncTerm(cfg, f); };
 	DataFromFuncDesc = function(cfg, desc) {
@@ -41561,13 +41537,16 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	};
 	globalBucket.prototype.tick = function(cfg, now) { return this.$val.tick(cfg, now); };
 	globalBucket.ptr.prototype.request = function(cfg, now, prevShares, shares, tokens) {
-		var _tmp, _tmp$1, _tmp$2, _tmp$3, allowedRate, allowedRatePerTick, availableRate, cfg, deadlineTick, debt, debtRate, gb, grantedTokens, maxTicks, now, prevShares, shares, ticks, tokens;
+		var _tmp, _tmp$1, _tmp$2, _tmp$3, allowedRate, allowedRatePerTick, availableRate, cfg, deadlineTick, debt, debtRate, gb, grantedTokens, maxTicks, now, prevShares, shares, ticks, tokens, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; allowedRate = $f.allowedRate; allowedRatePerTick = $f.allowedRatePerTick; availableRate = $f.availableRate; cfg = $f.cfg; deadlineTick = $f.deadlineTick; debt = $f.debt; debtRate = $f.debtRate; gb = $f.gb; grantedTokens = $f.grantedTokens; maxTicks = $f.maxTicks; now = $f.now; prevShares = $f.prevShares; shares = $f.shares; ticks = $f.ticks; tokens = $f.tokens; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		grantedTokens = 0;
 		deadlineTick = 0;
 		gb = this;
-		if (tokens < 0) {
-			$panic(new $String("requested negative tokens"));
-		}
+		/* */ if (tokens < 0) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (tokens < 0) { */ case 1:
+			$r = throw$1("requested negative tokens", new sliceType$1([])); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* } */ case 2:
 		gb.sharesSum = gb.sharesSum - prevShares + shares;
 		if (gb.currTokens >= tokens) {
 			gb.currTokens = gb.currTokens - (tokens);
@@ -41575,7 +41554,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			_tmp$1 = now;
 			grantedTokens = _tmp;
 			deadlineTick = _tmp$1;
-			return [grantedTokens, deadlineTick];
+			$s = -1; return [grantedTokens, deadlineTick];
 		}
 		if (gb.currTokens > 0) {
 			grantedTokens = gb.currTokens;
@@ -41596,9 +41575,6 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		allowedRatePerTick = allowedRate * cfg.Tick.Seconds();
 		ticks = ((tokens / allowedRatePerTick + 0.5 >> 0));
 		maxTicks = $clone(cfg, Config).TickForTime(cfg.TargetRefillPeriod);
-		if (ticks < 0) {
-			$panic(new $String("FOO"));
-		}
 		if (ticks <= maxTicks) {
 			grantedTokens = grantedTokens + (tokens);
 			deadlineTick = now + ticks >> 0;
@@ -41611,7 +41587,8 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		_tmp$3 = deadlineTick;
 		grantedTokens = _tmp$2;
 		deadlineTick = _tmp$3;
-		return [grantedTokens, deadlineTick];
+		$s = -1; return [grantedTokens, deadlineTick];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: globalBucket.ptr.prototype.request }; } $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f.allowedRate = allowedRate; $f.allowedRatePerTick = allowedRatePerTick; $f.availableRate = availableRate; $f.cfg = cfg; $f.deadlineTick = deadlineTick; $f.debt = debt; $f.debtRate = debtRate; $f.gb = gb; $f.grantedTokens = grantedTokens; $f.maxTicks = maxTicks; $f.now = now; $f.prevShares = prevShares; $f.shares = shares; $f.ticks = ticks; $f.tokens = tokens; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	globalBucket.prototype.request = function(cfg, now, prevShares, shares, tokens) { return this.$val.request(cfg, now, prevShares, shares, tokens); };
 	localBucket.ptr.prototype.init = function(cfg, requested, nodeIdx) {
@@ -41633,34 +41610,40 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	};
 	localBucket.prototype.init = function(cfg, requested, nodeIdx) { return this.$val.init(cfg, requested, nodeIdx); };
 	localBucket.ptr.prototype.distribute = function(now, amount, deadlineTick) {
-		var amount, deadlineTick, l, now;
+		var amount, deadlineTick, l, now, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; amount = $f.amount; deadlineTick = $f.deadlineTick; l = $f.l; now = $f.now; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		l = this;
 		l.lastRefillTick = now;
 		l.lastRefillAmount = amount;
-		if (deadlineTick < now) {
-			$panic(new $String("deadlineTick < now"));
-		}
+		/* */ if (deadlineTick < now) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (deadlineTick < now) { */ case 1:
+			$r = throw$1("deadlineTick < now", new sliceType$1([])); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* } */ case 2:
 		if (deadlineTick <= now) {
 			l.deadlineTick = now;
 			l.currTokens = l.currTokens + (amount);
 			l.currRatePerTick = 0;
-			return;
+			$s = -1; return;
 		}
 		if (l.deadlineTick > now) {
 			amount = amount + (((l.deadlineTick - now >> 0)) * l.currRatePerTick);
 		}
 		l.deadlineTick = deadlineTick;
 		l.currRatePerTick = amount / ((deadlineTick - now >> 0));
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: localBucket.ptr.prototype.distribute }; } $f.amount = amount; $f.deadlineTick = deadlineTick; $f.l = l; $f.now = now; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	localBucket.prototype.distribute = function(now, amount, deadlineTick) { return this.$val.distribute(now, amount, deadlineTick); };
 	localBucket.ptr.prototype.maintain = function(cfg, gb, now) {
-		var _tuple, alpha, amount, cfg, deadlineTick, gb, granted, i, i$1, l, now, queued, shares, x, x$1, x$2, x$3, x$4;
+		var _r, _tuple, alpha, amount, cfg, deadlineTick, gb, granted, i, i$1, l, now, queued, shares, x, x$1, x$2, x$3, x$4, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; alpha = $f.alpha; amount = $f.amount; cfg = $f.cfg; deadlineTick = $f.deadlineTick; gb = $f.gb; granted = $f.granted; i = $f.i; i$1 = $f.i$1; l = $f.l; now = $f.now; queued = $f.queued; shares = $f.shares; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		l = this;
 		if (l.currTokens > l.lastRefillAmount * cfg.RefillFraction) {
-			return;
+			$s = -1; return;
 		}
 		if (((l.deadlineTick - now >> 0)) * cfg.Tick.Seconds() > cfg.PreRequestTime.Seconds()) {
-			return;
+			$s = -1; return;
 		}
 		alpha = math.Pow(cfg.EWMAFactor, cfg.Tick.Seconds());
 		l.reqEWMA = l.reqEWMA * alpha + (x = l.requested, ((now < 0 || now >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + now])) * (1 - alpha);
@@ -41688,11 +41671,14 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			i$1 = i$1 + (1) >> 0;
 		}
 		shares = shares + (queued * 0.01);
-		_tuple = gb.request(cfg, now, l.lastShares, shares, amount);
+		_r = gb.request(cfg, now, l.lastShares, shares, amount); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
 		granted = _tuple[0];
 		deadlineTick = _tuple[1];
 		l.lastShares = shares;
-		l.distribute(now, granted, deadlineTick);
+		$r = l.distribute(now, granted, deadlineTick); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: localBucket.ptr.prototype.maintain }; } $f._r = _r; $f._tuple = _tuple; $f.alpha = alpha; $f.amount = amount; $f.cfg = cfg; $f.deadlineTick = deadlineTick; $f.gb = gb; $f.granted = granted; $f.i = i; $f.i$1 = i$1; $f.l = l; $f.now = now; $f.queued = queued; $f.shares = shares; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	localBucket.prototype.maintain = function(cfg, gb, now) { return this.$val.maintain(cfg, gb, now); };
 	localBucket.ptr.prototype.request = function(cfg, now, amount) {
@@ -41708,9 +41694,10 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	};
 	localBucket.prototype.request = function(cfg, now, amount) { return this.$val.request(cfg, now, amount); };
 	localBucket.ptr.prototype.tick = function(cfg, gb, now) {
-		var amount, cfg, gb, granted, l, now, x, x$1, x$2, x$3, x$4, x$5, x$6, x$7;
+		var amount, cfg, gb, granted, l, now, x, x$1, x$2, x$3, x$4, x$5, x$6, x$7, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; amount = $f.amount; cfg = $f.cfg; gb = $f.gb; granted = $f.granted; l = $f.l; now = $f.now; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		l = this;
-		l.maintain(cfg, gb, now);
+		$r = l.maintain(cfg, gb, now); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		if (l.deadlineTick >= now) {
 			l.currTokens = l.currTokens + (l.currRatePerTick);
 		}
@@ -41725,13 +41712,17 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			(x$3 = l.granted, ((now < 0 || now >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + now] = (x$2 = l.granted, ((now < 0 || now >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + now])) + (granted)));
 			(x$6 = l.outstanding, x$7 = l.outstandingTick, ((x$7 < 0 || x$7 >= x$6.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$6.$array[x$6.$offset + x$7] = (x$4 = l.outstanding, x$5 = l.outstandingTick, ((x$5 < 0 || x$5 >= x$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$4.$array[x$4.$offset + x$5])) - (granted)));
 			if (granted < amount) {
-				return;
+				$s = -1; return;
 			}
 		}
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: localBucket.ptr.prototype.tick }; } $f.amount = amount; $f.cfg = cfg; $f.gb = gb; $f.granted = granted; $f.l = l; $f.now = now; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	localBucket.prototype.tick = function(cfg, gb, now) { return this.$val.tick(cfg, gb, now); };
 	DistTokenBucket3 = function(cfg, requested) {
-		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _tmp, _tmp$1, _tmp$2, _tmp$3, cfg, global, globalTokens, granted, i, i$1, i$2, i$3, local, n, now, requested, tickDuration;
+		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _tmp, _tmp$1, _tmp$2, _tmp$3, cfg, global, globalTokens, granted, i, i$1, i$2, i$3, local, n, now, requested, tickDuration, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _i$5 = $f._i$5; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _ref$5 = $f._ref$5; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; cfg = $f.cfg; global = $f.global; globalTokens = $f.globalTokens; granted = $f.granted; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; local = $f.local; n = $f.n; now = $f.now; requested = $f.requested; tickDuration = $f.tickDuration; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		global = [global];
 		granted = PerNodeData.nil;
 		globalTokens = Data.nil;
 		globalTokens = ZeroData(cfg);
@@ -41741,7 +41732,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			_tmp$1 = globalTokens;
 			granted = _tmp;
 			globalTokens = _tmp$1;
-			return [granted, globalTokens];
+			$s = -1; return [granted, globalTokens];
 		}
 		requested = requested.Copy(cfg);
 		tickDuration = cfg.Tick.Seconds();
@@ -41753,8 +41744,8 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			((i < 0 || i >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i]).Scale(tickDuration);
 			_i++;
 		}
-		global = new globalBucket.ptr(0, 0);
-		global.init(cfg);
+		global[0] = new globalBucket.ptr(0, 0);
+		global[0].init(cfg);
 		local = $makeSlice(sliceType$3, requested.$length);
 		_ref$1 = local;
 		_i$1 = 0;
@@ -41766,21 +41757,21 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		}
 		_ref$2 = globalTokens;
 		_i$2 = 0;
-		while (true) {
-			if (!(_i$2 < _ref$2.$length)) { break; }
+		/* while (true) { */ case 1:
+			/* if (!(_i$2 < _ref$2.$length)) { break; } */ if(!(_i$2 < _ref$2.$length)) { $s = 2; continue; }
 			now = _i$2;
-			global.tick(cfg, now);
-			((now < 0 || now >= globalTokens.$length) ? ($throwRuntimeError("index out of range"), undefined) : globalTokens.$array[globalTokens.$offset + now] = global.currTokens);
+			global[0].tick(cfg, now);
+			((now < 0 || now >= globalTokens.$length) ? ($throwRuntimeError("index out of range"), undefined) : globalTokens.$array[globalTokens.$offset + now] = global[0].currTokens);
 			_ref$3 = local;
 			_i$3 = 0;
-			while (true) {
-				if (!(_i$3 < _ref$3.$length)) { break; }
+			/* while (true) { */ case 3:
+				/* if (!(_i$3 < _ref$3.$length)) { break; } */ if(!(_i$3 < _ref$3.$length)) { $s = 4; continue; }
 				n = _i$3;
-				((n < 0 || n >= local.$length) ? ($throwRuntimeError("index out of range"), undefined) : local.$array[local.$offset + n]).tick(cfg, global, now);
+				$r = ((n < 0 || n >= local.$length) ? ($throwRuntimeError("index out of range"), undefined) : local.$array[local.$offset + n]).tick(cfg, global[0], now); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				_i$3++;
-			}
+			/* } */ $s = 3; continue; case 4:
 			_i$2++;
-		}
+		/* } */ $s = 1; continue; case 2:
 		_ref$4 = granted;
 		_i$4 = 0;
 		while (true) {
@@ -41801,22 +41792,51 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		_tmp$3 = globalTokens;
 		granted = _tmp$2;
 		globalTokens = _tmp$3;
-		return [granted, globalTokens];
+		$s = -1; return [granted, globalTokens];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: DistTokenBucket3 }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f.cfg = cfg; $f.global = global; $f.globalTokens = globalTokens; $f.granted = granted; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.local = local; $f.n = n; $f.now = now; $f.requested = requested; $f.tickDuration = tickDuration; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.DistTokenBucket3 = DistTokenBucket3;
+	throw$1 = function(format, args) {
+		var _r, args, format, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; args = $f.args; format = $f.format; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_r = fmt.Errorf(format, args); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		$panic(_r);
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: throw$1 }; } $f._r = _r; $f.args = args; $f.format = format; $f.$s = $s; $f.$r = $r; return $f;
+	};
 	Process = function(inputYAML) {
-		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _i$6, _i$7, _i$8, _i$9, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _ref$6, _ref$7, _ref$8, _ref$9, _tuple, _tuple$1, aggregateDist, aggregateIdeal, aggregateRequested, cfg, err, g, g$1, grantedDist, grantedIdeal, i, i$1, i$2, i$3, i$4, i$5, input, inputYAML, j, max, nodeSeries, out, requested, sum, tokensDist, tokensIdeal, totalDist, totalIdeal, v, v$1, v$2, x, x$1, x$2, x$3, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _i$5 = $f._i$5; _i$6 = $f._i$6; _i$7 = $f._i$7; _i$8 = $f._i$8; _i$9 = $f._i$9; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _ref$5 = $f._ref$5; _ref$6 = $f._ref$6; _ref$7 = $f._ref$7; _ref$8 = $f._ref$8; _ref$9 = $f._ref$9; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; aggregateDist = $f.aggregateDist; aggregateIdeal = $f.aggregateIdeal; aggregateRequested = $f.aggregateRequested; cfg = $f.cfg; err = $f.err; g = $f.g; g$1 = $f.g$1; grantedDist = $f.grantedDist; grantedIdeal = $f.grantedIdeal; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; i$5 = $f.i$5; input = $f.input; inputYAML = $f.inputYAML; j = $f.j; max = $f.max; nodeSeries = $f.nodeSeries; out = $f.out; requested = $f.requested; sum = $f.sum; tokensDist = $f.tokensDist; tokensIdeal = $f.tokensIdeal; totalDist = $f.totalDist; totalIdeal = $f.totalIdeal; v = $f.v; v$1 = $f.v$1; v$2 = $f.v$2; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _i$6, _i$7, _i$8, _i$9, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _ref$6, _ref$7, _ref$8, _ref$9, _tuple, _tuple$1, aggregateDist, aggregateIdeal, aggregateRequested, cfg, err, g, g$1, grantedDist, grantedIdeal, i, i$1, i$2, i$3, i$4, i$5, input, inputYAML, j, max, nodeSeries, out, requested, result, sum, tokensDist, tokensIdeal, totalDist, totalIdeal, v, v$1, v$2, x, x$1, x$2, x$3, $s, $deferred, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _i$5 = $f._i$5; _i$6 = $f._i$6; _i$7 = $f._i$7; _i$8 = $f._i$8; _i$9 = $f._i$9; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _ref$5 = $f._ref$5; _ref$6 = $f._ref$6; _ref$7 = $f._ref$7; _ref$8 = $f._ref$8; _ref$9 = $f._ref$9; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; aggregateDist = $f.aggregateDist; aggregateIdeal = $f.aggregateIdeal; aggregateRequested = $f.aggregateRequested; cfg = $f.cfg; err = $f.err; g = $f.g; g$1 = $f.g$1; grantedDist = $f.grantedDist; grantedIdeal = $f.grantedIdeal; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; i$5 = $f.i$5; input = $f.input; inputYAML = $f.inputYAML; j = $f.j; max = $f.max; nodeSeries = $f.nodeSeries; out = $f.out; requested = $f.requested; result = $f.result; sum = $f.sum; tokensDist = $f.tokensDist; tokensIdeal = $f.tokensIdeal; totalDist = $f.totalDist; totalIdeal = $f.totalIdeal; v = $f.v; v$1 = $f.v$1; v$2 = $f.v$2; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; $s = $f.$s; $deferred = $f.$deferred; $r = $f.$r; } var $err = null; try { s: while (true) { switch ($s) { case 0: $deferred = []; $deferred.index = $curGoroutine.deferStack.length; $curGoroutine.deferStack.push($deferred);
 		input = [input];
-		input[0] = new Input.ptr($clone($pkg.DefaultConfig, Config), sliceType$4.nil);
-		_r = yaml.UnmarshalStrict((new sliceType$5($stringToBytes(inputYAML))), input[0]); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		result = [result];
+		result[0] = new Output.ptr(sliceType.nil, sliceType$4.nil, "");
+		$deferred.push([(function(input, result) { return function $b() {
+			var _r, _tuple, err, isErr, obj, $s, $r;
+			/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; err = $f.err; isErr = $f.isErr; obj = $f.obj; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+			obj = $recover();
+			/* */ if (!($interfaceIsEqual(obj, $ifaceNil))) { $s = 1; continue; }
+			/* */ $s = 2; continue;
+			/* if (!($interfaceIsEqual(obj, $ifaceNil))) { */ case 1:
+				_tuple = $assertType(obj, $error, true);
+				err = _tuple[0];
+				isErr = _tuple[1];
+				/* */ if (isErr) { $s = 3; continue; }
+				/* */ $s = 4; continue;
+				/* if (isErr) { */ case 3:
+					_r = err.Error(); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+					Output.copy(result[0], new Output.ptr(sliceType.nil, sliceType$4.nil, _r));
+				/* } */ case 4:
+			/* } */ case 2:
+			$s = -1; return;
+			/* */ } return; } if ($f === undefined) { $f = { $blk: $b }; } $f._r = _r; $f._tuple = _tuple; $f.err = err; $f.isErr = isErr; $f.obj = obj; $f.$s = $s; $f.$r = $r; return $f;
+		}; })(input, result), []]);
+		input[0] = new Input.ptr($clone($pkg.DefaultConfig, Config), sliceType$5.nil);
+		_r = yaml.UnmarshalStrict((new sliceType$6($stringToBytes(inputYAML))), input[0]); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		err = _r;
 		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 2; continue; }
 		/* */ $s = 3; continue;
 		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 2:
-			_r$1 = fmt.Printf("Error parsing input YAML: %v\n", new sliceType$1([err])); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-			_r$1;
-			$s = -1; return new Output.ptr(sliceType.nil, sliceType$6.nil);
+			$r = throw$1("Error parsing input YAML: %v\n", new sliceType$1([err])); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		/* } */ case 3:
 		cfg = input[0].Config;
 		if (!((cfg.TargetRefillPeriodSecs === 0))) {
@@ -41831,8 +41851,8 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		/* while (true) { */ case 5:
 			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 6; continue; }
 			i = _i;
-			_r$2 = DataFromFuncDesc(cfg, $clone((x = input[0].Nodes, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i])), FuncDesc)); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			((i < 0 || i >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i] = _r$2);
+			_r$1 = DataFromFuncDesc(cfg, $clone((x = input[0].Nodes, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i])), FuncDesc)); /* */ $s = 7; case 7: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			((i < 0 || i >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i] = _r$1);
 			_ref$1 = ((i < 0 || i >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i]);
 			_i$1 = 0;
 			while (true) {
@@ -41846,11 +41866,12 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			_i++;
 		/* } */ $s = 5; continue; case 6:
 		aggregateRequested = requested.Aggregate(cfg);
-		_tuple = DistTokenBucket3(cfg, requested);
+		_r$2 = DistTokenBucket3(cfg, requested); /* */ $s = 8; case 8: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_tuple = _r$2;
 		grantedDist = _tuple[0];
 		tokensDist = _tuple[1];
 		aggregateDist = grantedDist.Aggregate(cfg);
-		_r$3 = TokenBucket(cfg, requested); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		_r$3 = TokenBucket(cfg, requested); /* */ $s = 9; case 9: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 		_tuple$1 = _r$3;
 		grantedIdeal = _tuple$1[0];
 		tokensIdeal = _tuple$1[1];
@@ -41883,44 +41904,44 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		nodeSeries = $makeSlice(sliceType$7, requested.$length);
 		_ref$5 = nodeSeries;
 		_i$5 = 0;
-		/* while (true) { */ case 9:
-			/* if (!(_i$5 < _ref$5.$length)) { break; } */ if(!(_i$5 < _ref$5.$length)) { $s = 10; continue; }
+		/* while (true) { */ case 10:
+			/* if (!(_i$5 < _ref$5.$length)) { break; } */ if(!(_i$5 < _ref$5.$length)) { $s = 11; continue; }
 			i$1 = _i$5;
-			_r$4 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$1 + 1 >> 0))])); /* */ $s = 11; case 11: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+			_r$4 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$1 + 1 >> 0))])); /* */ $s = 12; case 12: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 			Series.copy(((i$1 < 0 || i$1 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$1]), new Series.ptr(_r$4, "RU/s", 1, (x$3 = ((i$1 < 0 || i$1 >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i$1]), $subslice(new sliceType(x$3.$array), x$3.$offset, x$3.$offset + x$3.$length))));
 			_i$5++;
-		/* } */ $s = 9; continue; case 10:
-		out = new Output.ptr($clone(cfg, Config).TimeAxis(), sliceType$6.nil);
+		/* } */ $s = 10; continue; case 11:
+		out = new Output.ptr($clone(cfg, Config).TimeAxis(), sliceType$4.nil, "");
 		out.Charts = $append(out.Charts, new Chart.ptr("Requested", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, max]))]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2, $subslice(new sliceType(aggregateRequested.$array), aggregateRequested.$offset, aggregateRequested.$offset + aggregateRequested.$length)))));
 		nodeSeries = $makeSlice(sliceType$7, requested.$length);
 		_ref$6 = nodeSeries;
 		_i$6 = 0;
-		/* while (true) { */ case 12:
-			/* if (!(_i$6 < _ref$6.$length)) { break; } */ if(!(_i$6 < _ref$6.$length)) { $s = 13; continue; }
+		/* while (true) { */ case 13:
+			/* if (!(_i$6 < _ref$6.$length)) { break; } */ if(!(_i$6 < _ref$6.$length)) { $s = 14; continue; }
 			i$2 = _i$6;
 			g = ((i$2 < 0 || i$2 >= grantedDist.$length) ? ($throwRuntimeError("index out of range"), undefined) : grantedDist.$array[grantedDist.$offset + i$2]);
 			if (cfg.Smoothing) {
 				g = g.Smooth(cfg, 0.1);
 			}
-			_r$5 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$2 + 1 >> 0))])); /* */ $s = 14; case 14: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+			_r$5 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$2 + 1 >> 0))])); /* */ $s = 15; case 15: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
 			Series.copy(((i$2 < 0 || i$2 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$2]), new Series.ptr(_r$5, "RU/s", 1, $subslice(new sliceType(g.$array), g.$offset, g.$offset + g.$length)));
 			_i$6++;
-		/* } */ $s = 12; continue; case 13:
+		/* } */ $s = 13; continue; case 14:
 		out.Charts = $append(out.Charts, new Chart.ptr("Granted (distributed token bucket)", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, max])), new Unit.ptr("RU", sliceType.nil)]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, $subslice(new sliceType(aggregateDist.$array), aggregateDist.$offset, aggregateDist.$offset + aggregateDist.$length)), new Series.ptr("global tokens", "RU", 0.5, $subslice(new sliceType(tokensDist.$array), tokensDist.$offset, tokensDist.$offset + tokensDist.$length)))));
 		nodeSeries = $makeSlice(sliceType$7, requested.$length);
 		_ref$7 = nodeSeries;
 		_i$7 = 0;
-		/* while (true) { */ case 15:
-			/* if (!(_i$7 < _ref$7.$length)) { break; } */ if(!(_i$7 < _ref$7.$length)) { $s = 16; continue; }
+		/* while (true) { */ case 16:
+			/* if (!(_i$7 < _ref$7.$length)) { break; } */ if(!(_i$7 < _ref$7.$length)) { $s = 17; continue; }
 			i$3 = _i$7;
 			g$1 = ((i$3 < 0 || i$3 >= grantedIdeal.$length) ? ($throwRuntimeError("index out of range"), undefined) : grantedIdeal.$array[grantedIdeal.$offset + i$3]);
 			if (cfg.Smoothing) {
 				g$1 = g$1.Smooth(cfg, 0.1);
 			}
-			_r$6 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$3 + 1 >> 0))])); /* */ $s = 17; case 17: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+			_r$6 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$3 + 1 >> 0))])); /* */ $s = 18; case 18: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
 			Series.copy(((i$3 < 0 || i$3 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$3]), new Series.ptr(_r$6, "RU/s", 1, $subslice(new sliceType(g$1.$array), g$1.$offset, g$1.$offset + g$1.$length)));
 			_i$7++;
-		/* } */ $s = 15; continue; case 16:
+		/* } */ $s = 16; continue; case 17:
 		out.Charts = $append(out.Charts, new Chart.ptr("Granted (ideal token bucket)", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, max])), new Unit.ptr("RU", sliceType.nil)]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, $subslice(new sliceType(aggregateIdeal.$array), aggregateIdeal.$offset, aggregateIdeal.$offset + aggregateIdeal.$length)), new Series.ptr("tokens", "RU", 0.5, $subslice(new sliceType(tokensIdeal.$array), tokensIdeal.$offset, tokensIdeal.$offset + tokensIdeal.$length)))));
 		totalDist = ZeroData(cfg);
 		sum = 0;
@@ -41945,8 +41966,9 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			_i$9++;
 		}
 		out.Charts = $append(out.Charts, new Chart.ptr("Total granted (vs ideal)", new sliceType$8([new Unit.ptr("RU", sliceType.nil)]), new sliceType$7([new Series.ptr("distributed", "RU", 1, $subslice(new sliceType(totalDist.$array), totalDist.$offset, totalDist.$offset + totalDist.$length)), new Series.ptr("ideal", "RU", 1, $subslice(new sliceType(totalIdeal.$array), totalIdeal.$offset, totalIdeal.$offset + totalIdeal.$length))])));
-		$s = -1; return out;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Process }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._i$6 = _i$6; $f._i$7 = _i$7; $f._i$8 = _i$8; $f._i$9 = _i$9; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._ref$6 = _ref$6; $f._ref$7 = _ref$7; $f._ref$8 = _ref$8; $f._ref$9 = _ref$9; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.aggregateDist = aggregateDist; $f.aggregateIdeal = aggregateIdeal; $f.aggregateRequested = aggregateRequested; $f.cfg = cfg; $f.err = err; $f.g = g; $f.g$1 = g$1; $f.grantedDist = grantedDist; $f.grantedIdeal = grantedIdeal; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.i$5 = i$5; $f.input = input; $f.inputYAML = inputYAML; $f.j = j; $f.max = max; $f.nodeSeries = nodeSeries; $f.out = out; $f.requested = requested; $f.sum = sum; $f.tokensDist = tokensDist; $f.tokensIdeal = tokensIdeal; $f.totalDist = totalDist; $f.totalIdeal = totalIdeal; $f.v = v; $f.v$1 = v$1; $f.v$2 = v$2; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.$s = $s; $f.$r = $r; return $f;
+		Output.copy(result[0], out);
+		$s = -1; return result[0];
+		/* */ } return; } } catch(err) { $err = err; $s = -1; } finally { $callDeferred($deferred, $err); if (!$curGoroutine.asleep) { return  result[0]; } if($curGoroutine.asleep) { if ($f === undefined) { $f = { $blk: Process }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._i$6 = _i$6; $f._i$7 = _i$7; $f._i$8 = _i$8; $f._i$9 = _i$9; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._ref$6 = _ref$6; $f._ref$7 = _ref$7; $f._ref$8 = _ref$8; $f._ref$9 = _ref$9; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.aggregateDist = aggregateDist; $f.aggregateIdeal = aggregateIdeal; $f.aggregateRequested = aggregateRequested; $f.cfg = cfg; $f.err = err; $f.g = g; $f.g$1 = g$1; $f.grantedDist = grantedDist; $f.grantedIdeal = grantedIdeal; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.i$5 = i$5; $f.input = input; $f.inputYAML = inputYAML; $f.j = j; $f.max = max; $f.nodeSeries = nodeSeries; $f.out = out; $f.requested = requested; $f.result = result; $f.sum = sum; $f.tokensDist = tokensDist; $f.tokensIdeal = tokensIdeal; $f.totalDist = totalDist; $f.totalIdeal = totalIdeal; $f.v = v; $f.v$1 = v$1; $f.v$2 = v$2; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.$s = $s; $f.$deferred = $deferred; $f.$r = $r; return $f; } }
 	};
 	$pkg.Process = Process;
 	TokenBucket = function(cfg, requested) {
@@ -42074,19 +42096,20 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	PerNodeData.init(Data);
 	globalBucket.init("github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", [{prop: "currTokens", name: "currTokens", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "sharesSum", name: "sharesSum", embedded: false, exported: false, typ: $Float64, tag: ""}]);
 	localBucket.init("github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", [{prop: "requested", name: "requested", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "expTable", name: "expTable", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "outstanding", name: "outstanding", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "outstandingTick", name: "outstandingTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "granted", name: "granted", embedded: false, exported: false, typ: Data, tag: ""}, {prop: "currTokens", name: "currTokens", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "currRatePerTick", name: "currRatePerTick", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "deadlineTick", name: "deadlineTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "lastShares", name: "lastShares", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "lastRefillTick", name: "lastRefillTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "lastRefillAmount", name: "lastRefillAmount", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "reqEWMA", name: "reqEWMA", embedded: false, exported: false, typ: $Float64, tag: ""}, {prop: "nextUpdateTick", name: "nextUpdateTick", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "r", name: "r", embedded: false, exported: false, typ: ptrType$2, tag: ""}]);
-	Input.init("", [{prop: "Config", name: "Config", embedded: false, exported: true, typ: Config, tag: ""}, {prop: "Nodes", name: "Nodes", embedded: false, exported: true, typ: sliceType$4, tag: ""}]);
-	Output.init("", [{prop: "TimeAxis", name: "TimeAxis", embedded: false, exported: true, typ: sliceType, tag: ""}, {prop: "Charts", name: "Charts", embedded: false, exported: true, typ: sliceType$6, tag: ""}]);
+	Input.init("", [{prop: "Config", name: "Config", embedded: false, exported: true, typ: Config, tag: ""}, {prop: "Nodes", name: "Nodes", embedded: false, exported: true, typ: sliceType$5, tag: ""}]);
+	Output.init("", [{prop: "TimeAxis", name: "TimeAxis", embedded: false, exported: true, typ: sliceType, tag: ""}, {prop: "Charts", name: "Charts", embedded: false, exported: true, typ: sliceType$4, tag: ""}, {prop: "Error", name: "Error", embedded: false, exported: true, typ: $String, tag: ""}]);
 	Chart.init("", [{prop: "Title", name: "Title", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Units", name: "Units", embedded: false, exported: true, typ: sliceType$8, tag: ""}, {prop: "Series", name: "Series", embedded: false, exported: true, typ: sliceType$7, tag: ""}]);
 	Unit.init("", [{prop: "Name", name: "Name", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "FixedRange", name: "FixedRange", embedded: false, exported: true, typ: sliceType, tag: ""}]);
 	Series.init("", [{prop: "Name", name: "Name", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Unit", name: "Unit", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Width", name: "Width", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Data", name: "Data", embedded: false, exported: true, typ: sliceType, tag: ""}]);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		$r = fmt.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = yaml.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = math.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = rand.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = time.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = errors.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = fmt.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = yaml.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = math.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = rand.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = time.$init(); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$pkg.DefaultConfig = new Config.ptr(new time.Duration(209, 2351835136), new time.Duration(0, 100000000), 240, 100, 100, new time.Duration(2, 1410065408), 0, 100, 10000, 0.1, new time.Duration(0, 1000000000), 0.5, new time.Duration(2, 1410065408), 0, false);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};

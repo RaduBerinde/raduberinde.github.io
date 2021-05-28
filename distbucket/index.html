@@ -137,6 +137,19 @@
 
         var output = Process(inputYAML);
 
+        var graphsDiv = document.getElementById("graphs_div")
+        // Clear out any left-over error.
+        while (graphsDiv.firstChild) {
+          graphsDiv.removeChild(graphsDiv.firstChild);
+        }
+
+        if (output.Error != "") {
+          var p = document.createElement("p");
+          p.innerHTML = '<pre>' + output.Error + '</pre>'
+          graphsDiv.appendChild(p)
+          return
+        }
+
 
         const colors = [ "red", "green", "blue", "orange", "magenta", "brown" ];
         var colorIdx = 0;
@@ -211,7 +224,6 @@
               }
             }
           }
-          var graphsDiv = document.getElementById("graphs_div")
           plots.push(new uPlot(opts, data, graphsDiv));
           widthDeltas.push(widthDelta);
           graphsDiv.appendChild(document.createElement("p"));

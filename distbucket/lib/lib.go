@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"time"
@@ -19,6 +20,8 @@ type Output struct {
 	TimeAxis []float64
 
 	Charts []Chart
+
+	Error string
 }
 
 type Chart struct {
@@ -39,14 +42,32 @@ type Series struct {
 	Data  []float64
 }
 
+func Test() (int, error) {
+	return 1, errors.New("lol")
+}
+
+func throw(format string, args ...interface{}) {
+	panic(fmt.Errorf(format, args...))
+}
+
 // Process takes the input parameters and generates the output graphs.
-func Process(inputYAML string) Output {
+func Process(inputYAML string) (result Output) {
+	// Catch any errors.
+	defer func() {
+		if obj := recover(); obj != nil {
+			if err, isErr := obj.(error); isErr {
+				result = Output{
+					Error: err.Error(),
+				}
+			}
+		}
+	}()
+
 	input := Input{
 		Config: DefaultConfig,
 	}
 	if err := yaml.UnmarshalStrict([]byte(inputYAML), &input); err != nil {
-		fmt.Printf("Error parsing input YAML: %v\n", err)
-		return Output{}
+		throw("Error parsing input YAML: %v\n", err)
 	}
 	cfg := &input.Config
 	if cfg.TargetRefillPeriodSecs != 0 {

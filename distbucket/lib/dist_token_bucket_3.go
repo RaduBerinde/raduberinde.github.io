@@ -32,7 +32,7 @@ func (gb *globalBucket) request(
 	cfg *Config, now int, prevShares float64, shares float64, tokens float64,
 ) (grantedTokens float64, deadlineTick int) {
 	if tokens < 0 {
-		panic("requested negative tokens")
+		throw("requested negative tokens")
 	}
 	gb.sharesSum = gb.sharesSum - prevShares + shares
 
@@ -72,9 +72,6 @@ func (gb *globalBucket) request(
 	ticks := int(tokens/allowedRatePerTick + 0.5)
 	//fmt.Printf("allowedRate: %v  allowedRatePerTick: %v  ticks: %v\n", allowedRate, allowedRatePerTick, ticks)
 	maxTicks := cfg.TickForTime(cfg.TargetRefillPeriod)
-	if ticks < 0 {
-		panic("FOO")
-	}
 	if ticks <= maxTicks {
 		grantedTokens += tokens
 		deadlineTick = now + ticks
@@ -126,7 +123,7 @@ func (l *localBucket) distribute(now int, amount float64, deadlineTick int) {
 	l.lastRefillTick = now
 	l.lastRefillAmount = amount
 	if deadlineTick < now {
-		panic("deadlineTick < now")
+		throw("deadlineTick < now")
 	}
 	if deadlineTick <= now {
 		l.deadlineTick = now

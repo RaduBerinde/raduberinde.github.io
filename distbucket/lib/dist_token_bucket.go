@@ -27,7 +27,7 @@ func (gb *globalBucket) tick(cfg *Config, now int) {
 func (gb *globalBucket) request(cfg *Config, now int, amount float64) (deadlineTick int) {
 	if gb.currTokens >= amount {
 		if gb.lastDeadline > now {
-			panic("giving out tokens with outstanding deadline")
+			throw("giving out tokens with outstanding deadline")
 		}
 		gb.currTokens -= amount
 		return now
@@ -63,10 +63,10 @@ func (l *localBucket) distribute(now int, amount float64, deadlineTick int) {
 	l.lastRefillTick = now
 	l.lastRefillAmount = amount
 	if deadlineTick < now {
-		panic("deadlineTick < now")
+		throw("deadlineTick < now")
 	}
 	if deadlineTick < l.deadlineTick {
-		panic("deadlineTick < l.deadlineTick")
+		throw("deadlineTick < l.deadlineTick")
 	}
 	if deadlineTick <= now {
 		l.deadlineTick = now

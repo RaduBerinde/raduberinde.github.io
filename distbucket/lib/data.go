@@ -99,7 +99,7 @@ func (s Data) AddFuncTerm(cfg *Config, f FuncTerm) {
 	convTimeCheck := func(v float64) int {
 		d := time.Duration(v * float64(time.Second))
 		if d < 0 || d > cfg.Timeframe {
-			panic(fmt.Sprintf("time %v out of range", v))
+			throw(fmt.Sprintf("time %v out of range", v))
 		}
 		return cfg.TickForTime(time.Duration(v * float64(time.Second)))
 	}
@@ -128,7 +128,7 @@ func (s Data) AddFuncTerm(cfg *Config, f FuncTerm) {
 
 	case "sine":
 		if f.Period <= 0 {
-			panic("invalid sine period")
+			throw("invalid sine period")
 		}
 		period := cfg.TickForTime(time.Duration(f.Period * float64(time.Second)))
 
@@ -156,7 +156,7 @@ func (s Data) AddFuncTerm(cfg *Config, f FuncTerm) {
 		// ticks and we use cosine interpolation in-between. See:
 		//   https://www.cs.umd.edu/class/spring2018/cmsc425/Lects/lect12-1d-perlin.pdf
 		if f.Smoothness == 0 {
-			panic("invalid noise smoothness")
+			throw("invalid noise smoothness")
 		}
 		// We choose the standard deviation so that Amplitude is width at 1% of maximum: 2*sqrt(2*ln(100)).
 		stddev := f.Amplitude / (2 * math.Sqrt(2*math.Log(100)))
@@ -177,7 +177,7 @@ func (s Data) AddFuncTerm(cfg *Config, f FuncTerm) {
 		}
 
 	default:
-		panic(fmt.Sprintf("func type '%s' not supported", f.Type))
+		throw("func type '%s' not supported", f.Type)
 	}
 }
 
