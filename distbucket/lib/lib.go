@@ -94,16 +94,16 @@ func Process(inputYAML string) (result Output) {
 	grantedIdeal, tokensIdeal := TokenBucket(cfg, requested)
 	aggregateIdeal := grantedIdeal.Aggregate(cfg)
 
-	var max float64
+	var graphMax float64
 	for _, v := range aggregateRequested {
-		max = math.Max(max, v)
+		graphMax = math.Max(graphMax, v)
 	}
-	for _, v := range aggregateDist {
-		max = math.Max(max, v)
-	}
-	for _, v := range aggregateIdeal {
-		max = math.Max(max, v)
-	}
+	//for _, v := range aggregateDist {
+	//	graphMax = math.Max(graphMax, v)
+	//}
+	//for _, v := range aggregateIdeal {
+	//	graphMax = math.Max(graphMax, v)
+	//}
 
 	nodeSeries := make([]Series, len(requested))
 	for i := range nodeSeries {
@@ -124,7 +124,7 @@ func Process(inputYAML string) (result Output) {
 		Units: []Unit{
 			{
 				Name:       "RU/s",
-				FixedRange: []float64{0, max},
+				FixedRange: []float64{0, graphMax},
 			},
 		},
 		Series: append(nodeSeries, Series{
@@ -154,7 +154,7 @@ func Process(inputYAML string) (result Output) {
 		Units: []Unit{
 			{
 				Name:       "RU/s",
-				FixedRange: []float64{0, max},
+				FixedRange: []float64{0, graphMax},
 			},
 			{
 				Name: "RU",
@@ -195,7 +195,7 @@ func Process(inputYAML string) (result Output) {
 		Units: []Unit{
 			{
 				Name:       "RU/s",
-				FixedRange: []float64{0, max},
+				FixedRange: []float64{0, graphMax},
 			},
 			{
 				Name: "RU",

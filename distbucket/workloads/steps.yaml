@@ -23,6 +23,13 @@ nodes:
     - type: constant
       value: 400
       start: 50
+
     - type: constant
       value: -400
       start: 600
+
+    - type: noise
+      amplitude: 20
+      smoothness: 10
+      start: 50
+      duration: 550

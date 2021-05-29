@@ -41805,8 +41805,8 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		/* */ } return; } if ($f === undefined) { $f = { $blk: throw$1 }; } $f._r = _r; $f.args = args; $f.format = format; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Process = function(inputYAML) {
-		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _i$6, _i$7, _i$8, _i$9, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _ref$6, _ref$7, _ref$8, _ref$9, _tuple, _tuple$1, aggregateDist, aggregateIdeal, aggregateRequested, cfg, err, g, g$1, grantedDist, grantedIdeal, i, i$1, i$2, i$3, i$4, i$5, input, inputYAML, j, max, nodeSeries, out, requested, result, sum, tokensDist, tokensIdeal, totalDist, totalIdeal, v, v$1, v$2, x, x$1, x$2, x$3, $s, $deferred, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _i$5 = $f._i$5; _i$6 = $f._i$6; _i$7 = $f._i$7; _i$8 = $f._i$8; _i$9 = $f._i$9; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _ref$5 = $f._ref$5; _ref$6 = $f._ref$6; _ref$7 = $f._ref$7; _ref$8 = $f._ref$8; _ref$9 = $f._ref$9; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; aggregateDist = $f.aggregateDist; aggregateIdeal = $f.aggregateIdeal; aggregateRequested = $f.aggregateRequested; cfg = $f.cfg; err = $f.err; g = $f.g; g$1 = $f.g$1; grantedDist = $f.grantedDist; grantedIdeal = $f.grantedIdeal; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; i$5 = $f.i$5; input = $f.input; inputYAML = $f.inputYAML; j = $f.j; max = $f.max; nodeSeries = $f.nodeSeries; out = $f.out; requested = $f.requested; result = $f.result; sum = $f.sum; tokensDist = $f.tokensDist; tokensIdeal = $f.tokensIdeal; totalDist = $f.totalDist; totalIdeal = $f.totalIdeal; v = $f.v; v$1 = $f.v$1; v$2 = $f.v$2; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; $s = $f.$s; $deferred = $f.$deferred; $r = $f.$r; } var $err = null; try { s: while (true) { switch ($s) { case 0: $deferred = []; $deferred.index = $curGoroutine.deferStack.length; $curGoroutine.deferStack.push($deferred);
+		var _i, _i$1, _i$2, _i$3, _i$4, _i$5, _i$6, _i$7, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _ref$6, _ref$7, _tuple, _tuple$1, aggregateDist, aggregateIdeal, aggregateRequested, cfg, err, g, g$1, grantedDist, grantedIdeal, graphMax, i, i$1, i$2, i$3, i$4, i$5, input, inputYAML, j, nodeSeries, out, requested, result, sum, tokensDist, tokensIdeal, totalDist, totalIdeal, v, x, x$1, x$2, x$3, $s, $deferred, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _i$5 = $f._i$5; _i$6 = $f._i$6; _i$7 = $f._i$7; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _ref$5 = $f._ref$5; _ref$6 = $f._ref$6; _ref$7 = $f._ref$7; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; aggregateDist = $f.aggregateDist; aggregateIdeal = $f.aggregateIdeal; aggregateRequested = $f.aggregateRequested; cfg = $f.cfg; err = $f.err; g = $f.g; g$1 = $f.g$1; grantedDist = $f.grantedDist; grantedIdeal = $f.grantedIdeal; graphMax = $f.graphMax; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; i$4 = $f.i$4; i$5 = $f.i$5; input = $f.input; inputYAML = $f.inputYAML; j = $f.j; nodeSeries = $f.nodeSeries; out = $f.out; requested = $f.requested; result = $f.result; sum = $f.sum; tokensDist = $f.tokensDist; tokensIdeal = $f.tokensIdeal; totalDist = $f.totalDist; totalIdeal = $f.totalIdeal; v = $f.v; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; $s = $f.$s; $deferred = $f.$deferred; $r = $f.$r; } var $err = null; try { s: while (true) { switch ($s) { case 0: $deferred = []; $deferred.index = $curGoroutine.deferStack.length; $curGoroutine.deferStack.push($deferred);
 		input = [input];
 		result = [result];
 		result[0] = new Output.ptr(sliceType.nil, sliceType$4.nil, "");
@@ -41876,99 +41876,83 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		grantedIdeal = _tuple$1[0];
 		tokensIdeal = _tuple$1[1];
 		aggregateIdeal = grantedIdeal.Aggregate(cfg);
-		max = 0;
+		graphMax = 0;
 		_ref$2 = aggregateRequested;
 		_i$2 = 0;
 		while (true) {
 			if (!(_i$2 < _ref$2.$length)) { break; }
 			v = ((_i$2 < 0 || _i$2 >= _ref$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$2.$array[_ref$2.$offset + _i$2]);
-			max = math.Max(max, v);
+			graphMax = math.Max(graphMax, v);
 			_i$2++;
 		}
-		_ref$3 = aggregateDist;
-		_i$3 = 0;
-		while (true) {
-			if (!(_i$3 < _ref$3.$length)) { break; }
-			v$1 = ((_i$3 < 0 || _i$3 >= _ref$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$3.$array[_ref$3.$offset + _i$3]);
-			max = math.Max(max, v$1);
-			_i$3++;
-		}
-		_ref$4 = aggregateIdeal;
-		_i$4 = 0;
-		while (true) {
-			if (!(_i$4 < _ref$4.$length)) { break; }
-			v$2 = ((_i$4 < 0 || _i$4 >= _ref$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$4.$array[_ref$4.$offset + _i$4]);
-			max = math.Max(max, v$2);
-			_i$4++;
-		}
 		nodeSeries = $makeSlice(sliceType$7, requested.$length);
-		_ref$5 = nodeSeries;
-		_i$5 = 0;
+		_ref$3 = nodeSeries;
+		_i$3 = 0;
 		/* while (true) { */ case 10:
-			/* if (!(_i$5 < _ref$5.$length)) { break; } */ if(!(_i$5 < _ref$5.$length)) { $s = 11; continue; }
-			i$1 = _i$5;
+			/* if (!(_i$3 < _ref$3.$length)) { break; } */ if(!(_i$3 < _ref$3.$length)) { $s = 11; continue; }
+			i$1 = _i$3;
 			_r$4 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$1 + 1 >> 0))])); /* */ $s = 12; case 12: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 			Series.copy(((i$1 < 0 || i$1 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$1]), new Series.ptr(_r$4, "RU/s", 1, (x$3 = ((i$1 < 0 || i$1 >= requested.$length) ? ($throwRuntimeError("index out of range"), undefined) : requested.$array[requested.$offset + i$1]), $subslice(new sliceType(x$3.$array), x$3.$offset, x$3.$offset + x$3.$length))));
-			_i$5++;
+			_i$3++;
 		/* } */ $s = 10; continue; case 11:
 		out = new Output.ptr($clone(cfg, Config).TimeAxis(), sliceType$4.nil, "");
-		out.Charts = $append(out.Charts, new Chart.ptr("Requested", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, max]))]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2, $subslice(new sliceType(aggregateRequested.$array), aggregateRequested.$offset, aggregateRequested.$offset + aggregateRequested.$length)))));
+		out.Charts = $append(out.Charts, new Chart.ptr("Requested", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, graphMax]))]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2, $subslice(new sliceType(aggregateRequested.$array), aggregateRequested.$offset, aggregateRequested.$offset + aggregateRequested.$length)))));
 		nodeSeries = $makeSlice(sliceType$7, requested.$length);
-		_ref$6 = nodeSeries;
-		_i$6 = 0;
+		_ref$4 = nodeSeries;
+		_i$4 = 0;
 		/* while (true) { */ case 13:
-			/* if (!(_i$6 < _ref$6.$length)) { break; } */ if(!(_i$6 < _ref$6.$length)) { $s = 14; continue; }
-			i$2 = _i$6;
+			/* if (!(_i$4 < _ref$4.$length)) { break; } */ if(!(_i$4 < _ref$4.$length)) { $s = 14; continue; }
+			i$2 = _i$4;
 			g = ((i$2 < 0 || i$2 >= grantedDist.$length) ? ($throwRuntimeError("index out of range"), undefined) : grantedDist.$array[grantedDist.$offset + i$2]);
 			if (cfg.Smoothing) {
 				g = g.Smooth(cfg, 0.1);
 			}
 			_r$5 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$2 + 1 >> 0))])); /* */ $s = 15; case 15: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
 			Series.copy(((i$2 < 0 || i$2 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$2]), new Series.ptr(_r$5, "RU/s", 1, $subslice(new sliceType(g.$array), g.$offset, g.$offset + g.$length)));
-			_i$6++;
+			_i$4++;
 		/* } */ $s = 13; continue; case 14:
-		out.Charts = $append(out.Charts, new Chart.ptr("Granted (distributed token bucket)", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, max])), new Unit.ptr("RU", sliceType.nil)]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, $subslice(new sliceType(aggregateDist.$array), aggregateDist.$offset, aggregateDist.$offset + aggregateDist.$length)), new Series.ptr("global tokens", "RU", 0.5, $subslice(new sliceType(tokensDist.$array), tokensDist.$offset, tokensDist.$offset + tokensDist.$length)))));
+		out.Charts = $append(out.Charts, new Chart.ptr("Granted (distributed token bucket)", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, graphMax])), new Unit.ptr("RU", sliceType.nil)]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, $subslice(new sliceType(aggregateDist.$array), aggregateDist.$offset, aggregateDist.$offset + aggregateDist.$length)), new Series.ptr("global tokens", "RU", 0.5, $subslice(new sliceType(tokensDist.$array), tokensDist.$offset, tokensDist.$offset + tokensDist.$length)))));
 		nodeSeries = $makeSlice(sliceType$7, requested.$length);
-		_ref$7 = nodeSeries;
-		_i$7 = 0;
+		_ref$5 = nodeSeries;
+		_i$5 = 0;
 		/* while (true) { */ case 16:
-			/* if (!(_i$7 < _ref$7.$length)) { break; } */ if(!(_i$7 < _ref$7.$length)) { $s = 17; continue; }
-			i$3 = _i$7;
+			/* if (!(_i$5 < _ref$5.$length)) { break; } */ if(!(_i$5 < _ref$5.$length)) { $s = 17; continue; }
+			i$3 = _i$5;
 			g$1 = ((i$3 < 0 || i$3 >= grantedIdeal.$length) ? ($throwRuntimeError("index out of range"), undefined) : grantedIdeal.$array[grantedIdeal.$offset + i$3]);
 			if (cfg.Smoothing) {
 				g$1 = g$1.Smooth(cfg, 0.1);
 			}
 			_r$6 = fmt.Sprintf("n%d", new sliceType$1([new $Int((i$3 + 1 >> 0))])); /* */ $s = 18; case 18: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
 			Series.copy(((i$3 < 0 || i$3 >= nodeSeries.$length) ? ($throwRuntimeError("index out of range"), undefined) : nodeSeries.$array[nodeSeries.$offset + i$3]), new Series.ptr(_r$6, "RU/s", 1, $subslice(new sliceType(g$1.$array), g$1.$offset, g$1.$offset + g$1.$length)));
-			_i$7++;
+			_i$5++;
 		/* } */ $s = 16; continue; case 17:
-		out.Charts = $append(out.Charts, new Chart.ptr("Granted (ideal token bucket)", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, max])), new Unit.ptr("RU", sliceType.nil)]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, $subslice(new sliceType(aggregateIdeal.$array), aggregateIdeal.$offset, aggregateIdeal.$offset + aggregateIdeal.$length)), new Series.ptr("tokens", "RU", 0.5, $subslice(new sliceType(tokensIdeal.$array), tokensIdeal.$offset, tokensIdeal.$offset + tokensIdeal.$length)))));
+		out.Charts = $append(out.Charts, new Chart.ptr("Granted (ideal token bucket)", new sliceType$8([new Unit.ptr("RU/s", new sliceType([0, graphMax])), new Unit.ptr("RU", sliceType.nil)]), $append(nodeSeries, new Series.ptr("aggregate", "RU/s", 2.5, $subslice(new sliceType(aggregateIdeal.$array), aggregateIdeal.$offset, aggregateIdeal.$offset + aggregateIdeal.$length)), new Series.ptr("tokens", "RU", 0.5, $subslice(new sliceType(tokensIdeal.$array), tokensIdeal.$offset, tokensIdeal.$offset + tokensIdeal.$length)))));
 		totalDist = ZeroData(cfg);
 		sum = 0;
-		_ref$8 = totalDist;
-		_i$8 = 0;
+		_ref$6 = totalDist;
+		_i$6 = 0;
 		while (true) {
-			if (!(_i$8 < _ref$8.$length)) { break; }
-			i$4 = _i$8;
+			if (!(_i$6 < _ref$6.$length)) { break; }
+			i$4 = _i$6;
 			sum = sum + (((i$4 < 0 || i$4 >= aggregateDist.$length) ? ($throwRuntimeError("index out of range"), undefined) : aggregateDist.$array[aggregateDist.$offset + i$4]));
 			((i$4 < 0 || i$4 >= totalDist.$length) ? ($throwRuntimeError("index out of range"), undefined) : totalDist.$array[totalDist.$offset + i$4] = sum);
-			_i$8++;
+			_i$6++;
 		}
 		totalIdeal = ZeroData(cfg);
 		sum = 0;
-		_ref$9 = totalIdeal;
-		_i$9 = 0;
+		_ref$7 = totalIdeal;
+		_i$7 = 0;
 		while (true) {
-			if (!(_i$9 < _ref$9.$length)) { break; }
-			i$5 = _i$9;
+			if (!(_i$7 < _ref$7.$length)) { break; }
+			i$5 = _i$7;
 			sum = sum + (((i$5 < 0 || i$5 >= aggregateIdeal.$length) ? ($throwRuntimeError("index out of range"), undefined) : aggregateIdeal.$array[aggregateIdeal.$offset + i$5]));
 			((i$5 < 0 || i$5 >= totalIdeal.$length) ? ($throwRuntimeError("index out of range"), undefined) : totalIdeal.$array[totalIdeal.$offset + i$5] = sum);
-			_i$9++;
+			_i$7++;
 		}
 		out.Charts = $append(out.Charts, new Chart.ptr("Total granted (vs ideal)", new sliceType$8([new Unit.ptr("RU", sliceType.nil)]), new sliceType$7([new Series.ptr("distributed", "RU", 1, $subslice(new sliceType(totalDist.$array), totalDist.$offset, totalDist.$offset + totalDist.$length)), new Series.ptr("ideal", "RU", 1, $subslice(new sliceType(totalIdeal.$array), totalIdeal.$offset, totalIdeal.$offset + totalIdeal.$length))])));
 		Output.copy(result[0], out);
 		$s = -1; return result[0];
-		/* */ } return; } } catch(err) { $err = err; $s = -1; } finally { $callDeferred($deferred, $err); if (!$curGoroutine.asleep) { return  result[0]; } if($curGoroutine.asleep) { if ($f === undefined) { $f = { $blk: Process }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._i$6 = _i$6; $f._i$7 = _i$7; $f._i$8 = _i$8; $f._i$9 = _i$9; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._ref$6 = _ref$6; $f._ref$7 = _ref$7; $f._ref$8 = _ref$8; $f._ref$9 = _ref$9; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.aggregateDist = aggregateDist; $f.aggregateIdeal = aggregateIdeal; $f.aggregateRequested = aggregateRequested; $f.cfg = cfg; $f.err = err; $f.g = g; $f.g$1 = g$1; $f.grantedDist = grantedDist; $f.grantedIdeal = grantedIdeal; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.i$5 = i$5; $f.input = input; $f.inputYAML = inputYAML; $f.j = j; $f.max = max; $f.nodeSeries = nodeSeries; $f.out = out; $f.requested = requested; $f.result = result; $f.sum = sum; $f.tokensDist = tokensDist; $f.tokensIdeal = tokensIdeal; $f.totalDist = totalDist; $f.totalIdeal = totalIdeal; $f.v = v; $f.v$1 = v$1; $f.v$2 = v$2; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.$s = $s; $f.$deferred = $deferred; $f.$r = $r; return $f; } }
+		/* */ } return; } } catch(err) { $err = err; $s = -1; } finally { $callDeferred($deferred, $err); if (!$curGoroutine.asleep) { return  result[0]; } if($curGoroutine.asleep) { if ($f === undefined) { $f = { $blk: Process }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._i$6 = _i$6; $f._i$7 = _i$7; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._ref$6 = _ref$6; $f._ref$7 = _ref$7; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.aggregateDist = aggregateDist; $f.aggregateIdeal = aggregateIdeal; $f.aggregateRequested = aggregateRequested; $f.cfg = cfg; $f.err = err; $f.g = g; $f.g$1 = g$1; $f.grantedDist = grantedDist; $f.grantedIdeal = grantedIdeal; $f.graphMax = graphMax; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.i$5 = i$5; $f.input = input; $f.inputYAML = inputYAML; $f.j = j; $f.nodeSeries = nodeSeries; $f.out = out; $f.requested = requested; $f.result = result; $f.sum = sum; $f.tokensDist = tokensDist; $f.tokensIdeal = tokensIdeal; $f.totalDist = totalDist; $f.totalIdeal = totalIdeal; $f.v = v; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.$s = $s; $f.$deferred = $deferred; $f.$r = $r; return $f; } }
 	};
 	$pkg.Process = Process;
 	TokenBucket = function(cfg, requested) {

@@ -1,7 +1,12 @@
 nodes:
   - terms:
     - type: constant
-      value: 200
+      value: 100
+
   - terms:
     - type: constant
       value: 200
+
+  - terms:
+    - type: constant
+      value: 400

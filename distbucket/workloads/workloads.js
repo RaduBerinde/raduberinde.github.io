@@ -1,33 +1,4 @@
 var workloads = {
-  a: `nodes:
-  - terms:
-    - type: constant
-      value: 200
-    
-    - type: noise
-      amplitude: 100
-      smoothness: 100
-
-    - type: constant
-      value: -500
-      start: 300
-
-  - terms:
-    - type: constant
-      value: 80
-
-    - type: noise
-      amplitude: 40
-      smoothness: 10
-
-  - terms:
-    - type: constant
-      value: 400
-      start: 50
-    - type: constant
-      value: -400
-      start: 600
-`,
   b: `nodes:
   - terms:
     - type: constant
@@ -35,6 +6,19 @@ var workloads = {
   - terms:
     - type: constant
       value: 200
+`,
+  constant: `nodes:
+  - terms:
+    - type: constant
+      value: 100
+
+  - terms:
+    - type: constant
+      value: 200
+
+  - terms:
+    - type: constant
+      value: 400
 `,
   noisy: `nodes:
   - terms:
@@ -62,7 +46,74 @@ var workloads = {
       amplitude: 40
       smoothness: 30
 `,
-  test: `nodes:
+  ramps: `nodes:
+  - terms:
+    - type: ramp
+      duration: 10
+      delta: 100
+
+    - type: ramp
+      start: 300
+      duration: 10
+      delta: -100
+
+  - terms:
+    - type: ramp
+      duration: 20
+      delta: 200
+
+    - type: ramp
+      start: 400
+      duration: 20
+      delta: -200
+
+  - terms:
+    - type: ramp
+      duration: 30
+      delta: 400
+
+    - type: ramp
+      start: 500
+      duration: 30
+      delta: -400
+`,
+  steps: `nodes:
+  - terms:
+    - type: constant
+      value: 200
+    
+    - type: noise
+      amplitude: 100
+      smoothness: 100
+
+    - type: constant
+      value: -500
+      start: 300
+
+  - terms:
+    - type: constant
+      value: 80
+
+    - type: noise
+      amplitude: 40
+      smoothness: 10
+
+  - terms:
+    - type: constant
+      value: 400
+      start: 50
+
+    - type: constant
+      value: -400
+      start: 600
+
+    - type: noise
+      amplitude: 20
+      smoothness: 10
+      start: 50
+      duration: 550
+`,
+  weird: `nodes:
   - terms:
     - type: constant
       value: 100

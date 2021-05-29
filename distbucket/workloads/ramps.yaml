@@ -1,0 +1,30 @@
+nodes:
+  - terms:
+    - type: ramp
+      duration: 10
+      delta: 100
+
+    - type: ramp
+      start: 300
+      duration: 10
+      delta: -100
+
+  - terms:
+    - type: ramp
+      duration: 20
+      delta: 200
+
+    - type: ramp
+      start: 400
+      duration: 20
+      delta: -200
+
+  - terms:
+    - type: ramp
+      duration: 30
+      delta: 400
+
+    - type: ramp
+      start: 500
+      duration: 30
+      delta: -400
