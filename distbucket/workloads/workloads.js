@@ -1,12 +1,4 @@
 var workloads = {
-  b: `nodes:
-  - terms:
-    - type: constant
-      value: 200
-  - terms:
-    - type: constant
-      value: 200
-`,
   constant: `nodes:
   - terms:
     - type: constant
@@ -27,7 +19,7 @@ var workloads = {
     
     - type: noise
       amplitude: 100
-      smoothness: 100
+      smoothness: 20
 
   - terms:
     - type: constant
@@ -35,7 +27,7 @@ var workloads = {
 
     - type: noise
       amplitude: 40
-      smoothness: 10
+      smoothness: 5
 
   - terms:
     - type: sine
@@ -44,7 +36,7 @@ var workloads = {
 
     - type: noise
       amplitude: 40
-      smoothness: 30
+      smoothness: 10
 `,
   ramps: `nodes:
   - terms:
@@ -113,7 +105,7 @@ var workloads = {
       start: 50
       duration: 550
 `,
-  weird: `nodes:
+  various: `nodes:
   - terms:
     - type: constant
       value: 100

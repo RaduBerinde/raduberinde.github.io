@@ -5,7 +5,7 @@ nodes:
     
     - type: noise
       amplitude: 100
-      smoothness: 100
+      smoothness: 20
 
   - terms:
     - type: constant
@@ -13,7 +13,7 @@ nodes:
 
     - type: noise
       amplitude: 40
-      smoothness: 10
+      smoothness: 5
 
   - terms:
     - type: sine
@@ -22,4 +22,4 @@ nodes:
 
     - type: noise
       amplitude: 40
-      smoothness: 30
+      smoothness: 10
