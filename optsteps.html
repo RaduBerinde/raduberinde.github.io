@@ -66,10 +66,26 @@ project
     var data = JSON.parse(strData);
 
     document.addEventListener('DOMContentLoaded', function () {
+      var sqlBox = document.getElementById("sql");
+      var normDiv = document.getElementById('normalization');
+      var exploreDiv = document.getElementById('exploration');
+      var radioNorm = document.getElementById("norm_radio");
+      var radioExplore = document.getElementById("explore_radio");
+
+      radioNorm.onchange = function(r) {
+        if (radioNorm.checked) {
+          normDiv.style = ""
+          exploreDiv.style = "display: none"
+        } else {
+          normDiv.style = "display: none"
+          exploreDiv.style = ""
+        }
+      }
+      radioExplore.onchange = radioNorm.onchange
+
       // Populate the SQL.
       document.getElementById("sql").innerHTML = data.SQL;
 
-      var targetElement = document.getElementById('normalization');
       var configuration = {
         inputFormat: 'json',
         drawFileList: true,
@@ -82,11 +98,22 @@ project
         highlight: false,
         renderNothingWhenEmpty: false,
       };
-      var diff2htmlUi = new Diff2HtmlUI(targetElement, data.Normdiff, configuration);
-      diff2htmlUi.draw();
+      var normDiff = data.NormDiff;
+      if (!normDiff) {
+        // Backward compatibility.
+        normDiff = data.Normdiff;
+      }
+      var exploreDiff = data.ExploreDiff;
 
-      var fileListTitleSpan = document.getElementsByClassName('d2h-file-list-title')[1]
-      fileListTitleSpan.innerHTML = fileListTitleSpan.innerHTML.replace('Files changed', 'Normalization steps')
+      var diff1 = new Diff2HtmlUI(normDiv, normDiff, configuration);
+      diff1.draw();
+
+      var diff2 = new Diff2HtmlUI(exploreDiv, exploreDiff, configuration);
+      diff2.draw();
+
+      var titleSpans = document.getElementsByClassName('d2h-file-list-title')
+      titleSpans[1].innerHTML = titleSpans[1].innerHTML.replace('Files changed', 'Normalization steps');
+      titleSpans[2].innerHTML = titleSpans[2].innerHTML.replace('Files changed', 'Exploration steps');
 
       // Do some very basic syntax highlighting. We pick the pattern that
       // matches at the earliest index, and among those we pick the first in the
@@ -161,9 +188,22 @@ project
     <div class="d2h-file-list-title">Query:</div>
     <div style="margin-left:5%;">
       <pre id="sql" style="padding: 5px 0px; overflow-x:auto; tab-size:4">
-No data provided via fragment or query
+No data provided via URL fragment or query
       </pre>
     </div>
+
+    <label style="cursor:pointer;">
+      <input type="radio" id="norm_radio" name="radio" checked style="margin-right:.5em;">Normalization steps
+    </label>
+
+    <label style="cursor:pointer;">
+    <input type="radio" id="explore_radio" name="radio" style="margin-left:2em;margin-right:.5em;">Exploration steps
+    </label>
+
+    <br>
+    <br>
+
     <div id="normalization"></div>
+    <div id="exploration" style="display: none"></div>
   </body>
 </html>
