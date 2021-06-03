@@ -1,0 +1,25 @@
+nodes:
+  - terms:
+    - type: constant
+      value: 200
+    
+    - type: noise
+      amplitude: 100
+      smoothness: 20
+
+  - terms:
+    - type: constant
+      value: 80
+
+    - type: noise
+      amplitude: 40
+      smoothness: 5
+
+  - terms:
+    - type: sine
+      amplitude: 120
+      period: 100
+
+    - type: noise
+      amplitude: 40
+      smoothness: 10

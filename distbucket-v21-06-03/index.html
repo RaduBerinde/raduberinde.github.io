@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Dist token bucket viz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://unpkg.com/uplot@1.6.9/dist/uPlot.min.css">
+    <style>
+      .uplot {
+        display: inline-block;
+        vertical-align: top;
+      }
+      .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 25px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+      }
+      .slider:hover {
+        opacity: 1;
+      }
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 10px;
+        height: 20px;
+        background: #04AA6D;
+        cursor: pointer;
+      }
+
+      .slider::-moz-range-thumb {
+        width: 10px;
+        height: 20px;
+        background: #04AA6D;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="width: 1200px;">
+      <div style="width: 300px; float: left; font-size:13px; position: fixed;">
+         <p/>
+         <div class="width: 100%">
+           <b>Refill rate (RU/s): <span id="rate_per_sec_value"></span></b>
+           <input id="rate_per_sec" type="range" min="1" max="1000" value="240" class="slider">
+         </div>
+         <p/>
+         <div class="width: 100%">
+           <b>Initial Burst (RU): <span id="initial_burst_value"></span></b>
+           <input id="initial_burst" type="range" min="0" max="10000" value="100" class="slider">
+         </div>
+         <p/>
+         <div class="width: 100%">
+           <b>Max Burst (RU): <span id="max_burst_value"></span></b>
+           <input id="max_burst" type="range" min="1000" max="100000" value="10000" class="slider">
+         </div>
+         <p/>
+         <div class="width: 100%">
+           <div>
+             <div style="float: left;"><b>Workload (YAML):</b></div>
+             <div align="right">
+               <label for="workload_dropdown">Load:</label>
+               <select id="workload_dropdown"></select>
+             </div>
+           </div>
+           <div>
+             <textarea id="workload_yaml" style="margin-left: 2px; resize: none;" rows="35" cols="38" spellcheck="false">
+             </textarea>
+           </div>
+         </div>
+         <p> - Algorithm knobs - </p>
+         <div class="width: 100%">
+           <b>Target global request period (s): <span id="target_refill_period_secs_value"></span></b>
+           <input id="target_refill_period_secs" type="range" min="2" max="100" value="10" class="slider">
+         </div>
+         <div class="width: 100%">
+           <b>Min refill amount (RUs): <span id="min_refill_amount_value"></span></b>
+           <input id="min_refill_amount" type="range" min="10" max="1000" value="100" class="slider">
+         </div>
+         <div class="width: 100%">
+           <b>Max refill amount (RUs): <span id="max_refill_amount_value"></span></b>
+           <input id="max_refill_amount" type="range" min="100" max="100000" value="10000" class="slider">
+         </div>
+         <div class="width: 100%">
+           <b>EWMA factor: <span id="ewma_factor_value"></span></b>
+           <input id="ewma_factor" type="range" min="0" max="1" value="0.5" step="0.01" class="slider">
+         </div>
+         <div class="width: 100%">
+           <b>Queued time scale: <span id="queued_time_scale_secs_value"></span></b>
+           <input id="queued_time_scale_secs" type="range" min="1" max="100" value="10" class="slider">
+         </div>
+         <!--
+         <p> - Misc - </p>
+         <div class="width: 100%">
+           <input type="checkbox" id="smoothing">
+           <b>Smoothing</b>
+         </div>
+         -->
+      </div>
+      <div style="margin-left:305px;" id="graphs_div">
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/uplot@1.6.9/dist/uPlot.iife.js"></script>
+    <script src="workloads/workloads.js"></script>
+    <script src="distbucket.js"></script>
+
+
+    <script>
+      // sliderKeys are yaml fields and <input> ids.
+      const sliderKeys = ["rate_per_sec", "initial_burst", "max_burst", "target_refill_period_secs", "min_refill_amount", "max_refill_amount", "ewma_factor", "queued_time_scale_secs"];
+
+      var plots = [];
+      var widthDeltas = [];
+
+      function makeCharts() {
+        plots.forEach(function(plot) {
+          plot.destroy();
+        })
+        plots = [];
+        widthDeltas = [];
+        const workloadYAML = document.getElementById("workload_yaml").value;
+
+        var inputYAML = workloadYAML;
+        inputYAML += "config:\n";
+        sliderKeys.forEach(function(key) {
+          var elem = document.getElementById(key);
+          inputYAML += "  " + key + ": " + elem.value + "\n";
+        })
+        //var smoothing = document.getElementById("smoothing");
+        //inputYAML += "  smoothing: " + smoothing.checked;
+
+        var output = Process(inputYAML);
+
+        var graphsDiv = document.getElementById("graphs_div")
+        // Clear out any left-over error.
+        while (graphsDiv.firstChild) {
+          graphsDiv.removeChild(graphsDiv.firstChild);
+        }
+
+        if (output.Error != "") {
+          var p = document.createElement("p");
+          p.innerHTML = '<font size=+2 color=red><br><pre>  ' + output.Error + '</pre></font>'
+          graphsDiv.appendChild(p)
+          return
+        }
+
+
+        const colors = [ "red", "green", "blue", "orange", "magenta", "brown" ];
+        var colorIdx = 0;
+
+        function getColor() {
+          var c = colors[colorIdx];
+          colorIdx = (colorIdx + 1) % colors.length;
+          return c
+        }
+
+        output.Charts.forEach(function (chart) {
+          const series = chart.Series;
+          const data = [ output.TimeAxis ].concat(series.map(s => s.Data));
+          const cursorOpts = {
+            lock: true,
+            ocus: {
+              prox: 16,
+            },
+            sync: {
+              key: "moo",
+            },
+          };
+
+          colorIdx = 0;
+          // Size the charts so that the actual plots align even if one graph has
+          // one axis and the other has two.
+          var widthDelta = -450 + chart.Units.length * 54;
+
+          var opts = {
+            title: chart.Title,
+            // Size the charts so that the actual graphs align.
+            width: window.innerWidth + widthDelta,
+            height: 400,
+            focus: {
+              alpha: 0.3
+            },
+            scales: {
+              x: {
+                time: false,
+               },
+            },
+            cursor: cursorOpts,
+            series: [ { label: "Time (s)" } ].concat(series.map(function(s, idx) {
+              return {
+                  label: s.Name,
+                  scale: s.Unit,
+                  value: (u, v) => v.toFixed(1) + " " + s.Unit,
+                  stroke: getColor(),
+                  width: s.Width,
+              }
+            })),
+            axes: [
+              {},
+            ],
+          };
+          for (let i = 0; i < chart.Units.length; i++) {
+            const unit = chart.Units[i].Name;
+            let axis = {
+              scale: unit,
+              label: unit,
+              values: (u, vals, space) => vals.map(v => v.toFixed(1)),
+            };
+            if (i == 1) {
+              axis.side = 1;
+              axis.grid = {show: false};
+            }
+            opts.axes.push(axis);
+            if (chart.Units[i].FixedRange && chart.Units[i].FixedRange.length == 2) {
+              opts.scales[unit] = {
+                auto: false,
+                range: [ chart.Units[i].FixedRange[0], chart.Units[i].FixedRange[1] ],
+              }
+            }
+          }
+          plots.push(new uPlot(opts, data, graphsDiv));
+          widthDeltas.push(widthDelta);
+          graphsDiv.appendChild(document.createElement("p"));
+        })
+      }
+
+      // Populate workloads.
+      var select = document.getElementById("workload_dropdown");
+      Object.keys(workloads).forEach(function(w) {
+        var el = document.createElement("option");
+        el.value = w;
+        el.textContent = w;
+        select.appendChild(el);
+      })
+      var el = document.createElement("option");
+      el.value = "empty";
+      el.textContent = "<empty>";
+      select.appendChild(el);
+
+      select.onchange = function() {
+        var yaml = "";
+        if (select.value != "empty") {
+          yaml = workloads[select.value];
+        }
+        document.getElementById("workload_yaml").value = yaml;
+        makeCharts()
+      }
+      select.onchange();
+
+      sliderKeys.forEach(function(key) {
+        var elem = document.getElementById(key);
+        elem.oninput = function() {
+          document.getElementById(key + "_value").innerHTML = this.value;
+          makeCharts();
+        }
+        elem.oninput();
+      })
+      //document.getElementById("smoothing").onchange = function() {
+      //  makeCharts();
+      //};
+      document.getElementById("workload_yaml").oninput = function() {
+        makeCharts();
+      };
+      window.addEventListener("resize", e => {
+        for (let i = 0; i < plots.length; i++) {
+          plots[i].setSize({
+            width: window.innerWidth + widthDeltas[i],
+            height: 400,
+          })
+        }
+     });
+    </script>
+  </body>
+</html>
