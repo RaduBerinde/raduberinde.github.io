@@ -243,6 +243,12 @@
       el.textContent = "<empty>";
       select.appendChild(el);
 
+      const urlParams = new URLSearchParams(window.location.search);
+      const workload = urlParams.get("workload");
+      if (workload && workloads[workload]) {
+        select.value = workload;
+      }
+
       select.onchange = function() {
         var yaml = "";
         if (select.value != "empty") {
