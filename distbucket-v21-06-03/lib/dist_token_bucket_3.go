@@ -157,17 +157,6 @@ func (l *localBucket) maintain(cfg *Config, gb *globalBucket, now int) {
 		amount = 1000
 	} else {
 		amount = l.reqEWMA * float64(cfg.TargetRefillPeriod.Seconds()/cfg.Tick.Seconds())
-		//timeSinceRefill := cfg.TimeForTick(now) - cfg.TimeForTick(l.lastRefillTick)
-		//amount = l.grantedSinceLastRefill / float64(timeSinceRefill) * float64(cfg.TargetRefillPeriod)
-
-		//// Estimate TargetRefillPeriod more seconds of requests.
-		//lastTick := now - cfg.TickForTime(cfg.TargetRefillPeriod)
-		//if lastTick < 0 {
-		//	lastTick = 0
-		//}
-		//for i := lastTick; i < now; i++ {
-		//	amount += l.requested[i]
-		//}
 
 		// Add the queued work that has not been granted yet.
 		for i := l.outstandingTick; i <= now; i++ {
