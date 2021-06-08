@@ -73,8 +73,8 @@ func Process(inputYAML string) (result Output) {
 	if cfg.TargetRefillPeriodSecs != 0 {
 		cfg.TargetRefillPeriod = time.Duration(cfg.TargetRefillPeriodSecs * float64(time.Second))
 	}
-	if cfg.QueuedTimeScaleSecs != 0 {
-		cfg.QueuedTimeScale = time.Duration(cfg.QueuedTimeScaleSecs * float64(time.Second))
+	if cfg.BacklogTimeScaleSecs != 0 {
+		cfg.BacklogTimeScale = time.Duration(cfg.BacklogTimeScaleSecs * float64(time.Second))
 	}
 
 	requested := MakePerNodeData(cfg, len(input.Nodes))

@@ -52,7 +52,7 @@
          <p/>
          <div class="width: 100%">
            <b>Initial Burst (RU): <span id="initial_burst_value"></span></b>
-           <input id="initial_burst" type="range" min="0" max="10000" value="100" class="slider">
+           <input id="initial_burst" type="range" min="0" max="50000" value="100" class="slider">
          </div>
          <p/>
          <div class="width: 100%">
@@ -79,20 +79,28 @@
            <input id="target_refill_period_secs" type="range" min="2" max="100" value="10" class="slider">
          </div>
          <div class="width: 100%">
+           <b>EWMA factor: <span id="ewma_factor_value"></span></b>
+           <input id="ewma_factor" type="range" min="0" max="1" value="0.5" step="0.01" class="slider">
+         </div>
+         <div class="width: 100%">
+           <b>Backlog time scale (s): <span id="backlog_time_scale_secs_value"></span></b>
+           <input id="backlog_time_scale_secs" type="range" min="1" max="100" value="10" class="slider">
+         </div>
+         <div class="width: 100%">
+           <b>Backlog factor (log10): <span id="backlog_factor_log_10_value"></span></b>
+           <input id="backlog_factor_log_10" type="range" min="-10" max="10" value="-2" step="1" class="slider">
+         </div>
+         <div class="width: 100%">
+           <b>Initial refill amount (RUs): <span id="initial_refill_amount_value"></span></b>
+           <input id="initial_refill_amount" type="range" min="10" max="10000" value="1000" class="slider">
+         </div>
+         <div class="width: 100%">
            <b>Min refill amount (RUs): <span id="min_refill_amount_value"></span></b>
            <input id="min_refill_amount" type="range" min="10" max="1000" value="100" class="slider">
          </div>
          <div class="width: 100%">
            <b>Max refill amount (RUs): <span id="max_refill_amount_value"></span></b>
            <input id="max_refill_amount" type="range" min="100" max="100000" value="10000" class="slider">
-         </div>
-         <div class="width: 100%">
-           <b>EWMA factor: <span id="ewma_factor_value"></span></b>
-           <input id="ewma_factor" type="range" min="0" max="1" value="0.5" step="0.01" class="slider">
-         </div>
-         <div class="width: 100%">
-           <b>Queued time scale: <span id="queued_time_scale_secs_value"></span></b>
-           <input id="queued_time_scale_secs" type="range" min="1" max="100" value="10" class="slider">
          </div>
          <!--
          <p> - Misc - </p>
@@ -113,7 +121,18 @@
 
     <script>
       // sliderKeys are yaml fields and <input> ids.
-      const sliderKeys = ["rate_per_sec", "initial_burst", "max_burst", "target_refill_period_secs", "min_refill_amount", "max_refill_amount", "ewma_factor", "queued_time_scale_secs"];
+      const sliderKeys = [
+        "rate_per_sec",
+        "initial_burst",
+        "max_burst",
+        "target_refill_period_secs",
+        "ewma_factor",
+        "backlog_time_scale_secs",
+        "backlog_factor_log_10",
+        "initial_refill_amount",
+        "min_refill_amount",
+        "max_refill_amount",
+      ];
 
       var plots = [];
       var widthDeltas = [];

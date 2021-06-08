@@ -24,14 +24,16 @@ type Config struct {
 	// Algorithm knobs.
 	TargetRefillPeriod     time.Duration `yaml:"-"`
 	TargetRefillPeriodSecs float64       `yaml:"target_refill_period_secs"`
+	InitialRefillAmount    float64       `yaml:"initial_refill_amount"`
 	MinRefillAmount        float64       `yaml:"min_refill_amount"`
 	MaxRefillAmount        float64       `yaml:"max_refill_amount"`
 	RefillFraction         float64       `yaml:"refill_fraction"`
 	PreRequestTime         time.Duration `yaml:"pre_request_time"`
 
-	EWMAFactor          float64       `yaml:"ewma_factor"`
-	QueuedTimeScale     time.Duration `yaml:"queued_time_scale"`
-	QueuedTimeScaleSecs float64       `yaml:"queued_time_scale_secs"`
+	EWMAFactor           float64       `yaml:"ewma_factor"`
+	BacklogTimeScale     time.Duration `yaml:"backlog_time_scale"`
+	BacklogTimeScaleSecs float64       `yaml:"backlog_time_scale_secs"`
+	BacklogFactorLog10   float64       `yaml:"backlog_factor_log_10"`
 
 	// Misc settings.
 	Smoothing bool
@@ -65,12 +67,14 @@ var DefaultConfig = Config{
 	InitialBurst: 100,
 	MaxBurst:     100,
 
-	TargetRefillPeriod: 10 * time.Second,
-	MinRefillAmount:    100,
-	MaxRefillAmount:    10000,
-	RefillFraction:     0.1,
-	PreRequestTime:     1 * time.Second,
+	TargetRefillPeriod:  10 * time.Second,
+	InitialRefillAmount: 1000,
+	MinRefillAmount:     100,
+	MaxRefillAmount:     10000,
+	RefillFraction:      0.1,
+	PreRequestTime:      1 * time.Second,
 
-	EWMAFactor:      0.5,
-	QueuedTimeScale: 10 * time.Second,
+	EWMAFactor:         0.5,
+	BacklogTimeScale:   10 * time.Second,
+	BacklogFactorLog10: -2,
 }

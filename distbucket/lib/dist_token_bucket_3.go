@@ -114,7 +114,7 @@ func (l *localBucket) init(cfg *Config, requested Data, nodeIdx int) {
 	l.expTable = ZeroData(cfg)
 	for i := range l.expTable {
 		//l.expTable[i] = math.Exp(cfg.TimeForTick(i).Seconds() / 10)
-		l.expTable[i] = math.Exp(float64(cfg.TimeForTick(i)) / float64(cfg.QueuedTimeScale))
+		l.expTable[i] = math.Exp(float64(cfg.TimeForTick(i)) / float64(cfg.BacklogTimeScale))
 	}
 	l.r = rand.New(rand.NewSource(int64(nodeIdx)))
 }
@@ -154,20 +154,9 @@ func (l *localBucket) maintain(cfg *Config, gb *globalBucket, now int) {
 	var amount float64
 	if l.lastRefillAmount == 0 {
 		// Initial request.
-		amount = 1000
+		amount = cfg.InitialRefillAmount
 	} else {
 		amount = l.reqEWMA * float64(cfg.TargetRefillPeriod.Seconds()/cfg.Tick.Seconds())
-		//timeSinceRefill := cfg.TimeForTick(now) - cfg.TimeForTick(l.lastRefillTick)
-		//amount = l.grantedSinceLastRefill / float64(timeSinceRefill) * float64(cfg.TargetRefillPeriod)
-
-		//// Estimate TargetRefillPeriod more seconds of requests.
-		//lastTick := now - cfg.TickForTime(cfg.TargetRefillPeriod)
-		//if lastTick < 0 {
-		//	lastTick = 0
-		//}
-		//for i := lastTick; i < now; i++ {
-		//	amount += l.requested[i]
-		//}
 
 		// Add the queued work that has not been granted yet.
 		for i := l.outstandingTick; i <= now; i++ {
@@ -191,7 +180,7 @@ func (l *localBucket) maintain(cfg *Config, gb *globalBucket, now int) {
 	for i := l.outstandingTick; i <= now; i++ {
 		queued += l.outstanding[i] * l.expTable[now-i] // */ math.Exp(cfg.TimeForTick(now-i).Seconds()/10)
 	}
-	shares += queued * 1e-2 //1e-5
+	shares += queued * math.Pow(10, cfg.BacklogFactorLog10)
 
 	granted, deadlineTick := gb.request(cfg, now, l.lastShares, shares, amount)
 	l.lastShares = shares

@@ -41050,7 +41050,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	math = $packages["math"];
 	rand = $packages["math/rand"];
 	time = $packages["time"];
-	Config = $pkg.Config = $newType(0, $kindStruct, "lib.Config", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Timeframe_, Tick_, RatePerSec_, InitialBurst_, MaxBurst_, TargetRefillPeriod_, TargetRefillPeriodSecs_, MinRefillAmount_, MaxRefillAmount_, RefillFraction_, PreRequestTime_, EWMAFactor_, QueuedTimeScale_, QueuedTimeScaleSecs_, Smoothing_) {
+	Config = $pkg.Config = $newType(0, $kindStruct, "lib.Config", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Timeframe_, Tick_, RatePerSec_, InitialBurst_, MaxBurst_, TargetRefillPeriod_, TargetRefillPeriodSecs_, InitialRefillAmount_, MinRefillAmount_, MaxRefillAmount_, RefillFraction_, PreRequestTime_, EWMAFactor_, BacklogTimeScale_, BacklogTimeScaleSecs_, BacklogFactorLog10_, Smoothing_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Timeframe = new time.Duration(0, 0);
@@ -41060,13 +41060,15 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			this.MaxBurst = 0;
 			this.TargetRefillPeriod = new time.Duration(0, 0);
 			this.TargetRefillPeriodSecs = 0;
+			this.InitialRefillAmount = 0;
 			this.MinRefillAmount = 0;
 			this.MaxRefillAmount = 0;
 			this.RefillFraction = 0;
 			this.PreRequestTime = new time.Duration(0, 0);
 			this.EWMAFactor = 0;
-			this.QueuedTimeScale = new time.Duration(0, 0);
-			this.QueuedTimeScaleSecs = 0;
+			this.BacklogTimeScale = new time.Duration(0, 0);
+			this.BacklogTimeScaleSecs = 0;
+			this.BacklogFactorLog10 = 0;
 			this.Smoothing = false;
 			return;
 		}
@@ -41077,13 +41079,15 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		this.MaxBurst = MaxBurst_;
 		this.TargetRefillPeriod = TargetRefillPeriod_;
 		this.TargetRefillPeriodSecs = TargetRefillPeriodSecs_;
+		this.InitialRefillAmount = InitialRefillAmount_;
 		this.MinRefillAmount = MinRefillAmount_;
 		this.MaxRefillAmount = MaxRefillAmount_;
 		this.RefillFraction = RefillFraction_;
 		this.PreRequestTime = PreRequestTime_;
 		this.EWMAFactor = EWMAFactor_;
-		this.QueuedTimeScale = QueuedTimeScale_;
-		this.QueuedTimeScaleSecs = QueuedTimeScaleSecs_;
+		this.BacklogTimeScale = BacklogTimeScale_;
+		this.BacklogTimeScaleSecs = BacklogTimeScaleSecs_;
+		this.BacklogFactorLog10 = BacklogFactorLog10_;
 		this.Smoothing = Smoothing_;
 	});
 	Data = $pkg.Data = $newType(12, $kindSlice, "lib.Data", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, null);
@@ -41165,7 +41169,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	Input = $pkg.Input = $newType(0, $kindStruct, "lib.Input", true, "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", true, function(Config_, Nodes_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Config = new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, new time.Duration(0, 0), 0, 0, 0, 0, new time.Duration(0, 0), 0, new time.Duration(0, 0), 0, false);
+			this.Config = new Config.ptr(new time.Duration(0, 0), new time.Duration(0, 0), 0, 0, 0, new time.Duration(0, 0), 0, 0, 0, 0, 0, new time.Duration(0, 0), 0, new time.Duration(0, 0), 0, 0, false);
 			this.Nodes = sliceType$5.nil;
 			return;
 		}
@@ -41603,7 +41607,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		while (true) {
 			if (!(_i < _ref.$length)) { break; }
 			i = _i;
-			(x = l.expTable, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i] = math.Exp(($flatten64($clone(cfg, Config).TimeForTick(i))) / ($flatten64(cfg.QueuedTimeScale)))));
+			(x = l.expTable, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i] = math.Exp(($flatten64($clone(cfg, Config).TimeForTick(i))) / ($flatten64(cfg.BacklogTimeScale)))));
 			_i++;
 		}
 		l.r = rand.New(rand.NewSource((new $Int64(0, nodeIdx))));
@@ -41649,7 +41653,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		l.reqEWMA = l.reqEWMA * alpha + (x = l.requested, ((now < 0 || now >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + now])) * (1 - alpha);
 		amount = 0;
 		if (l.lastRefillAmount === 0) {
-			amount = 1000;
+			amount = cfg.InitialRefillAmount;
 		} else {
 			amount = l.reqEWMA * (cfg.TargetRefillPeriod.Seconds() / cfg.Tick.Seconds());
 			i = l.outstandingTick;
@@ -41670,7 +41674,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 			queued = queued + ((x$2 = l.outstanding, ((i$1 < 0 || i$1 >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + i$1])) * (x$3 = l.expTable, x$4 = now - i$1 >> 0, ((x$4 < 0 || x$4 >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + x$4])));
 			i$1 = i$1 + (1) >> 0;
 		}
-		shares = shares + (queued * 0.01);
+		shares = shares + (queued * math.Pow(10, cfg.BacklogFactorLog10));
 		_r = gb.request(cfg, now, l.lastShares, shares, amount); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		granted = _tuple[0];
@@ -41842,8 +41846,8 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		if (!((cfg.TargetRefillPeriodSecs === 0))) {
 			cfg.TargetRefillPeriod = (new time.Duration(0, cfg.TargetRefillPeriodSecs * 1e+09));
 		}
-		if (!((cfg.QueuedTimeScaleSecs === 0))) {
-			cfg.QueuedTimeScale = (new time.Duration(0, cfg.QueuedTimeScaleSecs * 1e+09));
+		if (!((cfg.BacklogTimeScaleSecs === 0))) {
+			cfg.BacklogTimeScale = (new time.Duration(0, cfg.BacklogTimeScaleSecs * 1e+09));
 		}
 		requested = MakePerNodeData(cfg, input[0].Nodes.$length);
 		_ref = requested;
@@ -42073,7 +42077,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 	PerNodeData.methods = [{prop: "Copy", name: "Copy", pkg: "", typ: $funcType([ptrType], [PerNodeData], false)}, {prop: "Aggregate", name: "Aggregate", pkg: "", typ: $funcType([ptrType], [Data], false)}];
 	ptrType$1.methods = [{prop: "init", name: "init", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType], [], false)}, {prop: "tick", name: "tick", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, $Int], [], false)}, {prop: "request", name: "request", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, $Int, $Float64, $Float64, $Float64], [$Float64, $Int], false)}];
 	ptrType$3.methods = [{prop: "init", name: "init", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, Data, $Int], [], false)}, {prop: "distribute", name: "distribute", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([$Int, $Float64, $Int], [], false)}, {prop: "maintain", name: "maintain", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, ptrType$1, $Int], [], false)}, {prop: "request", name: "request", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, $Int, $Float64], [$Float64], false)}, {prop: "tick", name: "tick", pkg: "github.com/RaduBerinde/raduberinde.github.io/distbucket/lib", typ: $funcType([ptrType, ptrType$1, $Int], [], false)}];
-	Config.init("", [{prop: "Timeframe", name: "Timeframe", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "Tick", name: "Tick", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "RatePerSec", name: "RatePerSec", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"rate_per_sec\""}, {prop: "InitialBurst", name: "InitialBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"initial_burst\""}, {prop: "MaxBurst", name: "MaxBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"max_burst\""}, {prop: "TargetRefillPeriod", name: "TargetRefillPeriod", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"-\""}, {prop: "TargetRefillPeriodSecs", name: "TargetRefillPeriodSecs", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"target_refill_period_secs\""}, {prop: "MinRefillAmount", name: "MinRefillAmount", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"min_refill_amount\""}, {prop: "MaxRefillAmount", name: "MaxRefillAmount", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"max_refill_amount\""}, {prop: "RefillFraction", name: "RefillFraction", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"refill_fraction\""}, {prop: "PreRequestTime", name: "PreRequestTime", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"pre_request_time\""}, {prop: "EWMAFactor", name: "EWMAFactor", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"ewma_factor\""}, {prop: "QueuedTimeScale", name: "QueuedTimeScale", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"queued_time_scale\""}, {prop: "QueuedTimeScaleSecs", name: "QueuedTimeScaleSecs", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"queued_time_scale_secs\""}, {prop: "Smoothing", name: "Smoothing", embedded: false, exported: true, typ: $Bool, tag: ""}]);
+	Config.init("", [{prop: "Timeframe", name: "Timeframe", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "Tick", name: "Tick", embedded: false, exported: true, typ: time.Duration, tag: ""}, {prop: "RatePerSec", name: "RatePerSec", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"rate_per_sec\""}, {prop: "InitialBurst", name: "InitialBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"initial_burst\""}, {prop: "MaxBurst", name: "MaxBurst", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"max_burst\""}, {prop: "TargetRefillPeriod", name: "TargetRefillPeriod", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"-\""}, {prop: "TargetRefillPeriodSecs", name: "TargetRefillPeriodSecs", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"target_refill_period_secs\""}, {prop: "InitialRefillAmount", name: "InitialRefillAmount", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"initial_refill_amount\""}, {prop: "MinRefillAmount", name: "MinRefillAmount", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"min_refill_amount\""}, {prop: "MaxRefillAmount", name: "MaxRefillAmount", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"max_refill_amount\""}, {prop: "RefillFraction", name: "RefillFraction", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"refill_fraction\""}, {prop: "PreRequestTime", name: "PreRequestTime", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"pre_request_time\""}, {prop: "EWMAFactor", name: "EWMAFactor", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"ewma_factor\""}, {prop: "BacklogTimeScale", name: "BacklogTimeScale", embedded: false, exported: true, typ: time.Duration, tag: "yaml:\"backlog_time_scale\""}, {prop: "BacklogTimeScaleSecs", name: "BacklogTimeScaleSecs", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"backlog_time_scale_secs\""}, {prop: "BacklogFactorLog10", name: "BacklogFactorLog10", embedded: false, exported: true, typ: $Float64, tag: "yaml:\"backlog_factor_log_10\""}, {prop: "Smoothing", name: "Smoothing", embedded: false, exported: true, typ: $Bool, tag: ""}]);
 	Data.init($Float64);
 	FuncDesc.init("", [{prop: "Terms", name: "Terms", embedded: false, exported: true, typ: sliceType$10, tag: ""}]);
 	FuncTerm.init("", [{prop: "Type", name: "Type", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Start", name: "Start", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Duration", name: "Duration", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Delta", name: "Delta", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Period", name: "Period", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Amplitude", name: "Amplitude", embedded: false, exported: true, typ: $Float64, tag: ""}, {prop: "Smoothness", name: "Smoothness", embedded: false, exported: true, typ: $Int, tag: ""}]);
@@ -42094,7 +42098,7 @@ $packages["github.com/RaduBerinde/raduberinde.github.io/distbucket/lib"] = (func
 		$r = math.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = rand.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = time.$init(); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$pkg.DefaultConfig = new Config.ptr(new time.Duration(209, 2351835136), new time.Duration(0, 100000000), 240, 100, 100, new time.Duration(2, 1410065408), 0, 100, 10000, 0.1, new time.Duration(0, 1000000000), 0.5, new time.Duration(2, 1410065408), 0, false);
+		$pkg.DefaultConfig = new Config.ptr(new time.Duration(209, 2351835136), new time.Duration(0, 100000000), 240, 100, 100, new time.Duration(2, 1410065408), 0, 1000, 100, 10000, 0.1, new time.Duration(0, 1000000000), 0.5, new time.Duration(2, 1410065408), 0, -2, false);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;
