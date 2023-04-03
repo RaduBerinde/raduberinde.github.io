@@ -18,6 +18,8 @@ import (
 	"os"
 	"sort"
 	"unsafe"
+
+	"github.com/cockroachdb/pebble/objstorage/objstorageprovider/objiotracing"
 )
 
 type Event = objiotracing.Event
@@ -26,11 +28,12 @@ const eventSize = int(unsafe.Sizeof(Event{}))
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "usage: process <trace-name> <trace-files>...")
+		fmt.Fprintf(os.Stderr, "usage: process <trace-name> <trace-files>...\n")
 		os.Exit(1)
 	}
 	traceName := os.Args[1]
 	filenames := os.Args[2:]
+	fmt.Printf("Creating trace %q\n", traceName)
 	var size int64
 	for _, name := range filenames {
 		info, err := os.Stat(name)
@@ -40,7 +43,7 @@ func main() {
 
 	buf := bytes.NewBuffer(make([]byte, 0, int(size)))
 	for _, name := range filenames {
-		fmt.Printf("Reading %s..", name)
+		fmt.Printf("Reading %s..\n", name)
 		f, err := os.Open(name)
 		checkErr(err)
 		_, err = io.Copy(buf, f)
@@ -54,13 +57,13 @@ func main() {
 	p := unsafe.Pointer(&asBytes[0])
 	events := unsafe.Slice((*Event)(p), len(asBytes)/eventSize)
 
-	fmt.Printf("Sorting %d events..", len(events))
+	fmt.Printf("Sorting %d events..\n", len(events))
 	sort.Slice(events, func(i, j int) bool {
-		return events[i].StartUnixTime < events[j].StartUnixTime
+		return events[i].StartUnixNano < events[j].StartUnixNano
 	})
 
 	outFilename := fmt.Sprintf("traces/%s.gz", traceName)
-	fmt.Printf("Writing %s..", outFilename)
+	fmt.Printf("Writing %s..\n", outFilename)
 	out, err := os.Create(outFilename)
 	checkErr(err)
 	w := gzip.NewWriter(out)
@@ -72,7 +75,7 @@ func main() {
 
 func checkErr(err error) {
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v", err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }
