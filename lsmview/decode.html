@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Pebble LSM viewer</title>
+  <style>
+    @import url(style.css);
+  </style>
+</head>
+
+<script src="d3.v7.min.js"></script>
+<script src="pako_inflate.min.js"></script>
+
+<script type="module">
+  var compressed = window.location.hash;
+  if (window.location.hash.length <= 1) {
+    compressed = window.location.search
+  }
+  compressed = compressed.substring(1, compressed.length)
+
+  // Decode base64 (convert ascii to binary).
+  var strData = atob(compressed.replace(/-/g, '+').replace(/_/g, '/'));
+
+  // Convert binary string to character-number array
+  var charData = strData.split('').map(function(x){return x.charCodeAt(0);});
+
+  // Turn number array into byte-array
+  var binData = new Uint8Array(charData);
+
+  // Pako magic
+  var data = pako.inflate(binData);
+
+  var strData = new TextDecoder("utf-8").decode(data);
+  //console.log(strData)
+
+  var data = JSON.parse(strData);
+
+  var levels = [];
+  for (let i in data.levels) {
+    levels.push(data.levels[i].level_name);
+  }
+
+  var tables = [];
+  for (let i in data.levels) {
+    let level = data.levels[i];
+    for (let j in level.tables) {
+      let table = level.tables[j];
+      tables.push({
+        level: level.level_name,
+        start: table.smallest_key,
+        end: table.largest_key,
+        label: table.label,
+        details: table.details,
+      });
+    }
+  }
+
+  const margin = {left: 50, right: 30, top: 30, bottom: 20};
+
+  //let minWidth = 500;
+  //let minHeight = 50 * data.levels.length + margin.top + margin.bottom;
+
+  // width and height of the plot.
+  let width = window.innerWidth - margin.left - margin.right;
+  let height = 40 * data.levels.length + margin.top + margin.bottom;
+
+  var svg = d3.select("body").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .style("display", "block")
+      .style("margin", "auto");
+
+  const emptyText = "Click on a rectangle to see table info. Scroll to zoom, drag to pan.";
+  var textbox = d3.select("body").append("div").append("textarea")
+      .attr("readonly", "true")
+      .style("width", "92%")
+      .style("margin", "3%")
+      .style("padding-top", "4px")
+      .style("padding-bottom", "4px")
+      .style("padding-left", "6px")
+      .style("padding-right", "6px")
+      .style("font-size", "12px")
+      .attr("rows", 40)
+      .text(emptyText);
+
+  let verticalLine = svg.append("g").append("line")
+      .attr("pointer-events", "none")
+      .attr("x1", -1)
+      .attr("y1", margin.top - 5)
+      .attr("x2", -1)
+      .attr("y2", margin.top + height)
+      .style("stroke", "darkred")
+      .style("stroke-width", 1)
+      .style("opacity", 0.8);
+
+  let plot = svg.append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+  var mask = plot.append("defs")
+      .append("clipPath")
+      .attr("id", "mask")
+      .style("pointer-events", "none")
+      .append("rect")
+      .attr("x", -1)
+      .attr("y", -1)
+      .attr("width", width + 2)
+      .attr("height", height + 100);
+
+  var masked = plot.append("g")
+      .attr("clip-path", "url(#mask)");
+
+  // Build scales and axes.
+  let xScale = d3.scaleLinear([0, data.keys.length-1], [0, width-1]);
+  let xScaleZoomed = xScale;
+  let yScale = d3.scaleBand(levels, [0, height-1])
+      .paddingInner(0.2)
+      .paddingOuter(0.1);
+
+  const maxLen = 8;
+  function xAxisFn() {
+    let xAxisTicks = xScaleZoomed.ticks()
+      .filter(tick => Number.isInteger(tick));
+
+    return d3.axisBottom(xScaleZoomed)
+      .tickValues(xAxisTicks)
+      .tickFormat(d => {
+        let k = data.keys[d];
+        return k.length > maxLen ? k.substr(0, maxLen-1) + "…" : k;
+      });
+  }
+  
+  
+  let xAxisG = plot.append("g")
+      .attr("transform", `translate(0, ${height})`)
+      .call(xAxisFn());
+
+  xAxisG.selectAll("text")
+      .style("cursor", "default");
+
+
+  let yAxisG = plot.append("g")
+      .style("font-size", "14px")
+      .call(d3.axisLeft(yScale).tickSize(0));
+
+  yAxisG.selectAll(".domain")
+      .remove();
+
+  function highlightTable(r, highlighted) {
+    if (highlighted) {
+      d3.select(r).style("stroke-width", 2).style("opacity", 1);
+    } else {
+      d3.select(r).style("stroke-width", 1).style("opacity", 0.8);
+    }
+  }
+
+  var selected = null;
+  var selectedDetails = emptyText;
+  function selectTable(r, d) {
+    if (selected) {
+      highlightTable(selected, false);
+    }
+    selected = r;
+    if (r) {
+      highlightTable(r, true);
+      selectedDetails = d.details.join("\n");
+    } else {
+      selectedDetails = emptyText;
+    }
+    textbox.text(selectedDetails);
+  }
+
+  function rectmouseover(e, d) {
+    highlightTable(this, true);
+    textbox.text(d.details.join("\n"));
+  }
+
+  function rectmouseleave(e, d) {
+    if (selected != this) {
+      highlightTable(this, false);
+    }
+    textbox.text(selectedDetails)
+  }
+
+  function rectmouseclick(e, d) {
+    selectTable(selected == this ? null : this, d);
+  }
+
+
+  let rectangles = masked.append("g")
+      .attr("fill", "steelblue")
+      .selectAll("rect")
+      .data(tables)
+      .join("rect")
+//      .attr("x", d => xScale(d.start))
+      .attr("y", d => yScale(d.level))
+//      .attr("width", d => xScale(d.end) - xScale(d.start))
+      .attr("height", yScale.bandwidth())
+      .style("stroke-width", 1)
+      .style("stroke", "black")
+      .style("opacity", 0.8)
+      .on("mouseover", rectmouseover)
+      .on("mouseleave", rectmouseleave)
+      .on("click", rectmouseclick);
+
+
+  let labels = masked.append("g")
+      .selectAll("text")
+      .data(tables)
+      .join("text")
+      .attr("font-size", 14)
+//      .attr("x", d => (xScale(d.end) + xScale(d.start)) / 2)
+      .attr("y", d => yScale(d.level) + yScale.bandwidth() / 2)
+      .attr("text-anchor", "middle")
+      .attr("alignment-baseline", "central")
+      .attr("pointer-events", "none")
+      .text(d => d.label);
+
+  // position the rectangles and their labels according to horizontal translation and scale.
+  var position = function (dx, scale) {
+    rectangles
+        .attr("x", d => dx + scale * xScale(d.start))
+        .attr("width", d => scale * (xScale(d.end) - xScale(d.start)));
+    
+    labels
+        .attr("x", d => dx + scale * (xScale(d.end) + xScale(d.start)) / 2);
+  }
+  position(0, 1);
+
+  var zoom = d3.zoom()
+      .scaleExtent([1, 100])
+      .translateExtent([[0, 0], [width, height]])
+      .extent([[0, 0], [width, height]])
+      .on("zoom", (event) => {
+        verticalLineVisibility(false);
+        var t = event.transform;
+        position(t.x, t.k);
+        xScaleZoomed = t.rescaleX(xScale);
+        xAxisG.call(xAxisFn());
+      })
+  svg.call(zoom);
+
+  var tooltip = svg.append("g")
+      .append("text")
+      .attr("font-size", 14)
+      .attr("x", 0)
+      .attr("y", margin.top/2)
+      .attr("fill", "darkred")
+      .attr("text-anchor", "middle")
+      .attr("alignment-baseline", "central")
+      .attr("pointer-events", "none");
+
+  function clamp(x, min, max) {
+    return Math.min(Math.max(x, min), max)
+  }
+
+  function moveVerticalLine(x) {
+    verticalLineVisibility(true);
+    x = clamp(x - margin.left, 0, width);
+    
+    let k = Math.round(xScaleZoomed.invert(x));
+    k = clamp(k, 0, data.keys.length - 1);
+    
+    x = xScaleZoomed(k) + margin.left;
+    verticalLine.attr("x1", x).attr("x2", x);
+    tooltip.text(data.keys[k]);
+    let textWidth = tooltip.node().getBBox().width;
+    tooltip.attr("x", clamp(x, margin.left + textWidth / 2, margin.left + width - textWidth/2));
+  }
+
+  function verticalLineVisibility(val) {
+    verticalLine.style("visibility", val ? "visible" : "hidden");
+    tooltip.style("visibility", val ? "visible" : "hidden");
+  }
+
+
+  svg.on("mousemove", (e) => moveVerticalLine(d3.pointer(e)[0]))
+     .on("mouseleave", (e) => verticalLineVisibility(false));
+
+</script>
+<br>
+LSM viewer
+</body>
+</html>
