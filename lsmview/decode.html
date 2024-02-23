@@ -51,9 +51,22 @@
         start: table.smallest_key,
         end: table.largest_key,
         label: table.label,
+        size: table.size,
         details: table.details,
       });
     }
+  }
+
+  var minSize = Math.min(...tables.map(t => t.size));
+  var maxSize = Math.max(...tables.map(t => t.size));
+  let rectColor = d3.color("steelblue")
+  let colorInterpolator = d3.interpolateRgb(rectColor.brighter(1.5), rectColor.darker(1.5))
+  let sizeScale = d3.scaleLog([minSize, maxSize], [0, 1])
+  function color(size) {
+    if (minSize == maxSize) {
+      return rectColor;
+    }
+    return colorInterpolator(sizeScale(size));
   }
 
   const margin = {left: 50, right: 30, top: 30, bottom: 20};
@@ -188,10 +201,10 @@
 
 
   let rectangles = masked.append("g")
-      .attr("fill", "steelblue")
       .selectAll("rect")
       .data(tables)
       .join("rect")
+      .attr("fill", d => color(d.size))
 //      .attr("x", d => xScale(d.start))
       .attr("y", d => yScale(d.level))
 //      .attr("width", d => xScale(d.end) - xScale(d.start))
