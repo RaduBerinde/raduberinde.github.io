@@ -231,6 +231,7 @@
 
   // position the rectangles and their labels according to horizontal translation and scale.
   var position = function (dx, scale) {
+    dx += (scale - 1.0) * margin.left;
     rectangles
         .attr("x", d => {
           let xStart = xScale(d.start);
