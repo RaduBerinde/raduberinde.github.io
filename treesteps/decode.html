@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Pebble Tree Steps viewer</title>
+  <style>
+    @import url(style.css);
+  </style>
+</head>
+
+<script src="d3.v7.min.js"></script>
+<script src="pako_inflate.min.js"></script>
+
+<script type="module">
+  var compressed = window.location.hash;
+  if (window.location.hash.length <= 1) {
+    compressed = window.location.search
+  }
+  compressed = compressed.substring(1, compressed.length)
+
+  // Decode base64 (convert ascii to binary).
+  var strData = atob(compressed.replace(/-/g, '+').replace(/_/g, '/'));
+
+  // Convert binary string to character-number array
+  var charData = strData.split('').map(function(x){return x.charCodeAt(0);});
+
+  // Turn number array into byte-array
+  var binData = new Uint8Array(charData);
+
+  // Pako magic
+  var encodedData = pako.inflate(binData);
+  var strData = new TextDecoder("utf-8").decode(encodedData);
+  var data = JSON.parse(strData);
+  console.log(data);
+  var title = document.getElementById("title");
+  title.innerText = data.Name;
+  var stepLabel = document.getElementById("step-label");
+
+  function highlight(str) {
+    // Do some very basic syntax highlighting. We pick the pattern that
+    // matches at the earliest index, and among those we pick the first in the
+    // list. Each pattern has a "token" capture group, and optionally a
+    // "prefix" group.  We add a <span> around the token inside the parens and
+    // repeat with the rest of the string.
+    var patterns = [
+      {
+        style: 'hl-attribute',
+        match: /(?<prefix>(├|└)── )(?<token>[a-zA-Z][^:]*):/,
+      },
+      {
+        style: 'hl-op',
+        match: /(?<prefix>← )(?<token>.*$)/,
+      },
+      // Top-level attributes.
+      //{
+      //  style: 'hl-attribute',
+      //  match: /(?<prefix>(├|└)── )(?<token>immutable|mutable|stable|volatile|mutations|has-placeholder|)/
+      //},
+      // Other attributes.
+      //{
+      //  style: 'hl-attribute',
+      //  match: /(?<token>\b(outer|constraints|fd|tight)\b)/,
+      //},
+      // Operators.
+      {
+        style: 'hl-title',
+        match: /(?<prefix>^|(├|└)── )(?<token>[a-zA-Z][^: ]*)/,
+      },
+      {
+        style: 'hl-number',
+        match: /(?<token>(\b[0-9][0-9]*))/,
+      },
+      //{
+      //  style: 'hl-number',
+      //  match: /(?<token>\bNULL\b)/,
+      //},
+      //{
+      //  style: 'hl-built_in',
+      //  match: /(?<token>!null)/,
+      //},
+    ]
+    var out = "";
+    while (true) {
+      var bestMatch = null;
+      var style = null;
+      patterns.forEach(function (pattern) {
+        var match = str.match(pattern.match);
+        if (match && (!bestMatch || match.index < bestMatch.index)) {
+          bestMatch = match;
+          style = pattern.style;
+        }
+      })
+      if (!bestMatch) {
+        break
+      }
+      var tokenStart = bestMatch.index
+      if (bestMatch.groups.prefix) {
+        tokenStart += bestMatch.groups.prefix.length
+      }
+      out += str.substr(0, tokenStart) + '<span class="' + style + '">' + bestMatch.groups.token + '</span>';
+      str = str.substr(tokenStart + bestMatch.groups.token.length);
+    }
+    return out + str;
+  }
+
+  var maxLineLen = 10;
+  for (let n of data.StepNames) {
+    maxLineLen = Math.max(maxLineLen, n.length*2);
+    }
+  for (let s of data.Steps) {
+    for (let l of s.split('\n')) {
+      maxLineLen = Math.max(maxLineLen, l.length);
+    }
+  }
+  maxLineLen = Math.min(maxLineLen, 300);
+
+  var table = document.getElementById("table");
+  table.style.width = (maxLineLen+2) + "ch";
+  function show(step) {
+    let stepName = (step+1) + "/" + data.Steps.length;
+    if (data.StepNames[step] != "") {
+      stepName = stepName + ": " + data.StepNames[step];
+    }
+    stepLabel.innerText = stepName;
+
+    var str = data.Steps[step];
+    var lines = str.split('\n');
+
+    table.innerHTML = ""
+    lines.map(line=>{
+      let tr = table.insertRow();
+      tr.className = "table-row";
+      let td = tr.insertCell();
+      td.className = "table-cell";
+      td.innerText = line;
+      td.innerHTML = highlight(td.innerHTML);
+    })
+  }
+
+  show(0);
+  var slider = document.getElementById("slider");
+  function sliderChanged() {
+    show(slider.valueAsNumber-1);
+  }
+  slider.max = data.Steps.length;
+  slider.addEventListener("change", sliderChanged);
+
+  document.addEventListener('keydown', function(event) {
+    switch (event.key) {
+      case 'Backspace':
+      case 'ArrowLeft':
+        slider.value = Math.max(slider.valueAsNumber-1, 1);
+        sliderChanged();
+        break
+      case ' ':
+      case 'ArrowRight':
+        slider.value = Math.min(slider.valueAsNumber+1, slider.max);
+        sliderChanged();
+        break
+    }
+  });
+
+
+
+</script>
+<br>
+<div><label id='title' style='font-size:large'>Title</label></div>
+<div align='center' class='outer-div'>
+  <div class='step-div'>
+    <div class='step-label'><label id='step-label'>Step</label></div>
+    <input id='slider' class='slider' type="range" min="1" max="100" value="1" onfocus='this.blur()'>
+  </div>
+<div align='center' class='table-div'><table id='table' class='table'></table></div>
+<p align='left' style='font-size:small'>
+Next step: → or Space<br>
+Previous step: ← or Backspace
+</body>
+</html>
