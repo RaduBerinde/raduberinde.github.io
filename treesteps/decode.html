@@ -119,7 +119,7 @@
     maxNumLines = Math.max(maxNumLines, s.split('\n').length);
   }
   var tableDiv = document.getElementById("table-div");
-  tableDiv.style.height = 17 * maxNumLines + "px";
+  tableDiv.style.minHeight = 17 * maxNumLines + "px";
 
   var table = document.getElementById("table");
   table.style.width = (maxLineLen+2) + "ch";
