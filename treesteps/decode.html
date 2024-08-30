@@ -32,7 +32,6 @@
   var encodedData = pako.inflate(binData);
   var strData = new TextDecoder("utf-8").decode(encodedData);
   var data = JSON.parse(strData);
-  console.log(data);
   var title = document.getElementById("title");
   title.innerText = data.Name;
   var stepLabel = document.getElementById("step-label");
@@ -107,13 +106,20 @@
   var maxLineLen = 10;
   for (let n of data.StepNames) {
     maxLineLen = Math.max(maxLineLen, n.length*2);
-    }
+  }
   for (let s of data.Steps) {
     for (let l of s.split('\n')) {
       maxLineLen = Math.max(maxLineLen, l.length);
     }
   }
   maxLineLen = Math.min(maxLineLen, 300);
+
+  var maxNumLines = 3;
+  for (let s of data.Steps) {
+    maxNumLines = Math.max(maxNumLines, s.split('\n').length);
+  }
+  var tableDiv = document.getElementById("table-div");
+  tableDiv.style.height = 17 * maxNumLines + "px";
 
   var table = document.getElementById("table");
   table.style.width = (maxLineLen+2) + "ch";
@@ -171,7 +177,7 @@
     <div class='step-label'><label id='step-label'>Step</label></div>
     <input id='slider' class='slider' type="range" min="1" max="100" value="1" onfocus='this.blur()'>
   </div>
-<div align='center' class='table-div'><table id='table' class='table'></table></div>
+<div align='center' class='table-div' id='table-div'><table id='table' class='table'></table></div>
 <p align='left' style='font-size:small'>
 Next step: → or Space<br>
 Previous step: ← or Backspace
