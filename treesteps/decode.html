@@ -150,7 +150,7 @@
     show(slider.valueAsNumber-1);
   }
   slider.max = data.Steps.length;
-  slider.addEventListener("change", sliderChanged);
+  slider.addEventListener("input", sliderChanged);
 
   document.addEventListener('keydown', function(event) {
     switch (event.key) {
