@@ -53,6 +53,12 @@ body {
   white-space: pre;
 }
 
+.table-cell-changed {
+  user-select: text;
+  vertical-align: middle;
+  white-space: pre;
+}
+
 .hl-title {
   color: #900;
   font-weight: bold;
