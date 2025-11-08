@@ -60,14 +60,13 @@
       const lines = text.split('\n');
 
       lines.forEach((line, index) => {
+        if (index > 0) {
+          // Push the previous line and its status
+          result.push({ line: currentLine, changed: lineChanged });
+          currentLine = "";
+          lineChanged = false;
+        }
         if (line) {
-          if (index > 0) {
-            // Push the previous line and its status
-            result.push({ line: currentLine, changed: lineChanged });
-            currentLine = "";
-            lineChanged = false;
-          }
-
           if (type !== 0) {
             lineChanged = true;
           }
